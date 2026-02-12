@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { filterSuggestionItems } from "@blocknote/core/extensions";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { filterSuggestionItems, SuggestionMenu } from "@blocknote/core/extensions";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import { SuggestionMenuController } from "@blocknote/react";
@@ -57,6 +57,52 @@ export function EntryEditor({
     }
   }, [autoFocus, editor]);
 
+  // Workaround: BlockNote's handleTextInput fails to detect [[ mid-text
+  // because it reads triggerLength+1 chars and compares to triggerLength chars.
+  // We attach to the wrapper div (via ref) so we don't depend on editor.domElement timing.
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    let pendingTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "[") return;
+
+      // Defer check until after ProseMirror has fully processed the keystroke
+      pendingTimer = setTimeout(() => {
+        pendingTimer = null;
+        const suggestionMenuExt = editor.getExtension(SuggestionMenu);
+        if (!suggestionMenuExt || suggestionMenuExt.shown()) return;
+
+        const view = editor.prosemirrorView;
+        const { from } = view.state.selection;
+        if (from < 2) return;
+
+        try {
+          const twoBefore = view.state.doc.textBetween(from - 2, from);
+          if (twoBefore === "[[") {
+            // Delete the [[ the user typed, then let openSuggestionMenu re-insert it
+            // with deleteTriggerCharacter: true so it gets removed on item select.
+            view.dispatch(view.state.tr.delete(from - 2, from));
+            suggestionMenuExt.openSuggestionMenu("[[", {
+              deleteTriggerCharacter: true,
+            });
+          }
+        } catch {
+          // ignore textBetween errors near node boundaries
+        }
+      }, 0);
+    };
+
+    wrapper.addEventListener("keydown", handleKeyDown);
+    return () => {
+      wrapper.removeEventListener("keydown", handleKeyDown);
+      if (pendingTimer) clearTimeout(pendingTimer);
+    };
+  }, [editor]);
+
   const onChange = useCallback(() => {
     handleChange(editor as never);
   }, [handleChange, editor]);
@@ -93,6 +139,7 @@ export function EntryEditor({
 
   return (
     <div
+      ref={wrapperRef}
       className="entry-editor"
       data-autofocus={autoFocus ? "true" : undefined}
     >

@@ -1,4 +1,7 @@
+import { useState, useEffect } from "react";
 import { createReactInlineContentSpec } from "@blocknote/react";
+import { getEntry } from "../../storage/entries.ts";
+import { extractTitle } from "../../utils/extract-title.ts";
 
 export const entryLinkSpec = createReactInlineContentSpec(
   {
@@ -13,9 +16,28 @@ export const entryLinkSpec = createReactInlineContentSpec(
     render: (props) => {
       const { entryId, displayText } = props.inlineContent.props;
 
+      const [resolvedTitle, setResolvedTitle] = useState(displayText || "Untitled entry");
+      const [isDeleted, setIsDeleted] = useState(false);
+
+      useEffect(() => {
+        let cancelled = false;
+        getEntry(entryId).then((entry) => {
+          if (cancelled) return;
+          if (!entry) {
+            setIsDeleted(true);
+            setResolvedTitle(displayText || "Untitled entry");
+          } else {
+            setIsDeleted(false);
+            setResolvedTitle(extractTitle(entry));
+          }
+        });
+        return () => { cancelled = true; };
+      }, [entryId, displayText]);
+
       const handleClick = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+        if (isDeleted) return;
         window.dispatchEvent(
           new CustomEvent("workledger:navigate-entry", {
             detail: { entryId },
@@ -25,11 +47,15 @@ export const entryLinkSpec = createReactInlineContentSpec(
 
       return (
         <span
-          className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 cursor-pointer hover:bg-amber-200 transition-colors"
+          className={
+            isDeleted
+              ? "inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-400 line-through cursor-default"
+              : "inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 cursor-pointer hover:bg-amber-200 transition-colors"
+          }
           onClick={handleClick}
           data-entry-link={entryId}
         >
-          {displayText || "Untitled entry"}
+          {resolvedTitle}{isDeleted ? " (deleted)" : ""}
         </span>
       );
     },
