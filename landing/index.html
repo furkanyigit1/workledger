@@ -16,10 +16,22 @@
             rel="stylesheet"
         />
         <!-- Privacy-friendly analytics by Plausible -->
-        <script async src="https://analytics.novanexus.ca/js/pa-wrSVHfqrCHQ_GqhzyZGow.js"></script>
+        <script
+            async
+            src="https://analytics.novanexus.ca/js/pa-wrSVHfqrCHQ_GqhzyZGow.js"
+        ></script>
         <script>
-          window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-          plausible.init()
+            ((window.plausible =
+                window.plausible ||
+                function () {
+                    (plausible.q = plausible.q || []).push(arguments);
+                }),
+                (plausible.init =
+                    plausible.init ||
+                    function (i) {
+                        plausible.o = i || {};
+                    }));
+            plausible.init();
         </script>
         <style>
             /* ═══════════════════════════════════════
@@ -993,13 +1005,13 @@
                         <div class="chrome-bar">workledger.org</div>
                     </div>
                     <video
-                        src="./images/demo.mp4"
+                        src="./images/product.png"
                         autoplay
                         loop
                         muted
                         playsinline
                         preload="metadata"
-                        style="width:100%;display:block"
+                        style="width: 100%; display: block"
                     ></video>
                 </div>
                 <div class="showcase-decor showcase-decor-left"></div>
@@ -1189,7 +1201,9 @@
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                             >
-                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                                <path
+                                    d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"
+                                />
                                 <polyline points="7 10 12 15 17 10" />
                                 <line x1="12" y1="15" x2="12" y2="3" />
                             </svg>
@@ -1235,14 +1249,28 @@
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                             >
-                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                                <path
+                                    d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+                                />
+                                <path
+                                    d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+                                />
                             </svg>
                         </div>
                         <h3 class="feature-title">Wiki-Style Linking</h3>
                         <p class="feature-desc">
-                            Type <code style="background:#fef3c7;padding:1px 5px;border-radius:4px;font-size:0.85em">[[</code> to link between entries. Click any
-                            link to jump straight to the referenced note.
+                            Type
+                            <code
+                                style="
+                                    background: #fef3c7;
+                                    padding: 1px 5px;
+                                    border-radius: 4px;
+                                    font-size: 0.85em;
+                                "
+                                >[[</code
+                            >
+                            to link between entries. Click any link to jump
+                            straight to the referenced note.
                         </p>
                     </div>
                 </div>
@@ -1470,7 +1498,22 @@
                     </svg>
                     <span>WorkLedger</span>
                 </div>
-                <span class="footer-copy" style="display: flex; align-items: center; gap: 4px;">Made with <span style="color: #ef4444;">&hearts;</span> by <a href="https://bastiangruber.ca" style="color: var(--orange-dark); text-decoration: underline; text-decoration-color: var(--orange-light); text-underline-offset: 2px; transition: color 0.2s ease;">Bastian</a></span>
+                <span
+                    class="footer-copy"
+                    style="display: flex; align-items: center; gap: 4px"
+                    >Made with <span style="color: #ef4444">&hearts;</span> by
+                    <a
+                        href="https://bastiangruber.ca"
+                        style="
+                            color: var(--orange-dark);
+                            text-decoration: underline;
+                            text-decoration-color: var(--orange-light);
+                            text-underline-offset: 2px;
+                            transition: color 0.2s ease;
+                        "
+                        >Bastian</a
+                    ></span
+                >
                 <div class="footer-right">
                     <a href="https://workledger.org" class="footer-link"
                         >Open App</a
