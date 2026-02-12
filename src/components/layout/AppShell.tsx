@@ -11,7 +11,7 @@ export function AppShell({ sidebarOpen, children }: AppShellProps) {
       className={`
         min-h-screen bg-[#fafafa] text-[#1a1a1a]
         transition-[padding] duration-300 ease-in-out
-        ${sidebarOpen ? "pl-64" : "pl-0"}
+        ${sidebarOpen ? "pl-80" : "pl-0"}
       `}
     >
       <main className="max-w-7xl mx-auto px-12 pt-6 pb-8">

@@ -26,11 +26,11 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, fil
     return (
       <div className="flex flex-col items-center justify-center h-full text-center py-20">
         <div className="text-6xl mb-6 text-gray-300">📓</div>
-        <h2 className="text-xl text-gray-500 font-light mb-2">
+        <h2 className="text-2xl text-gray-500 font-light mb-3">
           Start your first entry
         </h2>
-        <p className="text-sm text-gray-400 max-w-sm">
-          Press <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-xs font-mono">⌘J</kbd> or
+        <p className="text-base text-gray-400 max-w-sm">
+          Press <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-sm font-mono">⌘J</kbd> or
           click the button below to create your first notebook entry.
         </p>
       </div>

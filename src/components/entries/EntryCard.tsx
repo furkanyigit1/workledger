@@ -18,12 +18,12 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive }: 
 
   return (
     <div className="entry-card group animate-fade-in" id={`entry-${entry.id}`}>
-      <div className="flex items-center gap-3 mb-1 px-1">
-        <span className="text-xs text-gray-400 font-mono">
+      <div className="flex items-center gap-3 mb-2 px-1">
+        <span className="text-sm text-gray-400 font-mono">
           {formatTime(entry.createdAt)}
         </span>
         {isOld && (
-          <span className="text-[10px] text-gray-300 uppercase tracking-wider">
+          <span className="text-[11px] text-gray-300 uppercase tracking-wider">
             past
           </span>
         )}
@@ -86,7 +86,7 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive }: 
           autoFocus={isLatest && !isOld}
         />
       </div>
-      <div className="entry-ruling mt-3 mb-6" />
+      <div className="entry-ruling mt-4 mb-8" />
     </div>
   );
 }
