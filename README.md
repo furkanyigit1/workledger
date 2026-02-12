@@ -23,15 +23,6 @@
 - **Local-first** -- All data stored in IndexedDB, no server required
 - **Keyboard-driven** -- `Cmd+J` new entry, `Cmd+K` search, `Cmd+\` toggle sidebar, `Escape` clear filter
 
-## Tech Stack
-
-- [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- [BlockNote](https://blocknotejs.org/) -- Rich text block editor
-- [Excalidraw](https://excalidraw.com/) -- Whiteboard and drawing tool
-- [Tailwind CSS](https://tailwindcss.com/) -- Styling
-- [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) via [idb](https://github.com/jakearchibald/idb) -- Local storage
-- [Vite](https://vitejs.dev/) -- Build tool
-
 ## Getting Started
 
 ```bash
@@ -42,32 +33,6 @@ npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-## Usage
-
-1. Press `Cmd+J` or click **+ New Entry** to create a new entry
-2. Start typing -- your work is auto-saved to IndexedDB
-3. Type `/` for slash commands: headings, lists, code blocks, or drawings
-4. Click **+ tag** below the timestamp to add tags to entries
-5. Use the sidebar search or click tags to filter entries
-6. Press `Cmd+K` for full-text search across all entries
-7. Archive entries via the box icon, or delete permanently via the trash icon
-8. Click the gear icon for import/export and archive access
-
-## Project Structure
-
-```
-src/
-  components/
-    editor/       # BlockNote editor, Excalidraw block, slash menu
-    entries/       # Entry cards, stream, tag editor
-    layout/        # App shell, sidebar, day headers
-    search/        # Search panel
-  hooks/           # useEntries, useAutoSave, useSearch
-  storage/         # IndexedDB layer (entries, search index, import/export)
-  types/           # TypeScript interfaces
-  utils/           # Date formatting, ID generation, tag colors
-```
 
 ## License
 
