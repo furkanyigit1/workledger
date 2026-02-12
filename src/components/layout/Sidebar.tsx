@@ -18,6 +18,7 @@ interface SidebarProps {
   isArchiveView: boolean;
   onToggleArchiveView: () => void;
   archivedCount: number;
+  activeDayKey?: string | null;
 }
 
 export function Sidebar({
@@ -35,6 +36,7 @@ export function Sidebar({
   isArchiveView,
   onToggleArchiveView,
   archivedCount,
+  activeDayKey,
 }: SidebarProps) {
   const today = todayKey();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -252,6 +254,7 @@ export function Sidebar({
             dayKeys.map((dayKey) => {
               const count = entriesByDay.get(dayKey)?.length || 0;
               const isToday = dayKey === today && !isArchiveView;
+              const isActive = activeDayKey === dayKey && !isArchiveView;
               return (
                 <button
                   key={dayKey}
@@ -261,9 +264,11 @@ export function Sidebar({
                     transition-colors duration-150
                     flex items-center justify-between gap-2
                     ${
-                      isToday
+                      isActive
                         ? "bg-orange-50 text-orange-700 font-medium"
-                        : "text-gray-600 hover:bg-gray-50"
+                        : isToday && !activeDayKey
+                          ? "bg-orange-50 text-orange-700 font-medium"
+                          : "text-gray-600 hover:bg-gray-50"
                     }
                   `}
                 >
@@ -275,11 +280,11 @@ export function Sidebar({
                       <span
                         className={`
                           w-1.5 h-1.5 rounded-full
-                          ${isToday ? "bg-orange-400" : "bg-gray-300"}
+                          ${isActive || (isToday && !activeDayKey) ? "bg-orange-400" : "bg-gray-300"}
                         `}
                       />
                     )}
-                    <span className={`text-xs ${isToday ? "text-orange-500" : "text-gray-400"}`}>{count}</span>
+                    <span className={`text-xs ${isActive || (isToday && !activeDayKey) ? "text-orange-500" : "text-gray-400"}`}>{count}</span>
                   </span>
                 </button>
               );

@@ -143,6 +143,24 @@ export function useEntries() {
     [refresh, refreshArchive],
   );
 
+  const loadEntryById = useCallback(
+    async (entryId: string): Promise<WorkLedgerEntry | null> => {
+      const entry = await dbGetEntry(entryId);
+      if (!entry || entry.isArchived) return null;
+      setEntriesByDay((prev) => {
+        const next = new Map(prev);
+        const dayEntries = [...(next.get(entry.dayKey) || [])];
+        if (!dayEntries.some((e) => e.id === entry.id)) {
+          dayEntries.unshift(entry);
+          next.set(entry.dayKey, dayEntries);
+        }
+        return next;
+      });
+      return entry;
+    },
+    [],
+  );
+
   return {
     entriesByDay,
     dayKeys,
@@ -156,5 +174,6 @@ export function useEntries() {
     archivedEntries,
     refreshArchive,
     refresh,
+    loadEntryById,
   };
 }

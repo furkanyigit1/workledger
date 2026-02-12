@@ -7,6 +7,7 @@ import "@blocknote/mantine/style.css";
 
 import { workledgerSchema } from "./EditorProvider.tsx";
 import { getWorkLedgerSlashMenuItems } from "./SlashMenuItems.tsx";
+import { getWikiLinkMenuItems } from "./WikiLinkMenuItems.ts";
 import type { WorkLedgerEntry } from "../../types/entry.ts";
 import { useAutoSave } from "../../hooks/useAutoSave.ts";
 
@@ -33,6 +34,9 @@ export function EntryEditor({
     {
       schema: workledgerSchema,
       initialContent: initialContent as never,
+      placeholders: {
+        default: "Type text, / for commands, [[ to link entries",
+      },
     },
     [entry.id],
   );
@@ -65,6 +69,28 @@ export function EntryEditor({
     [editor],
   );
 
+  const wikiLinkItems = useCallback(
+    async (query: string) => getWikiLinkMenuItems(query, entry.id),
+    [entry.id],
+  );
+
+  const handleWikiLinkSelect = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (item: any) => {
+      (editor as never as { insertInlineContent: (content: unknown[]) => void }).insertInlineContent([
+        {
+          type: "entryLink",
+          props: {
+            entryId: item.entryId,
+            displayText: item.displayText,
+          },
+        },
+        " ",
+      ]);
+    },
+    [editor],
+  );
+
   return (
     <div
       className="entry-editor"
@@ -81,6 +107,11 @@ export function EntryEditor({
         <SuggestionMenuController
           triggerCharacter="/"
           getItems={slashMenuItems}
+        />
+        <SuggestionMenuController
+          triggerCharacter="[["
+          getItems={wikiLinkItems}
+          onItemClick={handleWikiLinkSelect}
         />
       </BlockNoteView>
     </div>

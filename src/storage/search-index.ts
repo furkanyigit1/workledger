@@ -10,6 +10,13 @@ export function extractTextFromBlocks(blocks: Block[]): string {
       for (const inline of block.content) {
         if (inline.type === "text") {
           parts.push(inline.text);
+        } else {
+          // Handle custom inline content (e.g. entryLink)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const ic = inline as any;
+          if (ic.type === "entryLink" && ic.props?.displayText) {
+            parts.push(ic.props.displayText);
+          }
         }
       }
     }
@@ -51,6 +58,14 @@ export async function searchEntries(query: string): Promise<SearchIndexEntry[]> 
       return terms.every((term) => searchable.includes(term));
     })
     .sort((a, b) => b.updatedAt - a.updatedAt);
+}
+
+export async function getRecentSearchEntries(
+  limit = 10,
+): Promise<SearchIndexEntry[]> {
+  const db = await getDB();
+  const all = (await db.getAll("searchIndex")) as SearchIndexEntry[];
+  return all.sort((a, b) => b.updatedAt - a.updatedAt).slice(0, limit);
 }
 
 export async function deleteSearchIndex(entryId: string): Promise<void> {

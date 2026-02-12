@@ -15,6 +15,7 @@ export default function App() {
 
   const [filteredEntryIds, setFilteredEntryIds] = useState<Set<string> | null>(null);
   const [archiveView, setArchiveView] = useState(false);
+  const [activeDayKey, setActiveDayKey] = useState<string | null>(null);
   const {
     entriesByDay,
     dayKeys,
@@ -28,6 +29,7 @@ export default function App() {
     archivedEntries,
     refreshArchive,
     refresh,
+    loadEntryById,
   } = useEntries();
   const { query, results, isOpen: searchOpen, search, open: openSearch, close: closeSearch } = useSearch();
 
@@ -98,6 +100,7 @@ export default function App() {
   }, [createEntry]);
 
   const handleDayClick = useCallback((dayKey: string) => {
+    setActiveDayKey(dayKey);
     const el = document.getElementById(`day-${dayKey}`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -110,6 +113,57 @@ export default function App() {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, []);
+
+  const navigateToEntry = useCallback(
+    async (entryId: string) => {
+      const scrollAndHighlight = (el: HTMLElement) => {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("entry-link-highlight");
+        setTimeout(() => el.classList.remove("entry-link-highlight"), 2000);
+        // Focus the editor inside the entry
+        setTimeout(() => {
+          const editorEl = el.querySelector<HTMLElement>("[contenteditable=true]");
+          if (editorEl) editorEl.focus();
+        }, 400);
+      };
+
+      // Find the entry's dayKey from current state to highlight sidebar
+      for (const [dayKey, entries] of entriesByDay) {
+        if ((entries as { id: string }[]).some((e) => e.id === entryId)) {
+          setActiveDayKey(dayKey);
+          break;
+        }
+      }
+
+      const existing = document.getElementById(`entry-${entryId}`);
+      if (existing) {
+        scrollAndHighlight(existing);
+        return;
+      }
+
+      const entry = await loadEntryById(entryId);
+      if (!entry) {
+        console.warn(`Entry ${entryId} not found or archived`);
+        return;
+      }
+      setActiveDayKey(entry.dayKey);
+
+      setTimeout(() => {
+        const el = document.getElementById(`entry-${entryId}`);
+        if (el) scrollAndHighlight(el);
+      }, 150);
+    },
+    [loadEntryById, entriesByDay],
+  );
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const entryId = (e as CustomEvent).detail?.entryId;
+      if (entryId) navigateToEntry(entryId);
+    };
+    window.addEventListener("workledger:navigate-entry", handler);
+    return () => window.removeEventListener("workledger:navigate-entry", handler);
+  }, [navigateToEntry]);
 
   const handleTagsChange = useCallback(
     (entryId: string, dayKey: string, tags: string[]) => {
@@ -217,6 +271,7 @@ export default function App() {
         isArchiveView={archiveView}
         onToggleArchiveView={handleToggleArchiveView}
         archivedCount={archivedCount}
+        activeDayKey={activeDayKey}
       />
 
       <AppShell sidebarOpen={sidebarOpen}>
