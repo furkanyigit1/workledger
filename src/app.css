@@ -161,3 +161,9 @@ body {
   animation: entry-link-pulse 1s ease-in-out 2;
   border-radius: 8px;
 }
+
+/* Make BlockNote suggestion menus scrollable */
+.bn-mantine .bn-suggestion-menu {
+  max-height: 300px !important;
+  overflow-y: auto !important;
+}

@@ -71,3 +71,9 @@ export function getDB(): Promise<IDBPDatabase<WorkLedgerDB>> {
   }
   return dbPromise;
 }
+
+export async function clearAllData(): Promise<void> {
+  const db = await getDB();
+  await db.clear("entries");
+  await db.clear("searchIndex");
+}

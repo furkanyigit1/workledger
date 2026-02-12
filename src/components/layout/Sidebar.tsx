@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { formatDayKey, todayKey } from "../../utils/dates.ts";
 import { getTagColor } from "../../utils/tag-colors.ts";
 import { exportAllEntries, importEntries } from "../../storage/import-export.ts";
@@ -19,6 +19,7 @@ interface SidebarProps {
   onToggleArchiveView: () => void;
   archivedCount: number;
   activeDayKey?: string | null;
+  onDeleteAll?: () => void;
 }
 
 export function Sidebar({
@@ -37,12 +38,36 @@ export function Sidebar({
   onToggleArchiveView,
   archivedCount,
   activeDayKey,
+  onDeleteAll,
 }: SidebarProps) {
   const today = todayKey();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
+  const [tagsExpanded, setTagsExpanded] = useState(true);
+  const [tagsHeight, setTagsHeight] = useState(120);
+  const dragRef = useRef<{ startY: number; startHeight: number } | null>(null);
   const settingsRef = useRef<HTMLDivElement>(null);
+
+  const handleDragStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    dragRef.current = { startY: e.clientY, startHeight: tagsHeight };
+
+    const onMove = (ev: MouseEvent) => {
+      if (!dragRef.current) return;
+      const delta = dragRef.current.startY - ev.clientY;
+      const newHeight = Math.max(60, Math.min(300, dragRef.current.startHeight + delta));
+      setTagsHeight(newHeight);
+    };
+    const onUp = () => {
+      dragRef.current = null;
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }, [tagsHeight]);
 
   // Close settings dropdown when clicking outside
   useEffect(() => {
@@ -238,6 +263,46 @@ export function Sidebar({
                     </svg>
                     Import entries
                   </button>
+
+                  {onDeleteAll && (
+                    <>
+                      <div className="my-1 border-t border-gray-100" />
+                      {confirmDeleteAll ? (
+                        <div className="px-3 py-2 flex items-center gap-2">
+                          <span className="text-xs text-red-500">Delete everything?</span>
+                          <button
+                            onClick={() => {
+                              onDeleteAll();
+                              setConfirmDeleteAll(false);
+                              setSettingsOpen(false);
+                            }}
+                            className="text-xs text-red-600 hover:text-red-700 font-medium"
+                          >
+                            Yes
+                          </button>
+                          <button
+                            onClick={() => setConfirmDeleteAll(false)}
+                            className="text-xs text-gray-400 hover:text-gray-500"
+                          >
+                            No
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setConfirmDeleteAll(true)}
+                          className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                            <path d="M10 11v6" />
+                            <path d="M14 11v6" />
+                          </svg>
+                          Delete all entries
+                        </button>
+                      )}
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -292,25 +357,62 @@ export function Sidebar({
           )}
         </nav>
 
-        {/* Tags section — pinned at bottom, hidden in archive view */}
+        {/* Tags section — pinned at bottom, collapsible + resizable, hidden in archive view */}
         {!isArchiveView && allTags.length > 0 && (
-          <div className="shrink-0 pt-3 mt-3 border-t border-gray-100">
-            <p className="text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-2.5 px-1">Tags</p>
-            <div className="flex flex-wrap gap-2 px-1">
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => onTagClick(tag)}
-                  className={`
-                    px-2.5 py-1 rounded-full text-xs font-medium
-                    transition-opacity hover:opacity-80
-                    ${getTagColor(tag)}
-                    ${sidebarSearchQuery === tag ? "ring-2 ring-offset-1 ring-gray-300" : ""}
-                  `}
+          <div className="shrink-0 mt-1">
+            {/* Drag handle */}
+            {tagsExpanded && (
+              <div
+                onMouseDown={handleDragStart}
+                className="h-2 cursor-row-resize flex items-center justify-center group"
+              >
+                <div className="w-8 h-0.5 rounded-full bg-gray-200 group-hover:bg-gray-400 transition-colors" />
+              </div>
+            )}
+            <div className="border-t border-gray-100 pt-2">
+              <button
+                onClick={() => setTagsExpanded((prev) => !prev)}
+                className="flex items-center gap-1.5 w-full text-left px-1 mb-2"
+              >
+                <svg
+                  width="10"
+                  height="10"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={`text-gray-400 transition-transform duration-200 ${tagsExpanded ? "rotate-90" : ""}`}
                 >
-                  {tag}
-                </button>
-              ))}
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+                <span className={`uppercase tracking-wider text-gray-400 font-medium ${tagsExpanded ? "text-[11px]" : "text-xs"}`}>
+                  Tags
+                </span>
+                <span className={`text-gray-300 ml-1 ${tagsExpanded ? "text-[10px]" : "text-[11px]"}`}>{allTags.length}</span>
+              </button>
+              {tagsExpanded && (
+                <div
+                  className="flex flex-wrap gap-1.5 px-1 overflow-y-auto"
+                  style={{ maxHeight: tagsHeight }}
+                >
+                  {allTags.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => onTagClick(tag)}
+                      className={`
+                        px-2 py-0.5 rounded-full text-[11px] font-medium
+                        transition-opacity hover:opacity-80
+                        ${getTagColor(tag)}
+                        ${sidebarSearchQuery === tag ? "ring-2 ring-offset-1 ring-gray-300" : ""}
+                      `}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

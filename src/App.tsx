@@ -7,6 +7,7 @@ import { SearchPanel } from "./components/search/SearchPanel.tsx";
 import { useEntries } from "./hooks/useEntries.ts";
 import { useSearch } from "./hooks/useSearch.ts";
 import { searchEntries, extractTextFromBlocks } from "./storage/search-index.ts";
+import { clearAllData } from "./storage/db.ts";
 import type { Block } from "@blocknote/core";
 
 export default function App() {
@@ -172,6 +173,13 @@ export default function App() {
     [updateEntryTags],
   );
 
+  const handleDeleteAll = useCallback(async () => {
+    await clearAllData();
+    await refresh();
+    await refreshArchive();
+    setActiveDayKey(null);
+  }, [refresh, refreshArchive]);
+
   const handleToggleArchiveView = useCallback(() => {
     setArchiveView((prev) => {
       if (!prev) {
@@ -272,6 +280,7 @@ export default function App() {
         onToggleArchiveView={handleToggleArchiveView}
         archivedCount={archivedCount}
         activeDayKey={activeDayKey}
+        onDeleteAll={handleDeleteAll}
       />
 
       <AppShell sidebarOpen={sidebarOpen}>
