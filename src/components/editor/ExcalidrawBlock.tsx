@@ -271,7 +271,7 @@ function ExcalidrawRenderer({
           });
           try {
             const svg = await exportToSvgFn({
-              elements: [...latest.elements] || [],
+              elements: [...latest.elements],
               appState: {
                 exportBackground: true,
                 viewBackgroundColor: "#faf8f5",

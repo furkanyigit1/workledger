@@ -12,7 +12,7 @@ import type { Block } from "@blocknote/core";
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarFilter, setSidebarFilter] = useState("");
-  const [filteredDayKeys, setFilteredDayKeys] = useState<string[] | null>(null);
+
   const [filteredEntryIds, setFilteredEntryIds] = useState<Set<string> | null>(null);
   const [archiveView, setArchiveView] = useState(false);
   const {

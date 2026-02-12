@@ -2,7 +2,8 @@ import type { WorkLedgerEntry } from "../types/entry.ts";
 import { getDB } from "./db.ts";
 
 function normalizeEntry(raw: Record<string, unknown>): WorkLedgerEntry {
-  return { ...(raw as WorkLedgerEntry), tags: (raw as WorkLedgerEntry).tags ?? [] };
+  const entry = raw as unknown as WorkLedgerEntry;
+  return { ...entry, tags: entry.tags ?? [] };
 }
 
 export async function createEntry(
