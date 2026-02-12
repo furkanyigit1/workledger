@@ -21,6 +21,7 @@ export default function App() {
     updateEntry,
     updateEntryTags,
     archiveEntry,
+    refresh,
   } = useEntries();
   const { query, results, isOpen: searchOpen, search, open: openSearch, close: closeSearch } = useSearch();
 
@@ -163,6 +164,7 @@ export default function App() {
         onSearchOpen={openSearch}
         allTags={allTags}
         onTagClick={(tag) => setSidebarFilter(tag)}
+        onRefresh={refresh}
       />
 
       <AppShell sidebarOpen={sidebarOpen}>

@@ -1,5 +1,7 @@
+import { useState, useRef } from "react";
 import { formatDayKey, todayKey } from "../../utils/dates.ts";
 import { getTagColor } from "../../utils/tag-colors.ts";
+import { exportAllEntries, importEntries } from "../../storage/import-export.ts";
 
 interface SidebarProps {
   dayKeys: string[];
@@ -12,6 +14,7 @@ interface SidebarProps {
   onSearchOpen: () => void;
   allTags: string[];
   onTagClick: (tag: string) => void;
+  onRefresh: () => void;
 }
 
 export function Sidebar({
@@ -25,8 +28,11 @@ export function Sidebar({
   onSearchOpen,
   allTags,
   onTagClick,
+  onRefresh,
 }: SidebarProps) {
   const today = todayKey();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importStatus, setImportStatus] = useState<string | null>(null);
 
   return (
     <>
@@ -57,15 +63,17 @@ export function Sidebar({
       >
         {/* Header row: logo + title + collapse chevron */}
         <div className="mb-5 flex items-center gap-3 shrink-0">
-          <img src="/logo.svg" alt="WorkLedger" className="w-9 h-9 shrink-0" />
-          <div className="flex-1 min-w-0">
-            <h1 className="text-3xl text-gray-800 sidebar-title-font leading-tight">
-              WorkLedger
-            </h1>
-            <p className="text-xs text-gray-400 -mt-0.5">
-              Engineering Notebook
-            </p>
-          </div>
+          <a href="https://about.workledger.org" target="_blank" rel="noopener" className="flex items-center gap-3 flex-1 min-w-0">
+            <img src="/logo.svg" alt="WorkLedger" className="w-9 h-9 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <h1 className="text-3xl text-gray-800 sidebar-title-font leading-tight">
+                WorkLedger
+              </h1>
+              <p className="text-xs text-gray-400 -mt-0.5">
+                Engineering Notebook
+              </p>
+            </div>
+          </a>
           <button
             onClick={onToggle}
             className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors shrink-0"
@@ -185,6 +193,56 @@ export function Sidebar({
             </div>
           </div>
         )}
+
+        {/* Import / Export */}
+        <div className="shrink-0 pt-3 mt-3 border-t border-gray-100 flex items-center gap-2 px-1">
+          <button
+            onClick={exportAllEntries}
+            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+            title="Export all entries"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+          </button>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+            title="Import entries"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              try {
+                const result = await importEntries(file);
+                setImportStatus(`${result.imported} imported, ${result.skipped} skipped`);
+                onRefresh();
+                setTimeout(() => setImportStatus(null), 3000);
+              } catch {
+                setImportStatus("Import failed: invalid file");
+                setTimeout(() => setImportStatus(null), 3000);
+              }
+              e.target.value = "";
+            }}
+          />
+          {importStatus && (
+            <span className="text-xs text-gray-500">{importStatus}</span>
+          )}
+        </div>
+
       </aside>
     </>
   );
