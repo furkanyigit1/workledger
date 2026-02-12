@@ -2,7 +2,7 @@ import type { Block } from "@blocknote/core";
 import type { SearchIndexEntry } from "../types/entry.ts";
 import { getDB } from "./db.ts";
 
-function extractTextFromBlocks(blocks: Block[]): string {
+export function extractTextFromBlocks(blocks: Block[]): string {
   const parts: string[] = [];
 
   for (const block of blocks) {

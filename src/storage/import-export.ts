@@ -49,7 +49,7 @@ export async function importEntries(
 
   for (const entry of data.entries) {
     const existing = await db.get("entries", entry.id);
-    if (existing) {
+    if (existing && !(existing as WorkLedgerEntry).isArchived) {
       skipped++;
       continue;
     }

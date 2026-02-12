@@ -6,13 +6,15 @@ import { NewEntryButton } from "./components/entries/NewEntryButton.tsx";
 import { SearchPanel } from "./components/search/SearchPanel.tsx";
 import { useEntries } from "./hooks/useEntries.ts";
 import { useSearch } from "./hooks/useSearch.ts";
-import { searchEntries } from "./storage/search-index.ts";
+import { searchEntries, extractTextFromBlocks } from "./storage/search-index.ts";
+import type { Block } from "@blocknote/core";
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarFilter, setSidebarFilter] = useState("");
   const [filteredDayKeys, setFilteredDayKeys] = useState<string[] | null>(null);
   const [filteredEntryIds, setFilteredEntryIds] = useState<Set<string> | null>(null);
+  const [archiveView, setArchiveView] = useState(false);
   const {
     entriesByDay,
     dayKeys,
@@ -21,6 +23,10 @@ export default function App() {
     updateEntry,
     updateEntryTags,
     archiveEntry,
+    unarchiveEntry,
+    deleteEntry,
+    archivedEntries,
+    refreshArchive,
     refresh,
   } = useEntries();
   const { query, results, isOpen: searchOpen, search, open: openSearch, close: closeSearch } = useSearch();
@@ -115,12 +121,58 @@ export default function App() {
     [updateEntryTags],
   );
 
+  const handleToggleArchiveView = useCallback(() => {
+    setArchiveView((prev) => {
+      if (!prev) {
+        refreshArchive();
+      }
+      return !prev;
+    });
+    setSidebarFilter("");
+  }, [refreshArchive]);
+
+  // Compute filtered archive entries for archive view
+  // Since archived entries are removed from the search index, filter in-memory
+  const displayArchivedEntriesByDay = useMemo(() => {
+    if (!sidebarFilter.trim()) return archivedEntries;
+    const filterLower = sidebarFilter.trim().toLowerCase();
+    const filtered = new Map<string, import("./types/entry.ts").WorkLedgerEntry[]>();
+    for (const [dayKey, entries] of archivedEntries) {
+      const matching = entries.filter((e) => {
+        if (e.tags?.some((t) => t.toLowerCase().includes(filterLower))) return true;
+        if (e.blocks?.length) {
+          const text = extractTextFromBlocks(e.blocks as Block[]).toLowerCase();
+          if (text.includes(filterLower)) return true;
+        }
+        return false;
+      });
+      if (matching.length > 0) {
+        filtered.set(dayKey, matching);
+      }
+    }
+    return filtered;
+  }, [archivedEntries, sidebarFilter]);
+
+  // Compute archive data for sidebar
+  const archivedDayKeys = useMemo(
+    () => [...displayArchivedEntriesByDay.keys()].sort((a, b) => b.localeCompare(a)),
+    [displayArchivedEntriesByDay],
+  );
+
+  const archivedCount = useMemo(() => {
+    let count = 0;
+    for (const entries of archivedEntries.values()) {
+      count += entries.length;
+    }
+    return count;
+  }, [archivedEntries]);
+
   // Global keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "j") {
         e.preventDefault();
-        handleNewEntry();
+        if (!archiveView) handleNewEntry();
       }
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
@@ -141,7 +193,7 @@ export default function App() {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [handleNewEntry, searchOpen, closeSearch, openSearch, sidebarFilter]);
+  }, [handleNewEntry, searchOpen, closeSearch, openSearch, sidebarFilter, archiveView]);
 
   if (loading) {
     return (
@@ -154,8 +206,8 @@ export default function App() {
   return (
     <>
       <Sidebar
-        dayKeys={sidebarDayKeys}
-        entriesByDay={displayEntriesByDay as Map<string, unknown[]>}
+        dayKeys={archiveView ? archivedDayKeys : sidebarDayKeys}
+        entriesByDay={archiveView ? (displayArchivedEntriesByDay as Map<string, unknown[]>) : (displayEntriesByDay as Map<string, unknown[]>)}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen((prev) => !prev)}
         onDayClick={handleDayClick}
@@ -165,20 +217,26 @@ export default function App() {
         allTags={allTags}
         onTagClick={(tag) => setSidebarFilter(tag)}
         onRefresh={refresh}
+        isArchiveView={archiveView}
+        onToggleArchiveView={handleToggleArchiveView}
+        archivedCount={archivedCount}
       />
 
       <AppShell sidebarOpen={sidebarOpen}>
         <EntryStream
-          entriesByDay={displayEntriesByDay}
+          entriesByDay={archiveView ? displayArchivedEntriesByDay : displayEntriesByDay}
           onSave={updateEntry}
-          onTagsChange={handleTagsChange}
-          onArchive={archiveEntry}
+          onTagsChange={archiveView ? undefined : handleTagsChange}
+          onArchive={archiveView ? undefined : archiveEntry}
+          onDelete={deleteEntry}
+          onUnarchive={archiveView ? unarchiveEntry : undefined}
+          isArchiveView={archiveView}
           filterQuery={sidebarFilter}
           onClearFilter={clearFilter}
         />
       </AppShell>
 
-      <NewEntryButton onClick={handleNewEntry} />
+      {!archiveView && <NewEntryButton onClick={handleNewEntry} />}
 
       <SearchPanel
         isOpen={searchOpen}

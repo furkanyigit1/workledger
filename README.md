@@ -1,9 +1,13 @@
-# WorkLedger
+<p align="center">
+  <img src="public/logo.svg" alt="WorkLedger" width="64">
+</p>
 
-An open-source engineering notebook for documenting your daily work. Built with React, BlockNote, and Excalidraw.
+<h1 align="center">WorkLedger</h1>
+
+<p align="center">An open-source engineering notebook for documenting your daily work.<br>Built with React, BlockNote, and Excalidraw.</p>
 
 <p align="center">
-  <img src="images/screenshot.png" alt="WorkLedger" width="720">
+  <img src="images/product.png" alt="WorkLedger" width="720">
 </p>
 
 ## Features
@@ -14,6 +18,8 @@ An open-source engineering notebook for documenting your daily work. Built with 
 - **Tagging** -- Tag entries for easy categorization and filtering
 - **Search** -- Full-text search across all entries and tags (`Cmd+K`)
 - **Sidebar filtering** -- Click a tag or type to filter entries in real-time
+- **Archive & restore** -- Archive old entries to keep your workspace clean, browse and restore them anytime
+- **Import & export** -- Export all entries as JSON for backup, import them back anytime
 - **Local-first** -- All data stored in IndexedDB, no server required
 - **Keyboard-driven** -- `Cmd+J` new entry, `Cmd+K` search, `Cmd+\` toggle sidebar, `Escape` clear filter
 
@@ -45,6 +51,8 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 4. Click **+ tag** below the timestamp to add tags to entries
 5. Use the sidebar search or click tags to filter entries
 6. Press `Cmd+K` for full-text search across all entries
+7. Archive entries via the box icon, or delete permanently via the trash icon
+8. Click the gear icon for import/export and archive access
 
 ## Project Structure
 
@@ -56,7 +64,7 @@ src/
     layout/        # App shell, sidebar, day headers
     search/        # Search panel
   hooks/           # useEntries, useAutoSave, useSearch
-  storage/         # IndexedDB layer (entries, search index)
+  storage/         # IndexedDB layer (entries, search index, import/export)
   types/           # TypeScript interfaces
   utils/           # Date formatting, ID generation, tag colors
 ```

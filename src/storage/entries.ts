@@ -83,6 +83,40 @@ export async function archiveEntry(id: string): Promise<void> {
   }
 }
 
+export async function unarchiveEntry(id: string): Promise<void> {
+  const db = await getDB();
+  const raw = await db.get("entries", id);
+  if (raw) {
+    const entry = normalizeEntry(raw as Record<string, unknown>);
+    entry.isArchived = false;
+    entry.updatedAt = Date.now();
+    await db.put("entries", entry);
+  }
+}
+
+export async function deleteEntry(id: string): Promise<void> {
+  const db = await getDB();
+  await db.delete("entries", id);
+}
+
+export async function getArchivedEntries(): Promise<Map<string, WorkLedgerEntry[]>> {
+  const db = await getDB();
+  const allEntries = await db.getAll("entries");
+  const archived = (allEntries as unknown as Record<string, unknown>[])
+    .map(normalizeEntry)
+    .filter((e) => e.isArchived)
+    .sort((a, b) => b.createdAt - a.createdAt);
+
+  const grouped = new Map<string, WorkLedgerEntry[]>();
+  for (const entry of archived) {
+    const existing = grouped.get(entry.dayKey) || [];
+    existing.push(entry);
+    grouped.set(entry.dayKey, existing);
+  }
+
+  return grouped;
+}
+
 export async function getAllTags(): Promise<string[]> {
   const db = await getDB();
   const allEntries = await db.getAll("entries");

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { formatDayKey, todayKey } from "../../utils/dates.ts";
 import { getTagColor } from "../../utils/tag-colors.ts";
 import { exportAllEntries, importEntries } from "../../storage/import-export.ts";
@@ -15,6 +15,9 @@ interface SidebarProps {
   allTags: string[];
   onTagClick: (tag: string) => void;
   onRefresh: () => void;
+  isArchiveView: boolean;
+  onToggleArchiveView: () => void;
+  archivedCount: number;
 }
 
 export function Sidebar({
@@ -29,10 +32,27 @@ export function Sidebar({
   allTags,
   onTagClick,
   onRefresh,
+  isArchiveView,
+  onToggleArchiveView,
+  archivedCount,
 }: SidebarProps) {
   const today = todayKey();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
+
+  // Close settings dropdown when clicking outside
+  useEffect(() => {
+    if (!settingsOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setSettingsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [settingsOpen]);
 
   return (
     <>
@@ -56,13 +76,13 @@ export function Sidebar({
           bg-white border-r border-gray-100
           shadow-[1px_0_12px_rgba(0,0,0,0.03)]
           transition-transform duration-300 ease-in-out
-          w-80 pt-5 pb-5 px-5
+          w-80 pt-[23px] pb-5 px-[22px]
           flex flex-col
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
         {/* Header row: logo + title + collapse chevron */}
-        <div className="mb-5 flex items-center gap-3 shrink-0">
+        <div className="mb-6 flex items-center gap-3 shrink-0">
           <a href="https://about.workledger.org" target="_blank" rel="noopener" className="flex items-center gap-3 flex-1 min-w-0">
             <img src="/logo.svg" alt="WorkLedger" className="w-9 h-9 shrink-0" />
             <div className="flex-1 min-w-0">
@@ -85,8 +105,8 @@ export function Sidebar({
           </button>
         </div>
 
-        {/* Search filter input */}
-        <div className="mb-3 shrink-0">
+        {/* Search filter input — always visible */}
+        <div className="mb-5 shrink-0">
           <div className="relative">
             <svg
               width="14"
@@ -105,7 +125,7 @@ export function Sidebar({
               type="text"
               value={sidebarSearchQuery}
               onChange={(e) => onSidebarSearch(e.target.value)}
-              placeholder="Filter entries..."
+              placeholder={isArchiveView ? "Filter archive..." : "Filter entries..."}
               className="w-full text-sm bg-gray-50 border border-gray-200 rounded-lg pl-8 pr-7 py-2 outline-none focus:border-orange-300 focus:bg-white focus:ring-1 focus:ring-orange-100 transition-all text-gray-600 placeholder:text-gray-400"
             />
             {sidebarSearchQuery && (
@@ -120,22 +140,118 @@ export function Sidebar({
               </button>
             )}
           </div>
-          <button
-            onClick={onSearchOpen}
-            className="text-sm text-gray-400 hover:text-gray-500 mt-1.5 ml-0.5 transition-colors"
-          >
-            Full search <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-[10px]">⌘K</kbd>
-          </button>
+          {/* Below-filter row: label on left + gear on right */}
+          <div className="flex items-center justify-between mt-2 px-2">
+            {isArchiveView ? (
+              <p className="text-[11px] uppercase tracking-wider text-amber-500 font-medium flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="21 8 21 21 3 21 3 8" />
+                  <rect x="1" y="3" width="22" height="5" />
+                  <line x1="10" y1="12" x2="14" y2="12" />
+                </svg>
+                Archive
+              </p>
+            ) : (
+              <button
+                onClick={onSearchOpen}
+                className="text-sm text-gray-400 hover:text-gray-500 transition-colors"
+              >
+                Full search <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-[10px]">⌘K</kbd>
+              </button>
+            )}
+            <div className="relative" ref={settingsRef}>
+              <button
+                onClick={() => setSettingsOpen(!settingsOpen)}
+                className={`p-1 rounded-lg hover:bg-gray-100 transition-colors ${settingsOpen ? "bg-gray-100 text-gray-600" : "text-gray-400 hover:text-gray-600"}`}
+                title="Settings"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+              </button>
+
+              {/* Settings dropdown */}
+              {settingsOpen && (
+                <div className="absolute right-0 top-full mt-1 w-52 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                  <button
+                    onClick={() => {
+                      onToggleArchiveView();
+                      setSettingsOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2"
+                  >
+                    {isArchiveView ? (
+                      <>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                        Back to entries
+                      </>
+                    ) : (
+                      <>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="21 8 21 21 3 21 3 8" />
+                          <rect x="1" y="3" width="22" height="5" />
+                          <line x1="10" y1="12" x2="14" y2="12" />
+                        </svg>
+                        View archive
+                        {archivedCount > 0 && (
+                          <span className="ml-auto text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-medium">
+                            {archivedCount}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </button>
+
+                  <div className="my-1 border-t border-gray-100" />
+
+                  <button
+                    onClick={() => {
+                      exportAllEntries();
+                      setSettingsOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Export entries
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      fileInputRef.current?.click();
+                      setSettingsOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="17 8 12 3 7 8" />
+                      <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                    Import entries
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Day list — scrollable, takes remaining space */}
         <nav className="flex-1 overflow-y-auto -mx-2 min-h-0">
           {dayKeys.length === 0 ? (
-            <p className="text-sm text-gray-400 px-2">No entries yet</p>
+            <p className="text-sm text-gray-400 px-2">
+              {isArchiveView ? "No archived entries" : "No entries yet"}
+            </p>
           ) : (
             dayKeys.map((dayKey) => {
               const count = entriesByDay.get(dayKey)?.length || 0;
-              const isToday = dayKey === today;
+              const isToday = dayKey === today && !isArchiveView;
               return (
                 <button
                   key={dayKey}
@@ -171,8 +287,8 @@ export function Sidebar({
           )}
         </nav>
 
-        {/* Tags section — pinned at bottom */}
-        {allTags.length > 0 && (
+        {/* Tags section — pinned at bottom, hidden in archive view */}
+        {!isArchiveView && allTags.length > 0 && (
           <div className="shrink-0 pt-3 mt-3 border-t border-gray-100">
             <p className="text-[11px] uppercase tracking-wider text-gray-400 font-medium mb-2.5 px-1">Tags</p>
             <div className="flex flex-wrap gap-2 px-1">
@@ -194,56 +310,44 @@ export function Sidebar({
           </div>
         )}
 
-        {/* Import / Export */}
-        <div className="shrink-0 pt-3 mt-3 border-t border-gray-100 flex items-center gap-2 px-1">
-          <button
-            onClick={exportAllEntries}
-            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
-            title="Export all entries"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-          </button>
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
-            title="Import entries"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json"
-            className="hidden"
-            onChange={async (e) => {
-              const file = e.target.files?.[0];
-              if (!file) return;
-              try {
-                const result = await importEntries(file);
-                setImportStatus(`${result.imported} imported, ${result.skipped} skipped`);
-                onRefresh();
-                setTimeout(() => setImportStatus(null), 3000);
-              } catch {
-                setImportStatus("Import failed: invalid file");
-                setTimeout(() => setImportStatus(null), 3000);
-              }
-              e.target.value = "";
-            }}
-          />
-          {importStatus && (
-            <span className="text-xs text-gray-500">{importStatus}</span>
-          )}
-        </div>
+        {/* Hidden file input for import */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          className="hidden"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            try {
+              const result = await importEntries(file);
+              setImportStatus(`${result.imported} imported, ${result.skipped} skipped`);
+              onRefresh();
+              setTimeout(() => setImportStatus(null), 4000);
+            } catch {
+              setImportStatus("Import failed: invalid file");
+              setTimeout(() => setImportStatus(null), 4000);
+            }
+            e.target.value = "";
+          }}
+        />
 
       </aside>
+
+      {/* Import toast — fixed top center */}
+      {importStatus && (
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[100] animate-fade-in">
+          <div className={`
+            px-4 py-2.5 rounded-full shadow-lg text-sm font-medium
+            ${importStatus.startsWith("Import failed")
+              ? "bg-red-50 text-red-700 border border-red-200"
+              : "bg-green-50 text-green-700 border border-green-200"
+            }
+          `}>
+            {importStatus}
+          </div>
+        </div>
+      )}
     </>
   );
 }

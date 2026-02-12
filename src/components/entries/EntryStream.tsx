@@ -8,11 +8,14 @@ interface EntryStreamProps {
   onSave: (entry: WorkLedgerEntry) => Promise<void>;
   onTagsChange?: (entryId: string, dayKey: string, tags: string[]) => void;
   onArchive?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onUnarchive?: (id: string) => void;
+  isArchiveView?: boolean;
   filterQuery?: string;
   onClearFilter?: () => void;
 }
 
-export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, filterQuery, onClearFilter }: EntryStreamProps) {
+export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onDelete, onUnarchive, isArchiveView, filterQuery, onClearFilter }: EntryStreamProps) {
   const sortedDays = [...entriesByDay.keys()].sort((a, b) =>
     b.localeCompare(a),
   );
@@ -21,6 +24,26 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, fil
   const totalFilteredEntries = isFiltering
     ? sortedDays.reduce((sum, dk) => sum + (entriesByDay.get(dk)?.length || 0), 0)
     : 0;
+
+  if (sortedDays.length === 0 && isArchiveView) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center py-20">
+        <div className="text-5xl mb-6 text-gray-200">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto text-gray-300">
+            <polyline points="21 8 21 21 3 21 3 8" />
+            <rect x="1" y="3" width="22" height="5" />
+            <line x1="10" y1="12" x2="14" y2="12" />
+          </svg>
+        </div>
+        <h2 className="text-xl text-gray-400 font-light mb-2">
+          Archive is empty
+        </h2>
+        <p className="text-sm text-gray-400 max-w-sm">
+          Archived entries will appear here. Archive entries from the main view using the box icon.
+        </p>
+      </div>
+    );
+  }
 
   if (sortedDays.length === 0 && !isFiltering) {
     return (
@@ -64,10 +87,13 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, fil
               <EntryCard
                 key={entry.id}
                 entry={entry}
-                isLatest={idx === 0 && !isFiltering}
+                isLatest={idx === 0 && !isFiltering && !isArchiveView}
                 onSave={onSave}
-                onTagsChange={onTagsChange}
-                onArchive={onArchive}
+                onTagsChange={isArchiveView ? undefined : onTagsChange}
+                onArchive={isArchiveView ? undefined : onArchive}
+                onDelete={onDelete}
+                onUnarchive={isArchiveView ? onUnarchive : undefined}
+                isArchiveView={isArchiveView}
               />
             ))}
           </div>

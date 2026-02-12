@@ -10,10 +10,14 @@ interface EntryCardProps {
   onSave: (entry: WorkLedgerEntry) => Promise<void>;
   onTagsChange?: (entryId: string, dayKey: string, tags: string[]) => void;
   onArchive?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onUnarchive?: (id: string) => void;
+  isArchiveView?: boolean;
 }
 
-export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive }: EntryCardProps) {
+export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, onDelete, onUnarchive, isArchiveView }: EntryCardProps) {
   const isOld = entry.dayKey < todayKey();
+  const [confirmArchive, setConfirmArchive] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
@@ -22,19 +26,46 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive }: 
         <span className="text-sm text-gray-400 font-mono">
           {formatTime(entry.createdAt)}
         </span>
-        {isOld && (
+        {isOld && !isArchiveView && (
           <span className="text-[11px] text-gray-300 uppercase tracking-wider">
             past
           </span>
         )}
-        {onArchive && (
-          <div className="ml-auto">
-            {confirmDelete ? (
+        {isArchiveView && (
+          <span className="text-[11px] text-amber-400 uppercase tracking-wider">
+            archived
+          </span>
+        )}
+
+        {/* Action buttons */}
+        <div className="ml-auto flex items-center gap-1">
+          {/* Normal view: archive + delete */}
+          {!isArchiveView && (confirmArchive || confirmDelete) ? (
+            confirmArchive ? (
               <span className="flex items-center gap-1.5">
-                <span className="text-[10px] text-gray-400">Delete?</span>
+                <span className="text-[10px] text-gray-400">Archive?</span>
                 <button
                   onClick={() => {
-                    onArchive(entry.id);
+                    onArchive?.(entry.id);
+                    setConfirmArchive(false);
+                  }}
+                  className="text-[10px] text-amber-600 hover:text-amber-700 font-medium"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() => setConfirmArchive(false)}
+                  className="text-[10px] text-gray-400 hover:text-gray-500"
+                >
+                  No
+                </button>
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5">
+                <span className="text-[10px] text-gray-400">Delete forever?</span>
+                <button
+                  onClick={() => {
+                    onDelete?.(entry.id);
                     setConfirmDelete(false);
                   }}
                   className="text-[10px] text-red-500 hover:text-red-600 font-medium"
@@ -48,24 +79,92 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive }: 
                   No
                 </button>
               </span>
-            ) : (
+            )
+          ) : !isArchiveView ? (
+            <>
+              {onArchive && (
+                <button
+                  onClick={() => setConfirmArchive(true)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-gray-500"
+                  title="Archive entry"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="21 8 21 21 3 21 3 8" />
+                    <rect x="1" y="3" width="22" height="5" />
+                    <line x1="10" y1="12" x2="14" y2="12" />
+                  </svg>
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-red-400"
+                  title="Delete entry permanently"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                    <path d="M10 11v6" />
+                    <path d="M14 11v6" />
+                  </svg>
+                </button>
+              )}
+            </>
+          ) : null}
+
+          {/* Archive view: restore + delete */}
+          {isArchiveView && confirmDelete ? (
+            <span className="flex items-center gap-1.5">
+              <span className="text-[10px] text-gray-400">Delete forever?</span>
               <button
-                onClick={() => setConfirmDelete(true)}
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-gray-500"
-                title="Delete entry"
+                onClick={() => {
+                  onDelete?.(entry.id);
+                  setConfirmDelete(false);
+                }}
+                className="text-[10px] text-red-500 hover:text-red-600 font-medium"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                  <path d="M10 11v6" />
-                  <path d="M14 11v6" />
-                </svg>
+                Yes
               </button>
-            )}
-          </div>
-        )}
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="text-[10px] text-gray-400 hover:text-gray-500"
+              >
+                No
+              </button>
+            </span>
+          ) : isArchiveView ? (
+            <>
+              {onUnarchive && (
+                <button
+                  onClick={() => onUnarchive(entry.id)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-green-500"
+                  title="Restore entry"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="1 4 1 10 7 10" />
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                  </svg>
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-red-400"
+                  title="Delete entry permanently"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                    <path d="M10 11v6" />
+                    <path d="M14 11v6" />
+                  </svg>
+                </button>
+              )}
+            </>
+          ) : null}
+        </div>
       </div>
-      {onTagsChange && (
+      {onTagsChange && !isArchiveView && (
         <div className="mb-2">
           <TagEditor
             tags={entry.tags ?? []}
@@ -73,17 +172,28 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive }: 
           />
         </div>
       )}
+      {isArchiveView && entry.tags?.length > 0 && (
+        <div className="mb-2 px-1">
+          <div className="flex flex-wrap gap-1.5">
+            {entry.tags.map((tag) => (
+              <span key={tag} className="px-2 py-0.5 rounded-full text-[11px] bg-gray-100 text-gray-500">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
       <div
         className={`
           rounded-xl transition-all duration-200
-          ${isOld ? "opacity-80" : ""}
+          ${isOld || isArchiveView ? "opacity-80" : ""}
         `}
       >
         <EntryEditor
           entry={entry}
-          editable={true}
+          editable={!isArchiveView}
           onSave={onSave}
-          autoFocus={isLatest && !isOld}
+          autoFocus={isLatest && !isOld && !isArchiveView}
         />
       </div>
       <div className="entry-ruling mt-4 mb-8" />

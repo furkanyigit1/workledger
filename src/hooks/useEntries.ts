@@ -6,8 +6,13 @@ import {
   getEntry as dbGetEntry,
   getRecentEntries,
   archiveEntry as dbArchiveEntry,
+  unarchiveEntry as dbUnarchiveEntry,
+  deleteEntry as dbDeleteEntry,
+  getArchivedEntries,
   getAllDayKeys,
 } from "../storage/entries.ts";
+import { deleteSearchIndex, updateSearchIndex } from "../storage/search-index.ts";
+import type { Block } from "@blocknote/core";
 import { generateId } from "../utils/id.ts";
 import { todayKey } from "../utils/dates.ts";
 
@@ -17,6 +22,9 @@ export function useEntries() {
   >(new Map());
   const [dayKeys, setDayKeys] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [archivedEntries, setArchivedEntries] = useState<
+    Map<string, WorkLedgerEntry[]>
+  >(new Map());
 
   const refresh = useCallback(async () => {
     const [entries, keys] = await Promise.all([
@@ -28,9 +36,15 @@ export function useEntries() {
     setLoading(false);
   }, []);
 
+  const refreshArchive = useCallback(async () => {
+    const archived = await getArchivedEntries();
+    setArchivedEntries(archived);
+  }, []);
+
   useEffect(() => {
     refresh();
-  }, [refresh]);
+    refreshArchive();
+  }, [refresh, refreshArchive]);
 
   const createEntry = useCallback(async (): Promise<WorkLedgerEntry> => {
     const now = Date.now();
@@ -94,9 +108,39 @@ export function useEntries() {
   const archiveEntry = useCallback(
     async (id: string) => {
       await dbArchiveEntry(id);
+      await deleteSearchIndex(id);
       await refresh();
+      await refreshArchive();
     },
-    [refresh],
+    [refresh, refreshArchive],
+  );
+
+  const unarchiveEntry = useCallback(
+    async (id: string) => {
+      const entry = await dbGetEntry(id);
+      await dbUnarchiveEntry(id);
+      if (entry?.blocks?.length) {
+        await updateSearchIndex(
+          entry.id,
+          entry.dayKey,
+          entry.blocks as Block[],
+          entry.tags ?? [],
+        );
+      }
+      await refresh();
+      await refreshArchive();
+    },
+    [refresh, refreshArchive],
+  );
+
+  const deleteEntry = useCallback(
+    async (id: string) => {
+      await dbDeleteEntry(id);
+      await deleteSearchIndex(id);
+      await refresh();
+      await refreshArchive();
+    },
+    [refresh, refreshArchive],
   );
 
   return {
@@ -107,6 +151,10 @@ export function useEntries() {
     updateEntry,
     updateEntryTags,
     archiveEntry,
+    unarchiveEntry,
+    deleteEntry,
+    archivedEntries,
+    refreshArchive,
     refresh,
   };
 }
