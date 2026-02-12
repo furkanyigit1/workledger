@@ -42,6 +42,8 @@ export function useEntries() {
   }, []);
 
   useEffect(() => {
+    // Initial data load — setState in refresh/refreshArchive is intentional
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh();
     refreshArchive();
   }, [refresh, refreshArchive]);

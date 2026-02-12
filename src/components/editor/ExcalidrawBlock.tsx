@@ -80,6 +80,7 @@ function getBlockNoteWrapper(el: HTMLElement | null): HTMLElement | null {
   return null;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 function ExcalidrawRenderer({
   block,
   editor,

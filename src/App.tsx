@@ -36,15 +36,13 @@ export default function App() {
 
   // Debounced sidebar filter
   useEffect(() => {
-    if (!sidebarFilter.trim()) {
-      setFilteredEntryIds(null);
-      return;
-    }
-
     const timer = setTimeout(async () => {
+      if (!sidebarFilter.trim()) {
+        setFilteredEntryIds(null);
+        return;
+      }
       const results = await searchEntries(sidebarFilter);
-      const matchingIds = new Set(results.map((r) => r.entryId));
-      setFilteredEntryIds(matchingIds);
+      setFilteredEntryIds(new Set(results.map((r) => r.entryId)));
     }, 200);
 
     return () => clearTimeout(timer);
@@ -108,7 +106,7 @@ export default function App() {
     }
   }, []);
 
-  const handleSearchResultClick = useCallback((entryId: string, _dayKey: string) => {
+  const handleSearchResultClick = useCallback((entryId: string) => {
     const el = document.getElementById(`entry-${entryId}`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
