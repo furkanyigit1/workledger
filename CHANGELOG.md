@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Progressive Web App (PWA) support — install WorkLedger as a standalone app
+  - Auto-updating service worker caches all assets for offline use
+  - Web app manifest with app name, theme color, and icons
+  - Apple mobile web app meta tags for iOS home screen support
+  - SVG icons (192x192 and 512x512) derived from the existing logo
 - Mobile-friendly responsive layout for screens under 768px
   - Sidebar becomes a full-screen overlay with backdrop on mobile
   - Entry action buttons (archive, delete, AI) always visible on small screens (no hover required)
