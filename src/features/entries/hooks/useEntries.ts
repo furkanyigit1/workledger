@@ -13,8 +13,8 @@ import {
 } from "../storage/entries.ts";
 import { deleteSearchIndex, updateSearchIndex } from "../storage/search-index.ts";
 import type { Block } from "@blocknote/core";
-import { generateId } from "../utils/id.ts";
-import { todayKey } from "../utils/dates.ts";
+import { generateId } from "../../../utils/id.ts";
+import { todayKey } from "../../../utils/dates.ts";
 
 export function useEntries() {
   const [entriesByDay, setEntriesByDay] = useState<

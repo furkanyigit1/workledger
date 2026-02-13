@@ -1,10 +1,10 @@
 import {
   searchEntries,
   getRecentSearchEntries,
-} from "../../entries/storage/search-index.ts";
-import { getEntry } from "../../entries/storage/entries.ts";
-import { formatDayKey, formatTime } from "../../entries/utils/dates.ts";
-import { extractTitle } from "../../entries/utils/extract-title.ts";
+  getEntry,
+  extractTitle,
+} from "../../entries/index.ts";
+import { formatDayKey, formatTime } from "../../../utils/dates.ts";
 import type { DefaultReactSuggestionItem } from "@blocknote/react";
 
 export async function getWikiLinkMenuItems(

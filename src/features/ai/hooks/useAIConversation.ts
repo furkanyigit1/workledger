@@ -3,7 +3,7 @@ import type { AISettings, AIMessage, AIConversation } from "../types/ai.ts";
 import type { FrameworkStep } from "../frameworks/types.ts";
 import { createProvider } from "../providers/provider-factory.ts";
 import { buildMessages } from "../prompt-builder.ts";
-import { generateId } from "../../entries/utils/id.ts";
+import { generateId } from "../../../utils/id.ts";
 import {
   saveConversation,
   getConversationsByEntry,

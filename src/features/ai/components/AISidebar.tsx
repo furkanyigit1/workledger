@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { AISettings } from "../types/ai.ts";
-import type { WorkLedgerEntry } from "../../entries/types/entry.ts";
+import type { WorkLedgerEntry } from "../../entries/index.ts";
 import type { ThinkingFramework, FrameworkStep } from "../frameworks/types.ts";
-import { extractTextFromBlocks } from "../../entries/storage/search-index.ts";
+import { extractTextFromBlocks } from "../../entries/index.ts";
 import { useAIConversation } from "../hooks/useAIConversation.ts";
 import { useAIFeatureGate } from "../hooks/useAIFeatureGate.ts";
 import { useIsMobile } from "../../../hooks/useIsMobile.ts";

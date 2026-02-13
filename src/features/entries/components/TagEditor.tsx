@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { getTagColor } from "../utils/tag-colors.ts";
+import { getTagColor } from "../../../utils/tag-colors.ts";
 
 interface TagEditorProps {
   tags: string[];

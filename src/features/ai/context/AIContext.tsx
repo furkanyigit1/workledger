@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import { useAISettings } from "../hooks/useAISettings.ts";
 import { useAIFeatureGate } from "../hooks/useAIFeatureGate.ts";
 import type { AISettings } from "../types/ai.ts";
-import type { WorkLedgerEntry } from "../../entries/types/entry.ts";
+import type { WorkLedgerEntry } from "../../entries/index.ts";
 
 interface AIContextValue {
   settings: AISettings;

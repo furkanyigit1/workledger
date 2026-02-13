@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import type { SearchIndexEntry } from "../../entries/types/entry.ts";
-import { formatDayKey } from "../../entries/utils/dates.ts";
+import type { SearchIndexEntry } from "../../entries/index.ts";
+import { formatDayKey } from "../../../utils/dates.ts";
 
 interface SearchPanelProps {
   isOpen: boolean;

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { createReactBlockSpec } from "@blocknote/react";
 import "@excalidraw/excalidraw/index.css";
-import { ThemeContext } from "../../theme/context/ThemeContext.tsx";
+import { ThemeContext } from "../../theme/index.ts";
 import { ExcalidrawErrorBoundary } from "./ExcalidrawErrorBoundary.tsx";
 import { ExcalidrawResizeHandle } from "./ExcalidrawResizeHandle.tsx";
 import { useExcalidrawResize } from "./useExcalidrawResize.ts";

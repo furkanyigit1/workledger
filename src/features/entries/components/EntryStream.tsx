@@ -3,7 +3,7 @@ import { EntryCard } from "./EntryCard.tsx";
 import { DayHeader } from "../../../components/layout/DayHeader.tsx";
 import { FilterBanner } from "./FilterBanner.tsx";
 import { EmptyArchive, EmptyEntries, EmptyFilterResults } from "./EmptyStates.tsx";
-import { formatDayKey, formatTime } from "../utils/dates.ts";
+import { formatDayKey, formatTime } from "../../../utils/dates.ts";
 
 interface EntryStreamProps {
   entriesByDay: Map<string, WorkLedgerEntry[]>;

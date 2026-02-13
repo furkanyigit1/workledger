@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { useEntriesData, useEntriesActions } from "../context/EntriesContext.tsx";
-import { useSidebarContext } from "../../sidebar/context/SidebarContext.tsx";
+import { useSidebarContext } from "../../sidebar/index.ts";
 
 export function useEntryNavigation() {
   const { entriesByDay } = useEntriesData();

@@ -1,9 +1,9 @@
 import { useEffect, useCallback } from "react";
-import { useEntriesActions } from "../features/entries/context/EntriesContext.tsx";
-import { useSidebarContext } from "../features/sidebar/context/SidebarContext.tsx";
-import { useFocusModeContext } from "../features/focus-mode/context/FocusModeContext.tsx";
-import { useAIContext } from "../features/ai/context/AIContext.tsx";
-import { useSearch } from "../features/search/hooks/useSearch.ts";
+import { useEntriesActions } from "../features/entries/index.ts";
+import { useSidebarContext } from "../features/sidebar/index.ts";
+import { useFocusModeContext } from "../features/focus-mode/index.ts";
+import { useAIContext } from "../features/ai/index.ts";
+import { useSearch } from "../features/search/index.ts";
 
 export function useKeyboardShortcuts() {
   const { createEntry } = useEntriesActions();

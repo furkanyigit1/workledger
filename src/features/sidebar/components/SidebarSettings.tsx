@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { exportAllEntries } from "../../entries/storage/import-export.ts";
+import { exportAllEntries } from "../../entries/index.ts";
 
 interface SidebarSettingsProps {
   settingsOpen: boolean;

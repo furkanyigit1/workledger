@@ -1,4 +1,4 @@
-import { getTagColor } from "../utils/tag-colors.ts";
+import { getTagColor } from "../../../utils/tag-colors.ts";
 
 interface FilterBannerProps {
   selectedTags: string[];

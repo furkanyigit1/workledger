@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
-import type { SearchIndexEntry } from "../../entries/types/entry.ts";
-import { searchEntries } from "../../entries/storage/search-index.ts";
+import type { SearchIndexEntry } from "../../entries/index.ts";
+import { searchEntries } from "../../entries/index.ts";
 
 export function useSearch() {
   const [query, setQuery] = useState("");

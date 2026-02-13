@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { importEntries } from "../../entries/storage/import-export.ts";
+import { importEntries } from "../../entries/index.ts";
 
 interface ImportExportProps {
   fileInputRef: React.RefObject<HTMLInputElement | null>;

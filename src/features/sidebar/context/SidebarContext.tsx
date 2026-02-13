@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from "react";
-import { useEntriesData, useEntriesActions } from "../../entries/context/EntriesContext.tsx";
-import { searchEntries, extractTextFromBlocks } from "../../entries/storage/search-index.ts";
+import { useEntriesData, useEntriesActions, searchEntries, extractTextFromBlocks } from "../../entries/index.ts";
+import type { WorkLedgerEntry } from "../../entries/index.ts";
 import { clearAllData } from "../../../storage/db.ts";
-import type { WorkLedgerEntry } from "../../entries/types/entry.ts";
 import type { Block } from "@blocknote/core";
 
 interface SidebarContextValue {

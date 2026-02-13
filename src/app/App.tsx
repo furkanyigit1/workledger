@@ -1,19 +1,14 @@
 import { lazy, Suspense } from "react";
 import { AppShell } from "../components/layout/AppShell.tsx";
-import { Sidebar } from "../features/sidebar/components/Sidebar.tsx";
-import { EntryStream } from "../features/entries/components/EntryStream.tsx";
-import { NewEntryButton } from "../features/entries/components/NewEntryButton.tsx";
-import { SearchPanel } from "../features/search/components/SearchPanel.tsx";
-import { useEntriesData, useEntriesActions } from "../features/entries/context/EntriesContext.tsx";
-
-const AISidebar = lazy(() => import("../features/ai/components/AISidebar.tsx").then((m) => ({ default: m.AISidebar })));
-import { useSidebarContext } from "../features/sidebar/context/SidebarContext.tsx";
-import { useFocusModeContext } from "../features/focus-mode/context/FocusModeContext.tsx";
-import { useAIContext } from "../features/ai/context/AIContext.tsx";
-import { useSearch } from "../features/search/hooks/useSearch.ts";
+import { Sidebar, useSidebarContext } from "../features/sidebar/index.ts";
+import { EntryStream, NewEntryButton, useEntriesData, useEntriesActions, useEntryNavigation } from "../features/entries/index.ts";
+import { SearchPanel, useSearch } from "../features/search/index.ts";
+import { useFocusModeContext } from "../features/focus-mode/index.ts";
+import { useAIContext } from "../features/ai/index.ts";
+import { useTheme } from "../features/theme/index.ts";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts.ts";
-import { useEntryNavigation } from "../features/entries/hooks/useEntryNavigation.ts";
-import { useTheme } from "../features/theme/hooks/useTheme.ts";
+
+const AISidebar = lazy(() => import("../features/ai/index.ts").then((m) => ({ default: m.AISidebar })));
 import { AppProviders } from "./AppProviders.tsx";
 
 export default function App() {

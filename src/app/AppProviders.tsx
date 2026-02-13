@@ -1,10 +1,9 @@
 import { type ReactNode, useCallback } from "react";
-import { useTheme } from "../features/theme/hooks/useTheme.ts";
-import { ThemeContext } from "../features/theme/context/ThemeContext.tsx";
-import { EntriesProvider } from "../features/entries/context/EntriesContext.tsx";
-import { SidebarProvider, useSidebarContext } from "../features/sidebar/context/SidebarContext.tsx";
-import { FocusModeProvider } from "../features/focus-mode/context/FocusModeContext.tsx";
-import { AIProvider } from "../features/ai/context/AIContext.tsx";
+import { useTheme, ThemeContext } from "../features/theme/index.ts";
+import { EntriesProvider } from "../features/entries/index.ts";
+import { SidebarProvider, useSidebarContext } from "../features/sidebar/index.ts";
+import { FocusModeProvider } from "../features/focus-mode/index.ts";
+import { AIProvider } from "../features/ai/index.ts";
 
 function AIProviderWithSidebar({ children }: { children: ReactNode }) {
   const { setSidebarOpen } = useSidebarContext();

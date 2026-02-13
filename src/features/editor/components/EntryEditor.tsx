@@ -8,9 +8,9 @@ import "@blocknote/mantine/style.css";
 import { workledgerSchema } from "./EditorProvider.tsx";
 import { getWorkLedgerSlashMenuItems } from "./SlashMenuItems.tsx";
 import { getWikiLinkMenuItems } from "./WikiLinkMenuItems.ts";
-import type { WorkLedgerEntry } from "../../entries/types/entry.ts";
-import { useAutoSave } from "../../entries/hooks/useAutoSave.ts";
-import { useThemeMode } from "../../theme/context/ThemeContext.tsx";
+import type { WorkLedgerEntry } from "../../entries/index.ts";
+import { useAutoSave } from "../../entries/index.ts";
+import { useThemeMode } from "../../theme/index.ts";
 
 interface EntryEditorProps {
   entry: WorkLedgerEntry;

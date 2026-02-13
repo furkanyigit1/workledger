@@ -1,6 +1,6 @@
 import { useState, useCallback, memo } from "react";
 import type { WorkLedgerEntry } from "../types/entry.ts";
-import { formatTime, todayKey } from "../utils/dates.ts";
+import { formatTime, todayKey } from "../../../utils/dates.ts";
 import { EntryEditor } from "../../editor/components/EntryEditor.tsx";
 import { TagEditor } from "./TagEditor.tsx";
 import { ConfirmAction } from "../../../components/ui/ConfirmAction.tsx";

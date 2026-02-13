@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
-import type { WorkLedgerEntry } from "../../entries/types/entry.ts";
+import type { WorkLedgerEntry } from "../../entries/index.ts";
 
 interface FocusModeContextValue {
   focusedEntryId: string | null;

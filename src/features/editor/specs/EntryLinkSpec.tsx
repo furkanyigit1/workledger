@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { createReactInlineContentSpec } from "@blocknote/react";
-import { getEntry } from "../../entries/storage/entries.ts";
-import { extractTitle } from "../../entries/utils/extract-title.ts";
+import { getEntry, extractTitle } from "../../entries/index.ts";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function EntryLinkRenderer(props: {

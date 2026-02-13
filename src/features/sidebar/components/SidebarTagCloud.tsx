@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { getTagColor } from "../../entries/utils/tag-colors.ts";
+import { getTagColor } from "../../../utils/tag-colors.ts";
 
 interface SidebarTagCloudProps {
   allTags: string[];

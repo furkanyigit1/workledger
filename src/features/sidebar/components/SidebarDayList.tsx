@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { formatDayKey, todayKey } from "../../entries/utils/dates.ts";
+import { formatDayKey, todayKey } from "../../../utils/dates.ts";
 
 interface SidebarDayListProps {
   dayKeys: string[];
