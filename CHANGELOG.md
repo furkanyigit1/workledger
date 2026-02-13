@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- URL hash anchors — navigating to an entry updates the URL to `#entry-<id>`, enabling bookmarks and link sharing
+  - Hash is read on page load to scroll to the referenced entry
+  - Browser back/forward navigation works via `hashchange` listener
+- Focus mode — click the expand icon on any entry to view it full-screen
+  - Distraction-free single-entry view with back button and entry timestamp
+  - Press `Esc` or click the back arrow to return to the stream
+  - URL hash updates in focus mode for bookmarkable focused views
 - Progressive Web App (PWA) support — install WorkLedger as a standalone app
   - Auto-updating service worker caches all assets for offline use
   - Web app manifest with app name, theme color, and icons
