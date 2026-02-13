@@ -16,6 +16,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   - Distraction-free single-entry view with back button and entry timestamp
   - Press `Esc` or click the back arrow to return to the stream
   - URL hash updates in focus mode for bookmarkable focused views
+- Progressive Web App (PWA) support — install WorkLedger as a standalone app
+  - Auto-updating service worker caches all assets for offline use
+  - Web app manifest with app name, theme color, and icons
+  - Apple mobile web app meta tags for iOS home screen support
+  - SVG icons (192x192 and 512x512) derived from the existing logo
+- Mobile-friendly responsive layout for screens under 768px
+  - Sidebar becomes a full-screen overlay with backdrop on mobile
+  - Entry action buttons (archive, delete, AI) always visible on small screens (no hover required)
+  - Touch-based resize handles for Excalidraw drawings with larger touch targets
+  - `useIsMobile` hook for responsive behavior across components
+
+### Changed
+
+- AppShell removes sidebar padding on mobile since sidebars overlay instead of push content
+- Reduced horizontal padding from 48px to 16px on mobile for better space usage
+- Excalidraw default canvas height reduced to 350px on mobile (from 500px)
+- Excalidraw minimum width lowered to 200px (from 300px)
+- Excalidraw preview SVG max-height reduced to 280px on mobile
+
+### Removed
+
+- AI sidebar is hidden on mobile viewports to keep the mobile UI focused
 
 ## [1.1.4] - 2026-02-13
 
