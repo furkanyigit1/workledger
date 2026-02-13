@@ -14,6 +14,8 @@ function SidebarSettings({
   aiEnabled,
   fileInputRef,
   onDeleteAll,
+  themeMode,
+  onToggleTheme,
 }: {
   settingsOpen: boolean;
   setSettingsOpen: (open: boolean) => void;
@@ -25,6 +27,8 @@ function SidebarSettings({
   aiEnabled?: boolean;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
   onDeleteAll?: () => void;
+  themeMode?: "light" | "dark";
+  onToggleTheme?: () => void;
 }) {
   const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
 
@@ -32,7 +36,7 @@ function SidebarSettings({
     <div className="relative" ref={settingsRef}>
       <button
         onClick={() => setSettingsOpen(!settingsOpen)}
-        className={`p-1 rounded-lg hover:bg-gray-100 transition-colors ${settingsOpen ? "bg-gray-100 text-gray-600" : "text-gray-400 hover:text-gray-600"}`}
+        className={`p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${settingsOpen ? "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}
         title="Settings"
       >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -42,13 +46,50 @@ function SidebarSettings({
       </button>
 
       {settingsOpen && (
-        <div className="absolute right-0 top-full mt-1 w-52 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+        <div className="absolute right-0 top-full mt-1 w-52 bg-white dark:bg-[#1a1a1a] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
+          {/* Dark mode toggle */}
+          {onToggleTheme && (
+            <>
+              <button
+                onClick={() => {
+                  onToggleTheme();
+                  setSettingsOpen(false);
+                }}
+                className="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2"
+              >
+                {themeMode === "dark" ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="5" />
+                      <line x1="12" y1="1" x2="12" y2="3" />
+                      <line x1="12" y1="21" x2="12" y2="23" />
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                      <line x1="1" y1="12" x2="3" y2="12" />
+                      <line x1="21" y1="12" x2="23" y2="12" />
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                    Light mode
+                  </>
+                ) : (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                    Dark mode
+                  </>
+                )}
+              </button>
+              <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
+            </>
+          )}
           <button
             onClick={() => {
               onToggleArchiveView();
               setSettingsOpen(false);
             }}
-            className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2"
+            className="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2"
           >
             {isArchiveView ? (
               <>
@@ -66,7 +107,7 @@ function SidebarSettings({
                 </svg>
                 View archive
                 {archivedCount > 0 && (
-                  <span className="ml-auto text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-medium">
+                  <span className="ml-auto text-[10px] bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded-full font-medium">
                     {archivedCount}
                   </span>
                 )}
@@ -76,13 +117,13 @@ function SidebarSettings({
 
           {onToggleAI && (
             <>
-              <div className="my-1 border-t border-gray-100" />
+              <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
               <button
                 onClick={() => {
                   onToggleAI();
                   setSettingsOpen(false);
                 }}
-                className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2"
+                className="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 2a8 8 0 0 0-8 8c0 3.36 2.07 6.24 5 7.42V19a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1.58c2.93-1.18 5-4.06 5-7.42a8 8 0 0 0-8-8z" />
@@ -96,14 +137,14 @@ function SidebarSettings({
             </>
           )}
 
-          <div className="my-1 border-t border-gray-100" />
+          <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
 
           <button
             onClick={() => {
               exportAllEntries();
               setSettingsOpen(false);
             }}
-            className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2"
+            className="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -118,7 +159,7 @@ function SidebarSettings({
               fileInputRef.current?.click();
               setSettingsOpen(false);
             }}
-            className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2"
+            className="w-full text-left px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -130,7 +171,7 @@ function SidebarSettings({
 
           {onDeleteAll && (
             <>
-              <div className="my-1 border-t border-gray-100" />
+              <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
               {confirmDeleteAll ? (
                 <div className="px-3 py-2 flex items-center gap-2">
                   <span className="text-xs text-red-500">Delete everything?</span>
@@ -154,7 +195,7 @@ function SidebarSettings({
               ) : (
                 <button
                   onClick={() => setConfirmDeleteAll(true)}
-                  className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors flex items-center gap-2"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6" />
@@ -192,6 +233,8 @@ interface SidebarProps {
   onDeleteAll?: () => void;
   aiEnabled?: boolean;
   onToggleAI?: () => void;
+  themeMode?: "light" | "dark";
+  onToggleTheme?: () => void;
 }
 
 export function Sidebar({
@@ -213,6 +256,8 @@ export function Sidebar({
   onDeleteAll,
   aiEnabled,
   onToggleAI,
+  themeMode,
+  onToggleTheme,
 }: SidebarProps) {
   const today = todayKey();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -260,7 +305,7 @@ export function Sidebar({
       {!isOpen && (
         <button
           onClick={onToggle}
-          className="fixed top-4 left-4 z-50 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300 text-gray-400 hover:text-gray-600"
+          className="fixed top-4 left-4 z-50 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           title="Expand sidebar (⌘\)"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -273,8 +318,8 @@ export function Sidebar({
       <aside
         className={`
           fixed top-0 left-0 h-full z-40
-          bg-white border-r border-gray-100
-          shadow-[1px_0_12px_rgba(0,0,0,0.03)]
+          bg-white dark:bg-[#0f0f0f] border-r border-gray-100 dark:border-gray-800
+          shadow-[1px_0_12px_rgba(0,0,0,0.03)] dark:shadow-[1px_0_12px_rgba(0,0,0,0.3)]
           transition-transform duration-300 ease-in-out
           w-80 pt-[23px] pb-5 px-[22px]
           flex flex-col
@@ -286,17 +331,17 @@ export function Sidebar({
           <a href="https://about.workledger.org" target="_blank" rel="noopener" className="flex items-center gap-3 flex-1 min-w-0">
             <img src="/logo.svg" alt="WorkLedger" className="w-9 h-9 shrink-0" />
             <div className="flex-1 min-w-0">
-              <h1 className="text-3xl text-gray-800 sidebar-title-font leading-tight">
+              <h1 className="text-3xl text-gray-800 dark:text-gray-100 sidebar-title-font leading-tight">
                 WorkLedger
               </h1>
-              <p className="text-xs text-gray-400 -mt-0.5">
+              <p className="text-xs text-gray-400 dark:text-gray-500 -mt-0.5">
                 Engineering Notebook
               </p>
             </div>
           </a>
           <button
             onClick={onToggle}
-            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0"
             title="Collapse sidebar (⌘\)"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -326,7 +371,7 @@ export function Sidebar({
               value={sidebarSearchQuery}
               onChange={(e) => onSidebarSearch(e.target.value)}
               placeholder={isArchiveView ? "Filter archive..." : "Filter entries..."}
-              className="w-full text-sm bg-gray-50 border border-gray-200 rounded-lg pl-8 pr-7 py-2 outline-none focus:border-orange-300 focus:bg-white focus:ring-1 focus:ring-orange-100 transition-all text-gray-600 placeholder:text-gray-400"
+              className="w-full text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg pl-8 pr-7 py-2 outline-none focus:border-orange-300 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-orange-100 dark:focus:ring-orange-900 transition-all text-gray-600 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
               autoComplete="off"
               data-1p-ignore
             />
@@ -358,7 +403,7 @@ export function Sidebar({
                 onClick={onSearchOpen}
                 className="text-sm text-gray-400 hover:text-gray-500 transition-colors"
               >
-                Full search <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-[10px]">⌘K</kbd>
+                Full search <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px]">⌘K</kbd>
               </button>
             )}
             <SidebarSettings
@@ -372,6 +417,8 @@ export function Sidebar({
               aiEnabled={aiEnabled}
               fileInputRef={fileInputRef}
               onDeleteAll={onDeleteAll}
+              themeMode={themeMode}
+              onToggleTheme={onToggleTheme}
             />
           </div>
         </div>
@@ -397,10 +444,10 @@ export function Sidebar({
                     flex items-center justify-between gap-2
                     ${
                       isActive
-                        ? "bg-orange-50 text-orange-700 font-medium"
+                        ? "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 font-medium"
                         : isToday && !activeDayKey
-                          ? "bg-orange-50 text-orange-700 font-medium"
-                          : "text-gray-600 hover:bg-gray-50"
+                          ? "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 font-medium"
+                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                     }
                   `}
                 >
@@ -412,11 +459,11 @@ export function Sidebar({
                       <span
                         className={`
                           w-1.5 h-1.5 rounded-full
-                          ${isActive || (isToday && !activeDayKey) ? "bg-orange-400" : "bg-gray-300"}
+                          ${isActive || (isToday && !activeDayKey) ? "bg-orange-400" : "bg-gray-300 dark:bg-gray-600"}
                         `}
                       />
                     )}
-                    <span className={`text-xs ${isActive || (isToday && !activeDayKey) ? "text-orange-500" : "text-gray-400"}`}>{count}</span>
+                    <span className={`text-xs ${isActive || (isToday && !activeDayKey) ? "text-orange-500 dark:text-orange-400" : "text-gray-400 dark:text-gray-500"}`}>{count}</span>
                   </span>
                 </button>
               );
@@ -433,10 +480,10 @@ export function Sidebar({
                 onMouseDown={handleDragStart}
                 className="h-2 cursor-row-resize flex items-center justify-center group"
               >
-                <div className="w-8 h-0.5 rounded-full bg-gray-200 group-hover:bg-gray-400 transition-colors" />
+                <div className="w-8 h-0.5 rounded-full bg-gray-200 dark:bg-gray-700 group-hover:bg-gray-400 dark:group-hover:bg-gray-500 transition-colors" />
               </div>
             )}
-            <div className="border-t border-gray-100 pt-2">
+            <div className="border-t border-gray-100 dark:border-gray-800 pt-2">
               <button
                 onClick={() => setTagsExpanded((prev) => !prev)}
                 className="flex items-center gap-1.5 w-full text-left px-1 mb-2"
@@ -514,8 +561,8 @@ export function Sidebar({
           <div className={`
             px-4 py-2.5 rounded-full shadow-lg text-sm font-medium
             ${importStatus.startsWith("Import failed")
-              ? "bg-red-50 text-red-700 border border-red-200"
-              : "bg-green-50 text-green-700 border border-green-200"
+              ? "bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
+              : "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800"
             }
           `}>
             {importStatus}

@@ -1,6 +1,7 @@
-import React, { useState, useRef, useCallback, useEffect, Component, type ReactNode } from "react";
+import React, { useState, useRef, useCallback, useEffect, useContext, Component, type ReactNode } from "react";
 import { createReactBlockSpec } from "@blocknote/react";
 import "@excalidraw/excalidraw/index.css";
+import { ThemeContext } from "../../hooks/ThemeContext.tsx";
 
 const LazyExcalidraw = React.lazy(() =>
   import("@excalidraw/excalidraw").then((mod) => ({
@@ -25,9 +26,9 @@ class ExcalidrawErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex items-center justify-center h-full bg-stone-50 text-stone-400 rounded-lg border border-stone-200 p-8">
+        <div className="flex items-center justify-center h-full bg-stone-50 dark:bg-stone-900 text-stone-400 dark:text-stone-500 rounded-lg border border-stone-200 dark:border-stone-700 p-8">
           <div className="text-center">
-            <div className="text-sm font-medium text-stone-500 mb-1">Drawing failed to load</div>
+            <div className="text-sm font-medium text-stone-500 dark:text-stone-400 mb-1">Drawing failed to load</div>
             <button
               className="text-xs text-amber-600 hover:text-amber-700"
               onClick={() => this.setState({ hasError: false })}
@@ -95,6 +96,7 @@ function ExcalidrawRenderer({
     updateBlock: (block: any, update: any) => void;
   };
 }) {
+  const themeMode = useContext(ThemeContext);
   const [isEditing, setIsEditing] = useState(!block.props.previewSvg);
   const [maxWidth, setMaxWidth] = useState(0);
   const [resizeHeight, setResizeHeight] = useState<number | null>(null);
@@ -233,9 +235,10 @@ function ExcalidrawRenderer({
             const svg = await exportToSvgFn({
               elements: [...latest.elements],
               appState: {
-                exportBackground: true,
-                viewBackgroundColor: "#faf8f5",
                 ...(latest.appState || {}),
+                exportBackground: true,
+                viewBackgroundColor: "#f0f0f0",
+                theme: "light",
               },
               files: null,
             });
@@ -300,7 +303,7 @@ function ExcalidrawRenderer({
           className="group flex items-center justify-center h-3 cursor-row-resize select-none -mt-px"
           title="Drag to resize height"
         >
-          <div className="w-10 h-1 rounded-full bg-gray-200 group-hover:bg-gray-400 transition-colors" />
+          <div className="w-10 h-1 rounded-full bg-gray-200 dark:bg-gray-700 group-hover:bg-gray-400 dark:group-hover:bg-gray-500 transition-colors" />
         </div>
         {/* Right handle — width */}
         <div
@@ -308,7 +311,7 @@ function ExcalidrawRenderer({
           className="group absolute -right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-4 h-16 cursor-col-resize select-none z-10"
           title="Drag to resize width"
         >
-          <div className="h-10 w-1 rounded-full bg-gray-200 group-hover:bg-gray-400 transition-colors" />
+          <div className="h-10 w-1 rounded-full bg-gray-200 dark:bg-gray-700 group-hover:bg-gray-400 dark:group-hover:bg-gray-500 transition-colors" />
         </div>
         {/* Corner handle — both */}
         <div
@@ -316,7 +319,7 @@ function ExcalidrawRenderer({
           className="group absolute -bottom-1 -right-2 w-4 h-4 cursor-nwse-resize select-none z-10 flex items-center justify-center"
           title="Drag to resize"
         >
-          <div className="w-2.5 h-2.5 rounded-sm bg-gray-200 group-hover:bg-gray-400 transition-colors" />
+          <div className="w-2.5 h-2.5 rounded-sm bg-gray-200 dark:bg-gray-700 group-hover:bg-gray-400 dark:group-hover:bg-gray-500 transition-colors" />
         </div>
       </div>
     );
@@ -329,7 +332,7 @@ function ExcalidrawRenderer({
   return (
     <div ref={containerRef} className="excalidraw-block my-2" style={{ width: "100%" }}>
       <div
-        className="excalidraw-wrapper rounded-lg border border-stone-200"
+        className="excalidraw-wrapper rounded-lg border border-stone-200 dark:border-stone-700"
         style={{ width: "100%", height: `${canvasHeight}px` }}
         onWheel={(e) => e.stopPropagation()}
       >
@@ -337,7 +340,7 @@ function ExcalidrawRenderer({
           {ready ? (
             <React.Suspense
               fallback={
-                <div className="flex items-center justify-center h-full bg-stone-50 text-stone-400">
+                <div className="flex items-center justify-center h-full bg-stone-50 dark:bg-stone-900 text-stone-400 dark:text-stone-500">
                   Loading drawing canvas...
                 </div>
               }
@@ -356,7 +359,7 @@ function ExcalidrawRenderer({
                 }}
                 initialData={initialData}
                 onChange={handleChange}
-                theme="light"
+                theme={themeMode}
                 UIOptions={{
                   canvasActions: {
                     saveToActiveFile: false,

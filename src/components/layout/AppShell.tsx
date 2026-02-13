@@ -10,7 +10,7 @@ export function AppShell({ sidebarOpen, aiSidebarOpen, children }: AppShellProps
   return (
     <div
       className={`
-        min-h-screen bg-[#fafafa] text-[#1a1a1a]
+        min-h-screen bg-[var(--color-notebook-bg)] text-[var(--color-notebook-text)]
         transition-[padding] duration-300 ease-in-out
         ${sidebarOpen ? "pl-80" : "pl-0"}
         ${aiSidebarOpen ? "pr-96" : "pr-0"}

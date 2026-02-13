@@ -38,11 +38,11 @@ export function AISettingsPanel({ settings, onUpdateSettings }: AISettingsPanelP
       <div className="space-y-4">
         {/* Provider */}
         <div>
-          <label className="text-xs text-gray-500 block mb-1">Provider</label>
+          <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Provider</label>
           <select
             value={settings.provider}
             onChange={(e) => onUpdateSettings({ provider: e.target.value as AISettings["provider"] })}
-            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white"
+            className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
           >
             <option value="ollama">Ollama (Local)</option>
             <option value="huggingface">Hugging Face</option>
@@ -54,21 +54,21 @@ export function AISettingsPanel({ settings, onUpdateSettings }: AISettingsPanelP
         {settings.provider === "ollama" && (
           <>
             <div>
-              <label className="text-xs text-gray-500 block mb-1">Server URL</label>
+              <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Server URL</label>
               <input
                 type="text"
                 value={settings.ollamaUrl}
                 onChange={(e) => onUpdateSettings({ ollamaUrl: e.target.value })}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white"
+                className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
               />
             </div>
             <div>
-              <label className="text-xs text-gray-500 block mb-1">Model</label>
+              <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Model</label>
               {models.length > 0 ? (
                 <select
                   value={settings.ollamaModel}
                   onChange={(e) => onUpdateSettings({ ollamaModel: e.target.value })}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white"
+                  className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
                 >
                   {models.map((m) => (
                     <option key={m} value={m}>{m}</option>
@@ -79,7 +79,7 @@ export function AISettingsPanel({ settings, onUpdateSettings }: AISettingsPanelP
                   type="text"
                   value={settings.ollamaModel}
                   onChange={(e) => onUpdateSettings({ ollamaModel: e.target.value })}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white"
+                  className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
                 />
               )}
             </div>
@@ -89,20 +89,20 @@ export function AISettingsPanel({ settings, onUpdateSettings }: AISettingsPanelP
         {settings.provider === "huggingface" && (
           <>
             <div>
-              <label className="text-xs text-gray-500 block mb-1">API Key</label>
+              <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">API Key</label>
               <input
                 type="password"
                 value={settings.hfApiKey}
                 onChange={(e) => onUpdateSettings({ hfApiKey: e.target.value })}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white"
+                className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
               />
             </div>
             <div>
-              <label className="text-xs text-gray-500 block mb-1">Model</label>
+              <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Model</label>
               <select
                 value={settings.hfModel}
                 onChange={(e) => onUpdateSettings({ hfModel: e.target.value })}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white"
+                className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
               >
                 <option value="Qwen/Qwen2.5-7B-Instruct">Qwen 2.5 7B Instruct</option>
                 <option value="meta-llama/Llama-3.1-8B-Instruct">Llama 3.1 8B Instruct</option>
@@ -124,7 +124,7 @@ export function AISettingsPanel({ settings, onUpdateSettings }: AISettingsPanelP
                 type="text"
                 value={settings.customUrl}
                 onChange={(e) => onUpdateSettings({ customUrl: e.target.value })}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white"
+                className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
               />
             </div>
             <div>
@@ -133,7 +133,7 @@ export function AISettingsPanel({ settings, onUpdateSettings }: AISettingsPanelP
                 type="password"
                 value={settings.customApiKey}
                 onChange={(e) => onUpdateSettings({ customApiKey: e.target.value })}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white"
+                className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
               />
             </div>
             <div>
@@ -142,18 +142,18 @@ export function AISettingsPanel({ settings, onUpdateSettings }: AISettingsPanelP
                 type="text"
                 value={settings.customModel}
                 onChange={(e) => onUpdateSettings({ customModel: e.target.value })}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white"
+                className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
               />
             </div>
           </>
         )}
 
         {/* Divider */}
-        <div className="border-t border-gray-100" />
+        <div className="border-t border-gray-100 dark:border-gray-800" />
 
         {/* Temperature */}
         <div>
-          <label className="text-xs text-gray-500 block mb-1">
+          <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">
             Temperature: {settings.temperature.toFixed(1)}
           </label>
           <input
@@ -173,7 +173,7 @@ export function AISettingsPanel({ settings, onUpdateSettings }: AISettingsPanelP
 
         {/* Max tokens */}
         <div>
-          <label className="text-xs text-gray-500 block mb-1">
+          <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">
             Max tokens: {settings.maxTokens}
           </label>
           <input

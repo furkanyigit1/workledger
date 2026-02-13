@@ -12,7 +12,7 @@ export function NewEntryButton({ onClick }: NewEntryButtonProps) {
         bg-orange-500 hover:bg-orange-400 active:bg-orange-600
         text-white font-medium
         px-6 py-3.5 rounded-full
-        shadow-lg shadow-orange-500/20 hover:shadow-xl hover:shadow-orange-500/25
+        shadow-lg shadow-orange-500/20 dark:shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/25 dark:hover:shadow-orange-500/35
         transition-all duration-200
         hover:scale-[1.02]
         group

@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.2] - 2026-02-13
+
+### Added
+
+- Dark mode with moon/sun toggle in sidebar settings dropdown
+  - Defaults to system preference, persists user choice in IndexedDB
+  - Flash-free initial load via localStorage mirror and inline script
+  - CSS variables for scrollbar, AI markdown, and streaming cursor adapt automatically
+  - Tailwind `dark:` variants across all 19 component files
+  - BlockNote editor and Excalidraw drawings render in correct theme
+  - Excalidraw preview uses CSS `invert()` filter for seamless dark adaptation
+  - Tag colors have dark mode variants with reduced opacity backgrounds
+  - Search panel, AI sidebar, and all modals properly themed
+
+### Changed
+
+- Expanded CSS theme variables: added `--color-notebook-surface`, `--color-notebook-surface-alt`, `--color-notebook-muted`, `--color-notebook-border`, `--color-notebook-code-bg`, `--color-notebook-scrollbar`
+- Replaced hardcoded hex colors in `app.css` with CSS variable references
+- Replaced hardcoded `bg-[#fafafa]` / `text-[#1a1a1a]` in AppShell and DayHeader with CSS variables
+
 ## [1.1.1] - 2026-02-12
 
 ### Changed
@@ -66,6 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Local-first storage with IndexedDB -- no server required
 - Landing page
 
+[1.1.2]: https://github.com/gruberb/workledger/releases/tag/v1.1.2
 [1.1.1]: https://github.com/gruberb/workledger/releases/tag/v1.1.1
 [1.1.0]: https://github.com/gruberb/workledger/releases/tag/v1.1.0
 [1.0.0]: https://github.com/gruberb/workledger/releases/tag/v1.0.0

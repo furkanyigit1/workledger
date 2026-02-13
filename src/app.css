@@ -1,12 +1,36 @@
 @import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Playfair+Display:wght@500;600;700&display=swap");
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Notebook theme — clean, bright palette inspired by modern productivity apps */
 @theme {
   --color-notebook-bg: #fafafa;
   --color-notebook-text: #1a1a1a;
   --color-notebook-accent: #f97316;
   --color-notebook-ruling: #e5e5e5;
+  --color-notebook-surface: #ffffff;
+  --color-notebook-surface-alt: #fcfcfc;
+  --color-notebook-muted: #666666;
+  --color-notebook-border: #e5e5e5;
+  --color-notebook-code-bg: #f5f5f5;
+  --color-notebook-scrollbar: #d1d5db;
+  --color-notebook-scrollbar-hover: #9ca3af;
+}
+
+/* Dark mode overrides */
+.dark {
+  --color-notebook-bg: #0f0f0f;
+  --color-notebook-text: #f5f5f5;
+  --color-notebook-accent: #fb923c;
+  --color-notebook-ruling: #2a2a2a;
+  --color-notebook-surface: #1a1a1a;
+  --color-notebook-surface-alt: #161616;
+  --color-notebook-muted: #a3a3a3;
+  --color-notebook-border: #2a2a2a;
+  --color-notebook-code-bg: #1e1e1e;
+  --color-notebook-scrollbar: #404040;
+  --color-notebook-scrollbar-hover: #525252;
 }
 
 /* Sidebar title font */
@@ -68,6 +92,11 @@
   max-height: 400px;
 }
 
+/* Invert Excalidraw preview in dark mode so light-bg drawings look correct */
+.dark .excalidraw-preview svg {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 /* Excalidraw container — prevent canvas from stealing focus */
 .excalidraw-container .excalidraw {
   --ui-font: system-ui, -apple-system, sans-serif;
@@ -123,12 +152,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: var(--color-notebook-scrollbar);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: var(--color-notebook-scrollbar-hover);
 }
 
 /* Body base styles */
@@ -175,7 +204,7 @@ body {
   font-weight: 600;
   margin-top: 1em;
   margin-bottom: 0.5em;
-  color: #1a1a1a;
+  color: var(--color-notebook-text);
 }
 .ai-markdown h1 { font-size: 1.1em; }
 .ai-markdown h2 { font-size: 1em; }
@@ -204,25 +233,25 @@ body {
 }
 
 .ai-markdown th, .ai-markdown td {
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-notebook-border);
   padding: 0.35em 0.6em;
   text-align: left;
 }
 
 .ai-markdown th {
-  background: #f5f5f5;
+  background: var(--color-notebook-code-bg);
   font-weight: 600;
 }
 
 .ai-markdown code {
-  background: #f5f5f5;
+  background: var(--color-notebook-code-bg);
   padding: 0.15em 0.4em;
   border-radius: 4px;
   font-size: 0.85em;
 }
 
 .ai-markdown pre {
-  background: #f5f5f5;
+  background: var(--color-notebook-code-bg);
   padding: 0.75em;
   border-radius: 8px;
   overflow-x: auto;
@@ -235,10 +264,10 @@ body {
 }
 
 .ai-markdown blockquote {
-  border-left: 3px solid #f97316;
+  border-left: 3px solid var(--color-notebook-accent);
   padding-left: 0.75em;
   margin: 0.5em 0;
-  color: #666;
+  color: var(--color-notebook-muted);
 }
 
 .ai-markdown strong {
@@ -250,7 +279,7 @@ body {
   display: inline-block;
   width: 6px;
   height: 14px;
-  background: #f97316;
+  background: var(--color-notebook-accent);
   margin-left: 2px;
   vertical-align: text-bottom;
   border-radius: 1px;

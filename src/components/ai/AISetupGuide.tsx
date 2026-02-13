@@ -72,13 +72,13 @@ export function AISetupGuide({ settings, onUpdateSettings }: AISetupGuideProps) 
 
   return (
     <div className="px-4 py-4 overflow-y-auto h-full">
-      <h3 className="text-sm font-medium text-gray-700 mb-1">Set up AI Provider</h3>
+      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Set up AI Provider</h3>
       <p className="text-xs text-gray-400 mb-4">
         Connect to a local or remote LLM to power thinking frameworks.
       </p>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-100 mb-4">
+      <div className="flex border-b border-gray-100 dark:border-gray-800 mb-4">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -86,8 +86,8 @@ export function AISetupGuide({ settings, onUpdateSettings }: AISetupGuideProps) 
             className={`
               text-xs px-3 py-2 -mb-px transition-colors
               ${activeTab === tab.id
-                ? "border-b-2 border-orange-500 text-orange-600 font-medium"
-                : "text-gray-400 hover:text-gray-600"
+                ? "border-b-2 border-orange-500 text-orange-600 dark:text-orange-400 font-medium"
+                : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               }
             `}
           >
@@ -99,32 +99,32 @@ export function AISetupGuide({ settings, onUpdateSettings }: AISetupGuideProps) 
       {/* Ollama tab */}
       {activeTab === "ollama" && (
         <div className="space-y-4">
-          <div className="bg-gray-50 rounded-xl p-3">
-            <p className="text-xs text-gray-600 font-medium mb-2">Quick setup:</p>
+          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-3">
+            <p className="text-xs text-gray-600 dark:text-gray-300 font-medium mb-2">Quick setup:</p>
             <ol className="text-xs text-gray-500 space-y-1.5 list-decimal list-inside">
               <li>Install Ollama from <span className="text-orange-600 font-medium">ollama.com</span></li>
-              <li>Run <code className="px-1.5 py-0.5 bg-gray-200 rounded text-[11px]">ollama pull mistral</code> in terminal</li>
+              <li>Run <code className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[11px]">ollama pull mistral</code> in terminal</li>
               <li>Ollama starts automatically on localhost:11434</li>
             </ol>
           </div>
           <div>
-            <label className="text-xs text-gray-500 block mb-1">Server URL</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Server URL</label>
             <input
               type="text"
               value={ollamaUrl}
               onChange={(e) => setOllamaUrl(e.target.value)}
               placeholder="http://localhost:11434"
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 bg-white"
+              className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 dark:focus:ring-orange-900 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 block mb-1">Model name</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Model name</label>
             <input
               type="text"
               value={ollamaModel}
               onChange={(e) => setOllamaModel(e.target.value)}
               placeholder="mistral"
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 bg-white"
+              className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 dark:focus:ring-orange-900 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
             />
             <p className="text-[10px] text-gray-400 mt-1">e.g. mistral, llama3.1, phi3, qwen2.5</p>
           </div>
@@ -132,7 +132,7 @@ export function AISetupGuide({ settings, onUpdateSettings }: AISetupGuideProps) 
             <button
               onClick={() => testConnection("ollama")}
               disabled={testing}
-              className="flex-1 py-2 text-sm rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              className="flex-1 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition-colors"
             >
               {testing ? "Testing..." : "Test Connection"}
             </button>
@@ -150,8 +150,8 @@ export function AISetupGuide({ settings, onUpdateSettings }: AISetupGuideProps) 
       {/* Hugging Face tab */}
       {activeTab === "huggingface" && (
         <div className="space-y-4">
-          <div className="bg-gray-50 rounded-xl p-3">
-            <p className="text-xs text-gray-600 font-medium mb-2">Quick setup:</p>
+          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-3">
+            <p className="text-xs text-gray-600 dark:text-gray-300 font-medium mb-2">Quick setup:</p>
             <ol className="text-xs text-gray-500 space-y-1.5 list-decimal list-inside">
               <li>Create a free account at <span className="text-orange-600 font-medium">huggingface.co</span></li>
               <li>Go to Settings &gt; Access Tokens</li>
@@ -159,21 +159,21 @@ export function AISetupGuide({ settings, onUpdateSettings }: AISetupGuideProps) 
             </ol>
           </div>
           <div>
-            <label className="text-xs text-gray-500 block mb-1">API Key</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">API Key</label>
             <input
               type="password"
               value={hfApiKey}
               onChange={(e) => setHfApiKey(e.target.value)}
               placeholder="hf_..."
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 bg-white"
+              className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 dark:focus:ring-orange-900 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 block mb-1">Model</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Model</label>
             <select
               value={hfModel}
               onChange={(e) => setHfModel(e.target.value)}
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 bg-white"
+              className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 dark:focus:ring-orange-900 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
             >
               <option value="Qwen/Qwen2.5-7B-Instruct">Qwen 2.5 7B Instruct</option>
               <option value="meta-llama/Llama-3.1-8B-Instruct">Llama 3.1 8B Instruct</option>
@@ -188,7 +188,7 @@ export function AISetupGuide({ settings, onUpdateSettings }: AISetupGuideProps) 
             <button
               onClick={() => testConnection("huggingface")}
               disabled={testing || !hfApiKey}
-              className="flex-1 py-2 text-sm rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              className="flex-1 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition-colors"
             >
               {testing ? "Testing..." : "Test Connection"}
             </button>
@@ -207,48 +207,48 @@ export function AISetupGuide({ settings, onUpdateSettings }: AISetupGuideProps) 
       {/* Custom server tab */}
       {activeTab === "custom" && (
         <div className="space-y-4">
-          <div className="bg-gray-50 rounded-xl p-3">
-            <p className="text-xs text-gray-600 font-medium mb-2">Connect to any OpenAI-compatible server:</p>
+          <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-3">
+            <p className="text-xs text-gray-600 dark:text-gray-300 font-medium mb-2">Connect to any OpenAI-compatible server:</p>
             <p className="text-xs text-gray-500">
               Works with vLLM, text-generation-inference, llama.cpp server, or remote Ollama.
-              Any server exposing <code className="px-1 py-0.5 bg-gray-200 rounded text-[10px]">/v1/chat/completions</code>.
+              Any server exposing <code className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">/v1/chat/completions</code>.
             </p>
           </div>
           <div>
-            <label className="text-xs text-gray-500 block mb-1">Base URL</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Base URL</label>
             <input
               type="text"
               value={customUrl}
               onChange={(e) => setCustomUrl(e.target.value)}
               placeholder="https://your-server.com"
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 bg-white"
+              className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 dark:focus:ring-orange-900 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 block mb-1">API Key (optional)</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">API Key (optional)</label>
             <input
               type="password"
               value={customApiKey}
               onChange={(e) => setCustomApiKey(e.target.value)}
               placeholder="sk-..."
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 bg-white"
+              className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 dark:focus:ring-orange-900 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 block mb-1">Model name</label>
+            <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Model name</label>
             <input
               type="text"
               value={customModel}
               onChange={(e) => setCustomModel(e.target.value)}
               placeholder="e.g. mistral, gpt-4"
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 bg-white"
+              className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 dark:focus:ring-orange-900 bg-white dark:bg-[#1a1a1a] dark:text-gray-300"
             />
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => testConnection("custom")}
               disabled={testing || !customUrl || !customModel}
-              className="flex-1 py-2 text-sm rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              className="flex-1 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition-colors"
             >
               {testing ? "Testing..." : "Test Connection"}
             </button>
@@ -274,8 +274,8 @@ function TestResultBadge({ result }: { result: "success" | "error" | null }) {
       className={`
         text-xs px-3 py-2 rounded-lg text-center
         ${result === "success"
-          ? "bg-green-50 text-green-600 border border-green-100"
-          : "bg-red-50 text-red-600 border border-red-100"
+          ? "bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-800"
+          : "bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800"
         }
       `}
     >

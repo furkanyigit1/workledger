@@ -10,6 +10,7 @@ import { getWorkLedgerSlashMenuItems } from "./SlashMenuItems.tsx";
 import { getWikiLinkMenuItems } from "./WikiLinkMenuItems.ts";
 import type { WorkLedgerEntry } from "../../types/entry.ts";
 import { useAutoSave } from "../../hooks/useAutoSave.ts";
+import { useThemeMode } from "../../hooks/ThemeContext.tsx";
 
 interface EntryEditorProps {
   entry: WorkLedgerEntry;
@@ -24,6 +25,7 @@ export function EntryEditor({
   onSave,
   autoFocus = false,
 }: EntryEditorProps) {
+  const themeMode = useThemeMode();
   const initialContent = useMemo(
     () => (entry.blocks.length > 0 ? entry.blocks : undefined),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -146,7 +148,7 @@ export function EntryEditor({
       <BlockNoteView
         editor={editor}
         editable={editable}
-        theme="light"
+        theme={themeMode}
         onChange={onChange}
         slashMenu={false}
         data-workledger-editor

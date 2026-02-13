@@ -24,8 +24,8 @@ export function AIMessage({ message, stepName }: AIMessageProps) {
         className={`
           max-w-[90%] rounded-2xl px-4 py-3
           ${isUser
-            ? "bg-orange-50 text-gray-800 rounded-br-md"
-            : "bg-white border border-gray-100 shadow-sm text-gray-700 rounded-bl-md"
+            ? "bg-orange-50 dark:bg-orange-950/30 text-gray-800 dark:text-gray-200 rounded-br-md"
+            : "bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-gray-700 shadow-sm text-gray-700 dark:text-gray-300 rounded-bl-md"
           }
         `}
       >
@@ -43,7 +43,7 @@ export function AIMessage({ message, stepName }: AIMessageProps) {
             </ReactMarkdown>
           </div>
         )}
-        <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-gray-100/50">
+        <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-gray-100/50 dark:border-gray-700/50">
           <span className="text-[10px] text-gray-300">
             {new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
           </span>
@@ -69,7 +69,7 @@ interface StreamingMessageProps {
 export function StreamingMessage({ content, stepName }: StreamingMessageProps) {
   return (
     <div className="flex justify-start mb-4">
-      <div className="max-w-[90%] rounded-2xl rounded-bl-md px-4 py-3 bg-white border border-gray-100 shadow-sm text-gray-700">
+      <div className="max-w-[90%] rounded-2xl rounded-bl-md px-4 py-3 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-gray-700 shadow-sm text-gray-700 dark:text-gray-300">
         {stepName && (
           <div className="text-[10px] uppercase tracking-wider text-orange-500 font-medium mb-1.5">
             {stepName}

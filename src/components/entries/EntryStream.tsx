@@ -54,7 +54,7 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
           Start your first entry
         </h2>
         <p className="text-base text-gray-400 max-w-sm">
-          Press <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-sm font-mono">⌘J</kbd> or
+          Press <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono">⌘J</kbd> or
           click the button below to create your first notebook entry.
         </p>
       </div>
@@ -110,7 +110,7 @@ function FilterBanner({ query, count, onClear }: { query: string; count: number;
   const isTag = !query.includes(" ");
 
   return (
-    <div className="flex items-center gap-3 pt-6 pb-4 px-1 sticky top-0 z-10 bg-[#fafafa]/95 backdrop-blur-sm border-b border-gray-100">
+    <div className="flex items-center gap-3 pt-6 pb-4 px-1 sticky top-0 z-10 bg-[var(--color-notebook-bg)]/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
       <div className="flex items-center gap-2">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
           <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
@@ -120,7 +120,7 @@ function FilterBanner({ query, count, onClear }: { query: string; count: number;
             {query}
           </span>
         ) : (
-          <span className="text-gray-800 font-medium text-sm">"{query}"</span>
+          <span className="text-gray-800 dark:text-gray-200 font-medium text-sm">"{query}"</span>
         )}
       </div>
       <span className="text-xs text-gray-400">

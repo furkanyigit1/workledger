@@ -9,12 +9,15 @@ import { useEntries } from "./hooks/useEntries.ts";
 import { useSearch } from "./hooks/useSearch.ts";
 import { useAISettings } from "./hooks/useAISettings.ts";
 import { useAIFeatureGate } from "./hooks/useAIFeatureGate.ts";
+import { useTheme } from "./hooks/useTheme.ts";
+import { ThemeContext } from "./hooks/ThemeContext.tsx";
 import { searchEntries, extractTextFromBlocks } from "./storage/search-index.ts";
 import { clearAllData } from "./storage/db.ts";
 import type { Block } from "@blocknote/core";
 import type { WorkLedgerEntry } from "./types/entry.ts";
 
 export default function App() {
+  const { resolved: themeMode, toggle: toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarFilter, setSidebarFilter] = useState("");
 
@@ -301,14 +304,14 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
-        <div className="text-stone-400 text-sm">Loading notebook...</div>
+      <div className="min-h-screen bg-[var(--color-notebook-bg)] flex items-center justify-center">
+        <div className="text-stone-400 dark:text-stone-500 text-sm">Loading notebook...</div>
       </div>
     );
   }
 
   return (
-    <>
+    <ThemeContext.Provider value={themeMode}>
       <Sidebar
         dayKeys={archiveView ? archivedDayKeys : sidebarDayKeys}
         entriesByDay={archiveView ? (displayArchivedEntriesByDay as Map<string, unknown[]>) : (displayEntriesByDay as Map<string, unknown[]>)}
@@ -328,6 +331,8 @@ export default function App() {
         onDeleteAll={handleDeleteAll}
         aiEnabled={aiSettings.enabled}
         onToggleAI={handleToggleAI}
+        themeMode={themeMode}
+        onToggleTheme={toggleTheme}
       />
 
       <AppShell sidebarOpen={sidebarOpen} aiSidebarOpen={aiSidebarOpen}>
@@ -365,6 +370,6 @@ export default function App() {
           targetEntry={aiTargetEntry}
         />
       )}
-    </>
+    </ThemeContext.Provider>
   );
 }

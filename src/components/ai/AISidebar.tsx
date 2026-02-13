@@ -123,7 +123,7 @@ export function AISidebar({
       {!isOpen && settings.enabled && (
         <button
           onClick={onClose}
-          className="fixed top-4 right-4 z-50 p-2 rounded-lg hover:bg-gray-100 transition-all duration-300 text-gray-400 hover:text-gray-600"
+          className="fixed top-4 right-4 z-50 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           title="Open AI sidebar (⌘⇧I)"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -137,18 +137,18 @@ export function AISidebar({
       <aside
         className={`
           ai-sidebar fixed top-0 right-0 h-full z-40
-          bg-[#fcfcfc] border-l border-gray-100
-          shadow-[-1px_0_12px_rgba(0,0,0,0.03)]
+          bg-[var(--color-notebook-surface-alt)] border-l border-gray-100 dark:border-gray-800
+          shadow-[-1px_0_12px_rgba(0,0,0,0.03)] dark:shadow-[-1px_0_12px_rgba(0,0,0,0.3)]
           transition-transform duration-300 ease-in-out
           w-96 flex flex-col
           ${isOpen ? "translate-x-0" : "translate-x-full"}
         `}
       >
         {/* Header */}
-        <div className="shrink-0 flex items-center gap-2 px-4 py-3 border-b border-gray-100">
+        <div className="shrink-0 flex items-center gap-2 px-4 py-3 border-b border-gray-100 dark:border-gray-800">
           <button
             onClick={mode === "frameworks" || mode === "setup" ? onClose : handleBack}
-            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             title={mode === "frameworks" || mode === "setup" ? "Close sidebar" : "Back"}
           >
             {mode === "frameworks" || mode === "setup" ? (
@@ -164,7 +164,7 @@ export function AISidebar({
           </button>
 
           <div className="flex-1 min-w-0">
-            <h2 className="text-sm font-medium text-gray-700 truncate">
+            <h2 className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">
               {mode === "setup" && "AI Setup"}
               {mode === "frameworks" && "Think with AI"}
               {mode === "conversation" && activeFramework?.name}
@@ -194,7 +194,7 @@ export function AISidebar({
 
         {/* Step navigation tabs (conversation mode) */}
         {mode === "conversation" && activeFramework && (
-          <div className="shrink-0 flex overflow-x-auto border-b border-gray-100 px-2 gap-1 py-2">
+          <div className="shrink-0 flex overflow-x-auto border-b border-gray-100 dark:border-gray-800 px-2 gap-1 py-2">
             {activeFramework.steps.map((step) => (
               <button
                 key={step.id}
@@ -202,8 +202,8 @@ export function AISidebar({
                 className={`
                   text-[11px] px-2.5 py-1 rounded-full whitespace-nowrap transition-colors shrink-0
                   ${activeStep?.id === step.id
-                    ? "bg-orange-100 text-orange-700 font-medium"
-                    : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                    ? "bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 font-medium"
+                    : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                   }
                 `}
               >
@@ -230,7 +230,7 @@ export function AISidebar({
                   <line x1="9" y1="22" x2="15" y2="22" />
                 </svg>
               </div>
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Select a note first</h3>
+              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Select a note first</h3>
               <p className="text-xs text-gray-400 leading-relaxed">
                 Hover over a note and click the
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block mx-1 -mt-0.5 text-orange-400">

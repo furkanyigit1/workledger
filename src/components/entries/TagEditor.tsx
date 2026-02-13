@@ -79,14 +79,14 @@ export function TagEditor({ tags, onChange }: TagEditorProps) {
             }
           }}
           placeholder="tag name"
-          className="text-xs bg-transparent outline-none border-b border-stone-300 px-1 py-0.5 w-20 text-stone-600 placeholder:text-stone-300"
+          className="text-xs bg-transparent outline-none border-b border-stone-300 dark:border-stone-600 px-1 py-0.5 w-20 text-stone-600 dark:text-stone-300 placeholder:text-stone-300 dark:placeholder:text-stone-600"
           autoComplete="off"
           data-1p-ignore
         />
       ) : (
         <button
           onClick={() => setIsAdding(true)}
-          className="text-xs text-stone-400 hover:text-stone-600 transition-colors px-1.5 py-0.5 rounded hover:bg-stone-100"
+          className="text-xs text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 transition-colors px-1.5 py-0.5 rounded hover:bg-stone-100 dark:hover:bg-stone-800"
         >
           + tag
         </button>

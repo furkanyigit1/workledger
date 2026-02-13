@@ -66,7 +66,7 @@ export function AIConversation({
 
         {streaming && !streamContent && (
           <div className="flex justify-start mb-4">
-            <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-white border border-gray-100 shadow-sm">
+            <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-gray-700 shadow-sm">
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <span className="ai-thinking-dots">Thinking</span>
               </div>
@@ -75,7 +75,7 @@ export function AIConversation({
         )}
 
         {error && (
-          <div className="mx-2 mb-4 p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
+          <div className="mx-2 mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-800 text-sm text-red-600 dark:text-red-400">
             {error}
           </div>
         )}
@@ -87,7 +87,7 @@ export function AIConversation({
               <button
                 key={suggestion}
                 onClick={() => onSendMessage(suggestion)}
-                className="text-xs px-3 py-1.5 rounded-full bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors"
+                className="text-xs px-3 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-950/60 transition-colors"
               >
                 {suggestion}
               </button>
@@ -97,11 +97,11 @@ export function AIConversation({
       </div>
 
       {/* Input */}
-      <div className="shrink-0 border-t border-gray-100 px-4 py-3">
+      <div className="shrink-0 border-t border-gray-100 dark:border-gray-800 px-4 py-3">
         {streaming ? (
           <button
             onClick={onAbort}
-            className="w-full py-2 text-sm text-gray-500 hover:text-gray-700 bg-gray-50 rounded-lg transition-colors"
+            className="w-full py-2 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 bg-gray-50 dark:bg-gray-800 rounded-lg transition-colors"
           >
             Stop generating
           </button>
@@ -114,7 +114,7 @@ export function AIConversation({
               onKeyDown={handleKeyDown}
               placeholder="Ask a follow-up..."
               rows={1}
-              className="flex-1 resize-none text-sm border border-gray-200 rounded-xl px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 bg-white text-gray-700 placeholder:text-gray-400"
+              className="flex-1 resize-none text-sm border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 outline-none focus:border-orange-300 focus:ring-1 focus:ring-orange-100 dark:focus:ring-orange-900 bg-white dark:bg-[#1a1a1a] text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
             <button
               onClick={handleSend}

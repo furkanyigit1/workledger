@@ -49,16 +49,16 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, on
   return (
     <div className="entry-card group animate-fade-in" id={`entry-${entry.id}`}>
       <div className="flex items-center gap-3 mb-2 px-1">
-        <span className="text-sm text-gray-400 font-mono">
+        <span className="text-sm text-gray-400 dark:text-gray-500 font-mono">
           {formatTime(entry.createdAt)}
         </span>
         {isOld && !isArchiveView && (
-          <span className="text-[11px] text-gray-300 uppercase tracking-wider">
+          <span className="text-[11px] text-gray-300 dark:text-gray-600 uppercase tracking-wider">
             past
           </span>
         )}
         {isArchiveView && (
-          <span className="text-[11px] text-amber-400 uppercase tracking-wider">
+          <span className="text-[11px] text-amber-400 dark:text-amber-500 uppercase tracking-wider">
             archived
           </span>
         )}
@@ -69,7 +69,7 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, on
           {onOpenAI && !isArchiveView && !confirmArchive && !confirmDelete && (
             <button
               onClick={() => onOpenAI(entry)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-orange-50 text-gray-300 hover:text-orange-500"
+              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-orange-50 dark:hover:bg-orange-950 text-gray-300 dark:text-gray-600 hover:text-orange-500"
               title="Think with AI"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -99,7 +99,7 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, on
               {onArchive && (
                 <button
                   onClick={() => setConfirmArchive(true)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-gray-500"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400"
                   title="Archive entry"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -112,7 +112,7 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, on
               {onDelete && (
                 <button
                   onClick={() => setConfirmDelete(true)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-red-400"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-red-400"
                   title="Delete entry permanently"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -139,7 +139,7 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, on
               {onUnarchive && (
                 <button
                   onClick={() => onUnarchive(entry.id)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-green-500"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-green-500"
                   title="Restore entry"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -151,7 +151,7 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, on
               {onDelete && (
                 <button
                   onClick={() => setConfirmDelete(true)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-red-400"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-red-400"
                   title="Delete entry permanently"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -178,7 +178,7 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, on
         <div className="mb-2 px-1">
           <div className="flex flex-wrap gap-1.5">
             {entry.tags.map((tag) => (
-              <span key={tag} className="px-2 py-0.5 rounded-full text-[11px] bg-gray-100 text-gray-500">
+              <span key={tag} className="px-2 py-0.5 rounded-full text-[11px] bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
                 {tag}
               </span>
             ))}

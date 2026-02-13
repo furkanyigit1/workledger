@@ -30,7 +30,7 @@ export function FrameworkSelector({ onSelectFramework }: FrameworkSelectorProps)
 
   return (
     <div className="px-4 py-4 overflow-y-auto h-full">
-      <h3 className="text-sm font-medium text-gray-500 mb-4">
+      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">
         Choose a thinking framework
       </h3>
       {grouped.map((group) => (
@@ -43,12 +43,12 @@ export function FrameworkSelector({ onSelectFramework }: FrameworkSelectorProps)
               <button
                 key={framework.id}
                 onClick={() => onSelectFramework(framework)}
-                className="w-full text-left p-3 rounded-xl border border-gray-100 hover:border-orange-200 hover:bg-orange-50/50 transition-all group"
+                className="w-full text-left p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-orange-200 dark:hover:border-orange-800 hover:bg-orange-50/50 dark:hover:bg-orange-950/30 transition-all group"
               >
                 <div className="flex items-start gap-2.5">
                   <span className="text-lg shrink-0 mt-0.5">{framework.icon}</span>
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-gray-700 group-hover:text-orange-700 transition-colors">
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-orange-700 dark:group-hover:text-orange-400 transition-colors">
                       {framework.name}
                     </div>
                     <div className="text-xs text-gray-400 mt-0.5">
@@ -61,7 +61,7 @@ export function FrameworkSelector({ onSelectFramework }: FrameworkSelectorProps)
                       {framework.steps.map((step) => (
                         <span
                           key={step.id}
-                          className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500"
+                          className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
                         >
                           {step.name}
                         </span>
