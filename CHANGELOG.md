@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- URL hash anchors — navigating to an entry updates the URL to `#entry-<id>`, enabling bookmarks and link sharing
+  - Hash is read on page load to scroll to the referenced entry
+  - Browser back/forward navigation works via `hashchange` listener
+- Focus mode — click the expand icon on any entry to view it full-screen
+  - Distraction-free single-entry view with back button and entry timestamp
+  - Press `Esc` or click the back arrow to return to the stream
+  - URL hash updates in focus mode for bookmarkable focused views
+
 ## [1.1.4] - 2026-02-13
 
 ### Fixed

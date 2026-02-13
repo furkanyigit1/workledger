@@ -41,6 +41,9 @@ export default function App() {
   } = useEntries();
   const { query, results, isOpen: searchOpen, search, open: openSearch, close: closeSearch } = useSearch();
 
+  // Focus mode state
+  const [focusedEntryId, setFocusedEntryId] = useState<string | null>(null);
+
   // AI state
   const { settings: aiSettings, updateSettings: updateAISettings } = useAISettings();
   const { available: aiAvailable } = useAIFeatureGate(aiSettings);
@@ -133,6 +136,7 @@ export default function App() {
   }, []);
 
   const handleSearchResultClick = useCallback((entryId: string) => {
+    history.replaceState(null, "", `#entry-${entryId}`);
     const el = document.getElementById(`entry-${entryId}`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -142,7 +146,7 @@ export default function App() {
   const navigateToEntry = useCallback(
     async (entryId: string) => {
       const scrollAndHighlight = (el: HTMLElement) => {
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
         el.classList.add("entry-link-highlight");
         setTimeout(() => el.classList.remove("entry-link-highlight"), 2000);
         // Focus the editor inside the entry
@@ -159,6 +163,8 @@ export default function App() {
           break;
         }
       }
+
+      history.replaceState(null, "", `#entry-${entryId}`);
 
       const existing = document.getElementById(`entry-${entryId}`);
       if (existing) {
@@ -189,6 +195,41 @@ export default function App() {
     window.addEventListener("workledger:navigate-entry", handler);
     return () => window.removeEventListener("workledger:navigate-entry", handler);
   }, [navigateToEntry]);
+
+  // Read URL hash on initial load
+  useEffect(() => {
+    const hash = window.location.hash;
+    const match = hash.match(/^#entry-(.+)$/);
+    if (match) {
+      const entryId = match[1];
+      // Defer to avoid synchronous setState in effect body
+      requestAnimationFrame(() => navigateToEntry(entryId));
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- run once on mount
+
+  // Listen for hashchange (browser back/forward)
+  useEffect(() => {
+    const handler = () => {
+      const hash = window.location.hash;
+      const match = hash.match(/^#entry-(.+)$/);
+      if (match) {
+        navigateToEntry(match[1]);
+      }
+    };
+    window.addEventListener("hashchange", handler);
+    return () => window.removeEventListener("hashchange", handler);
+  }, [navigateToEntry]);
+
+  // Focus mode handlers
+  const handleFocusEntry = useCallback((entry: WorkLedgerEntry) => {
+    setFocusedEntryId(entry.id);
+    history.replaceState(null, "", `#entry-${entry.id}`);
+  }, []);
+
+  const handleExitFocus = useCallback(() => {
+    setFocusedEntryId(null);
+    history.replaceState(null, "", window.location.pathname);
+  }, []);
 
   const handleTagsChange = useCallback(
     (entryId: string, dayKey: string, tags: string[]) => {
@@ -293,14 +334,16 @@ export default function App() {
           handleToggleAISidebar();
         }
       }
-      if (e.key === "Escape" && sidebarFilter) {
+      if (e.key === "Escape" && focusedEntryId) {
+        handleExitFocus();
+      } else if (e.key === "Escape" && sidebarFilter) {
         setSidebarFilter("");
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [handleNewEntry, searchOpen, closeSearch, openSearch, sidebarFilter, archiveView, aiSettings.enabled, handleToggleAISidebar]);
+  }, [handleNewEntry, searchOpen, closeSearch, openSearch, sidebarFilter, archiveView, aiSettings.enabled, handleToggleAISidebar, focusedEntryId, handleExitFocus]);
 
   if (loading) {
     return (
@@ -347,10 +390,13 @@ export default function App() {
           filterQuery={sidebarFilter}
           onClearFilter={clearFilter}
           onOpenAI={aiSettings.enabled && aiAvailable ? handleOpenAI : undefined}
+          focusedEntryId={focusedEntryId}
+          onFocusEntry={handleFocusEntry}
+          onExitFocus={handleExitFocus}
         />
       </AppShell>
 
-      {!archiveView && <NewEntryButton onClick={handleNewEntry} />}
+      {!archiveView && !focusedEntryId && <NewEntryButton onClick={handleNewEntry} />}
 
       <SearchPanel
         isOpen={searchOpen}

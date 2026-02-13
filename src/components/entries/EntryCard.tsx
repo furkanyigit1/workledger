@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { WorkLedgerEntry } from "../../types/entry.ts";
 import { formatTime, todayKey } from "../../utils/dates.ts";
 import { EntryEditor } from "../editor/EntryEditor.tsx";
@@ -39,15 +39,25 @@ interface EntryCardProps {
   onUnarchive?: (id: string) => void;
   isArchiveView?: boolean;
   onOpenAI?: (entry: WorkLedgerEntry) => void;
+  onFocus?: (entry: WorkLedgerEntry) => void;
 }
 
-export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, onDelete, onUnarchive, isArchiveView, onOpenAI }: EntryCardProps) {
+export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, onDelete, onUnarchive, isArchiveView, onOpenAI, onFocus }: EntryCardProps) {
   const isOld = entry.dayKey < todayKey();
   const [confirmArchive, setConfirmArchive] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const handleCopyLink = useCallback(() => {
+    const url = `${window.location.origin}${window.location.pathname}#entry-${entry.id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    });
+  }, [entry.id]);
 
   return (
-    <div className="entry-card group animate-fade-in" id={`entry-${entry.id}`}>
+    <div className="entry-card group animate-fade-in scroll-mt-[120px]" id={`entry-${entry.id}`}>
       <div className="flex items-center gap-3 mb-2 px-1">
         <span className="text-sm text-gray-400 dark:text-gray-500 font-mono">
           {formatTime(entry.createdAt)}
@@ -65,6 +75,40 @@ export function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, on
 
         {/* Action buttons */}
         <div className="ml-auto flex items-center gap-1">
+          {/* Copy link button */}
+          {!isArchiveView && !confirmArchive && !confirmDelete && (
+            <button
+              onClick={handleCopyLink}
+              className="opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400"
+              title={linkCopied ? "Link copied!" : "Copy link to entry"}
+            >
+              {linkCopied ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+              )}
+            </button>
+          )}
+          {/* Focus mode button */}
+          {onFocus && !isArchiveView && !confirmArchive && !confirmDelete && (
+            <button
+              onClick={() => onFocus(entry)}
+              className="opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400"
+              title="Focus on this entry"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 3h6v6" />
+                <path d="M9 21H3v-6" />
+                <path d="M21 3l-7 7" />
+                <path d="M3 21l7-7" />
+              </svg>
+            </button>
+          )}
           {/* Think with AI button */}
           {onOpenAI && !isArchiveView && !confirmArchive && !confirmDelete && (
             <button
