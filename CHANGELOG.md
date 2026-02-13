@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.3] - 2026-02-13
+
+### Added
+
+- Syntax highlighting for code blocks with language selection dropdown (24 languages)
+  - Powered by Shiki with CSS variable theme that adapts to light/dark mode
+  - Languages loaded on demand for minimal bundle impact
+  - Use `/code` slash command to insert a code block
+
 ## [1.1.2] - 2026-02-13
 
 ### Added
@@ -86,6 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Local-first storage with IndexedDB -- no server required
 - Landing page
 
+[1.1.3]: https://github.com/gruberb/workledger/releases/tag/v1.1.3
 [1.1.2]: https://github.com/gruberb/workledger/releases/tag/v1.1.2
 [1.1.1]: https://github.com/gruberb/workledger/releases/tag/v1.1.1
 [1.1.0]: https://github.com/gruberb/workledger/releases/tag/v1.1.0

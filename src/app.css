@@ -33,6 +33,36 @@
   --color-notebook-scrollbar-hover: #525252;
 }
 
+/* Shiki syntax highlighting — CSS variable theme (light) */
+:root {
+  --shiki-foreground: #24292e;
+  --shiki-background: transparent;
+  --shiki-token-constant: #005cc5;
+  --shiki-token-string: #032f62;
+  --shiki-token-comment: #6a737d;
+  --shiki-token-keyword: #d73a49;
+  --shiki-token-parameter: #24292e;
+  --shiki-token-function: #6f42c1;
+  --shiki-token-string-expression: #22863a;
+  --shiki-token-punctuation: #24292e;
+  --shiki-token-link: #005cc5;
+}
+
+/* Shiki syntax highlighting — dark overrides */
+.dark {
+  --shiki-foreground: #e1e4e8;
+  --shiki-background: transparent;
+  --shiki-token-constant: #79b8ff;
+  --shiki-token-string: #9ecbff;
+  --shiki-token-comment: #6a737d;
+  --shiki-token-keyword: #f97583;
+  --shiki-token-parameter: #e1e4e8;
+  --shiki-token-function: #b392f0;
+  --shiki-token-string-expression: #85e89d;
+  --shiki-token-punctuation: #e1e4e8;
+  --shiki-token-link: #79b8ff;
+}
+
 /* Sidebar title font */
 .sidebar-title-font {
   font-family: "Playfair Display", Georgia, serif;
