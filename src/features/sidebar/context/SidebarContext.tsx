@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from "react";
 import { useEntriesData, useEntriesActions, searchEntries, extractTextFromBlocks } from "../../entries/index.ts";
 import type { WorkLedgerEntry } from "../../entries/index.ts";
-import { clearAllData } from "../../../storage/db.ts";
+import { clearAllData, getDB } from "../../../storage/db.ts";
 import type { Block } from "@blocknote/core";
 
 interface SidebarContextValue {
@@ -178,7 +178,15 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   }, [refreshArchive]);
 
   const handleDeleteAll = useCallback(async () => {
+    // Collect all entry IDs before clearing so sync can create deletion tombstones
+    const db = await getDB();
+    const entryIds = await db.getAllKeys("entries");
     await clearAllData();
+    for (const id of entryIds) {
+      window.dispatchEvent(
+        new CustomEvent("workledger:entry-deleted", { detail: { entryId: id } }),
+      );
+    }
     await refresh();
     await refreshArchive();
     setActiveDayKey(null);
