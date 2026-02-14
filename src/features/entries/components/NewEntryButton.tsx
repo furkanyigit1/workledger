@@ -1,22 +1,24 @@
 interface NewEntryButtonProps {
   onClick: () => void;
+  aiSidebarOpen?: boolean;
 }
 
-export function NewEntryButton({ onClick }: NewEntryButtonProps) {
+export function NewEntryButton({ onClick, aiSidebarOpen }: NewEntryButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="
-        fixed bottom-8 right-8 z-[999]
+      className={`
+        fixed bottom-8 z-[999]
         flex items-center gap-2
         bg-orange-500 hover:bg-orange-400 active:bg-orange-600
         text-white font-medium
         px-6 py-3.5 rounded-full
         shadow-lg shadow-orange-500/20 dark:shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/25 dark:hover:shadow-orange-500/35
-        transition-all duration-200
+        transition-all duration-300 ease-in-out
         hover:scale-[1.02]
         group
-      "
+        ${aiSidebarOpen ? "right-[26rem]" : "right-8"}
+      `}
       title="New Entry (⌘J)"
     >
       <svg

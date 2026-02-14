@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.1.3] - 2026-02-14
+
+### Fixed
+
+- New Entry button no longer overlaps the AI sidebar — shifts left when the sidebar is open
+- Focus mode exit now restores scroll position to the previously focused entry
+- Focus mode exit feels instant instead of ~1s delay (uses instant scroll instead of smooth)
+
+### Added
+
+- Sidebar auto-highlights the current day section as you scroll through entries
+
 ## [2.1.2] - 2026-02-14
 
 ### Added

@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { useEntriesData, useEntriesActions } from "../context/EntriesContext.tsx";
 import { useSidebarUI } from "../../sidebar/index.ts";
 import { on } from "../../../utils/events.ts";
@@ -7,6 +7,7 @@ export function useEntryNavigation() {
   const { entriesByDay } = useEntriesData();
   const { loadEntryById } = useEntriesActions();
   const { setActiveDayKey } = useSidebarUI();
+  const isManualScroll = useRef(false);
 
   const navigateToEntry = useCallback(
     async (entryId: string) => {
@@ -59,11 +60,14 @@ export function useEntryNavigation() {
   }, []);
 
   const handleDayClick = useCallback((dayKey: string) => {
+    isManualScroll.current = true;
     setActiveDayKey(dayKey);
     const el = document.getElementById(`day-${dayKey}`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+    // Re-enable observer after scroll settles
+    setTimeout(() => { isManualScroll.current = false; }, 800);
   }, [setActiveDayKey]);
 
   // Listen for wiki link navigation events
@@ -93,6 +97,35 @@ export function useEntryNavigation() {
     window.addEventListener("hashchange", handler);
     return () => window.removeEventListener("hashchange", handler);
   }, [navigateToEntry]);
+
+  // IntersectionObserver: auto-highlight the current day in the sidebar while scrolling
+  useEffect(() => {
+    const daySections = document.querySelectorAll<HTMLElement>("[id^='day-']");
+    if (daySections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isManualScroll.current) return;
+        // Find the topmost visible day section
+        let topEntry: IntersectionObserverEntry | null = null;
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            if (!topEntry || entry.boundingClientRect.top < topEntry.boundingClientRect.top) {
+              topEntry = entry;
+            }
+          }
+        }
+        if (topEntry) {
+          const dayKey = topEntry.target.id.replace("day-", "");
+          setActiveDayKey(dayKey);
+        }
+      },
+      { rootMargin: "-10% 0px -70% 0px", threshold: 0 },
+    );
+
+    daySections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [entriesByDay, setActiveDayKey]); // re-attach when entries change
 
   return { navigateToEntry, handleSearchResultClick, handleDayClick };
 }

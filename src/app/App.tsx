@@ -76,7 +76,7 @@ function AppContent() {
         />
       </AppShell>
 
-      {!archiveView && !focusedEntryId && <NewEntryButton onClick={handleNewEntry} />}
+      {!archiveView && !focusedEntryId && <NewEntryButton onClick={handleNewEntry} aiSidebarOpen={aiSidebarOpen && !isMobile} />}
 
       <SearchPanel
         isOpen={searchOpen}
