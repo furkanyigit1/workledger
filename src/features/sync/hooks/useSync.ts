@@ -223,9 +223,10 @@ export function useSync() {
       setStatus((s) => ({ ...s, phase: "pushing" }));
 
       const allEntries = await getAllEntries();
-      const toPush = allEntries.filter(
-        (e) => cfg.lastSyncAt === null || e.updatedAt > cfg.lastSyncAt,
-      );
+      const dirtyIds = dirtyEntriesRef.current;
+      const toPush = dirtyIds.size > 0
+        ? allEntries.filter((e) => dirtyIds.has(e.id))
+        : allEntries.filter((e) => cfg.lastSyncAt === null || e.updatedAt > cfg.lastSyncAt);
 
       // Build deletion markers for entries removed from IDB
       const now = Date.now();

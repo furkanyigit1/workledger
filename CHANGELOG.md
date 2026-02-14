@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-## [2.0.1] - 2026-02-14
+## [2.0.2] - 2026-02-14
 
 ### Fixed
 
-- Background sync push no longer silently drops when a pull is in progress — retries automatically
+- Background push uses dirty entry tracking instead of timestamp comparison — entries edited between pull cycles are no longer missed
+- Background push retries when blocked by an in-progress pull instead of silently dropping
 
 ## [2.0.0] - 2026-02-14
 
@@ -175,6 +176,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Local-first storage with IndexedDB -- no server required
 - Landing page
 
+[2.0.2]: https://github.com/gruberb/workledger/releases/tag/v2.0.2
 [2.0.1]: https://github.com/gruberb/workledger/releases/tag/v2.0.1
 [2.0.0]: https://github.com/gruberb/workledger/releases/tag/v2.0.0
 [1.1.4]: https://github.com/gruberb/workledger/releases/tag/v1.1.4
