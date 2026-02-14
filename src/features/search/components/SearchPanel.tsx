@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import type { SearchIndexEntry } from "../../entries/index.ts";
 import { formatDayKey } from "../../../utils/dates.ts";
+import { SearchIcon } from "../../../components/ui/Icons.tsx";
 
 interface SearchPanelProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export function SearchPanel({
   onResultClick,
 }: SearchPanelProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -38,10 +40,36 @@ export function SearchPanel({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
+  // Focus trap: keep Tab within the dialog
+  const handleKeyDownFocusTrap = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== "Tab") return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const focusable = panel.querySelectorAll<HTMLElement>(
+      'input, button, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }, []);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Search entries"
+      onKeyDown={handleKeyDownFocusTrap}
+    >
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/20 dark:bg-black/50 backdrop-blur-sm"
@@ -49,21 +77,12 @@ export function SearchPanel({
       />
 
       {/* Panel */}
-      <div className="relative w-full max-w-lg mx-4 bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-2xl overflow-hidden animate-scale-in border border-gray-100 dark:border-gray-700">
+      <div
+        ref={panelRef}
+        className="relative w-full max-w-lg mx-4 bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-2xl overflow-hidden animate-scale-in border border-gray-100 dark:border-gray-700"
+      >
         <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            className="text-gray-400 shrink-0"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+          <SearchIcon size={18} className="text-gray-400 shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -72,6 +91,7 @@ export function SearchPanel({
             placeholder="Search entries and tags..."
             className="flex-1 text-sm bg-transparent outline-none text-gray-800 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500"
             autoComplete="off"
+            aria-label="Search query"
             data-1p-ignore
           />
           <kbd className="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded">
@@ -79,7 +99,7 @@ export function SearchPanel({
           </kbd>
         </div>
 
-        <div className="max-h-80 overflow-y-auto">
+        <div className="max-h-80 overflow-y-auto" role="listbox" aria-label="Search results">
           {query && results.length === 0 && (
             <div className="px-4 py-8 text-center text-sm text-gray-400">
               No entries found
@@ -93,6 +113,8 @@ export function SearchPanel({
             return (
               <button
                 key={result.entryId}
+                role="option"
+                aria-selected={false}
                 onClick={() => {
                   onResultClick(result.entryId, result.dayKey);
                   onClose();

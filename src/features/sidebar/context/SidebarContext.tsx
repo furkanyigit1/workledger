@@ -2,12 +2,23 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo, t
 import { useEntriesData, useEntriesActions, searchEntries, extractTextFromBlocks } from "../../entries/index.ts";
 import type { WorkLedgerEntry } from "../../entries/index.ts";
 import { clearAllData, getDB } from "../../../storage/db.ts";
+import { emit } from "../../../utils/events.ts";
 import type { Block } from "@blocknote/core";
+import { filterEntries } from "../utils/filterEntries.ts";
 
-interface SidebarContextValue {
+// --- Context value types ---
+
+interface SidebarUIValue {
   isOpen: boolean;
   toggleSidebar: () => void;
   setSidebarOpen: (open: boolean) => void;
+  archiveView: boolean;
+  toggleArchiveView: () => void;
+  activeDayKey: string | null;
+  setActiveDayKey: (key: string | null) => void;
+}
+
+interface SidebarFilterValue {
   selectedTags: string[];
   toggleTag: (tag: string) => void;
   removeTag: (tag: string) => void;
@@ -15,10 +26,9 @@ interface SidebarContextValue {
   setTextQuery: (query: string) => void;
   clearAllFilters: () => void;
   hasActiveFilters: boolean;
-  archiveView: boolean;
-  toggleArchiveView: () => void;
-  activeDayKey: string | null;
-  setActiveDayKey: (key: string | null) => void;
+}
+
+interface SidebarDataValue {
   displayEntriesByDay: Map<string, WorkLedgerEntry[]>;
   displayArchivedEntriesByDay: Map<string, WorkLedgerEntry[]>;
   sidebarDayKeys: string[];
@@ -28,7 +38,13 @@ interface SidebarContextValue {
   handleDeleteAll: () => Promise<void>;
 }
 
-const SidebarCtx = createContext<SidebarContextValue | null>(null);
+// --- Contexts ---
+
+const SidebarUICtx = createContext<SidebarUIValue | null>(null);
+const SidebarFilterCtx = createContext<SidebarFilterValue | null>(null);
+const SidebarDataCtx = createContext<SidebarDataValue | null>(null);
+
+// --- Provider ---
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
   const { entriesByDay, dayKeys, archivedEntries } = useEntriesData();
@@ -43,8 +59,23 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   const [archiveView, setArchiveView] = useState(false);
   const [activeDayKey, setActiveDayKey] = useState<string | null>(null);
 
+  // --- UI actions ---
+
   const toggleSidebar = useCallback(() => setIsOpen((prev) => !prev), []);
   const setSidebarOpen = useCallback((open: boolean) => setIsOpen(open), []);
+
+  const toggleArchiveView = useCallback(() => {
+    setArchiveView((prev) => {
+      if (!prev) {
+        refreshArchive();
+      }
+      return !prev;
+    });
+    setSelectedTags([]);
+    setTextQuery("");
+  }, [refreshArchive]);
+
+  // --- Filter actions ---
 
   const toggleTag = useCallback((tag: string) => {
     setSelectedTags((prev) =>
@@ -76,34 +107,12 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     return () => clearTimeout(timer);
   }, [textQuery]);
 
-  const displayEntriesByDay = useMemo(() => {
-    const hasTagFilter = selectedTags.length > 0;
-    const hasTextFilter = textQuery.trim() !== "";
-    if (!hasTagFilter && !hasTextFilter) return entriesByDay;
+  // --- Computed data ---
 
-    const textLower = textQuery.trim().toLowerCase();
-    const filtered = new Map<string, WorkLedgerEntry[]>();
-    for (const [dayKey, entries] of entriesByDay) {
-      const matching = entries.filter((e) => {
-        // Tag filter: entry must have every selected tag (exact match, AND logic)
-        if (hasTagFilter) {
-          const entryTags = e.tags ?? [];
-          if (!selectedTags.every((st) => entryTags.includes(st))) return false;
-        }
-        // Text filter: search index + in-memory tag substring match
-        if (hasTextFilter) {
-          const tagMatch = e.tags?.some((t) => t.toLowerCase().includes(textLower));
-          const indexMatch = filteredEntryIds?.has(e.id);
-          if (!tagMatch && !indexMatch) return false;
-        }
-        return true;
-      });
-      if (matching.length > 0) {
-        filtered.set(dayKey, matching);
-      }
-    }
-    return filtered;
-  }, [entriesByDay, filteredEntryIds, selectedTags, textQuery]);
+  const displayEntriesByDay = useMemo(() => {
+    if (!hasActiveFilters) return entriesByDay;
+    return filterEntries(entriesByDay, selectedTags, textQuery, (e) => !!filteredEntryIds?.has(e.id));
+  }, [entriesByDay, filteredEntryIds, selectedTags, textQuery, hasActiveFilters]);
 
   const sidebarDayKeys = useMemo(
     () => (hasActiveFilters ? [...displayEntriesByDay.keys()].sort((a, b) => b.localeCompare(a)) : dayKeys),
@@ -111,35 +120,14 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   );
 
   const displayArchivedEntriesByDay = useMemo(() => {
-    const hasTagFilter = selectedTags.length > 0;
-    const hasTextFilter = textQuery.trim() !== "";
-    if (!hasTagFilter && !hasTextFilter) return archivedEntries;
-
+    if (!hasActiveFilters) return archivedEntries;
     const textLower = textQuery.trim().toLowerCase();
-    const filtered = new Map<string, WorkLedgerEntry[]>();
-    for (const [dayKey, entries] of archivedEntries) {
-      const matching = entries.filter((e) => {
-        if (hasTagFilter) {
-          const entryTags = e.tags ?? [];
-          if (!selectedTags.every((st) => entryTags.includes(st))) return false;
-        }
-        if (hasTextFilter) {
-          const tagMatch = e.tags?.some((t) => t.toLowerCase().includes(textLower));
-          let textMatch = false;
-          if (e.blocks?.length) {
-            const text = extractTextFromBlocks(e.blocks as Block[]).toLowerCase();
-            if (text.includes(textLower)) textMatch = true;
-          }
-          if (!tagMatch && !textMatch) return false;
-        }
-        return true;
-      });
-      if (matching.length > 0) {
-        filtered.set(dayKey, matching);
-      }
-    }
-    return filtered;
-  }, [archivedEntries, selectedTags, textQuery]);
+    return filterEntries(archivedEntries, selectedTags, textQuery, (e) => {
+      if (!e.blocks?.length) return false;
+      const text = extractTextFromBlocks(e.blocks as Block[]).toLowerCase();
+      return text.includes(textLower);
+    });
+  }, [archivedEntries, selectedTags, textQuery, hasActiveFilters]);
 
   const archivedDayKeys = useMemo(
     () => [...displayArchivedEntriesByDay.keys()].sort((a, b) => b.localeCompare(a)),
@@ -166,36 +154,32 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     return count;
   }, [archivedEntries]);
 
-  const toggleArchiveView = useCallback(() => {
-    setArchiveView((prev) => {
-      if (!prev) {
-        refreshArchive();
-      }
-      return !prev;
-    });
-    setSelectedTags([]);
-    setTextQuery("");
-  }, [refreshArchive]);
-
   const handleDeleteAll = useCallback(async () => {
     // Collect all entry IDs before clearing so sync can create deletion tombstones
     const db = await getDB();
     const entryIds = await db.getAllKeys("entries");
     await clearAllData();
     for (const id of entryIds) {
-      window.dispatchEvent(
-        new CustomEvent("workledger:entry-deleted", { detail: { entryId: id } }),
-      );
+      emit("entry-deleted", { entryId: id as string });
     }
     await refresh();
     await refreshArchive();
     setActiveDayKey(null);
   }, [refresh, refreshArchive]);
 
-  const value: SidebarContextValue = {
+  // --- Context values (stable via useMemo) ---
+
+  const uiValue: SidebarUIValue = useMemo(() => ({
     isOpen,
     toggleSidebar,
     setSidebarOpen,
+    archiveView,
+    toggleArchiveView,
+    activeDayKey,
+    setActiveDayKey,
+  }), [isOpen, toggleSidebar, setSidebarOpen, archiveView, toggleArchiveView, activeDayKey]);
+
+  const filterValue: SidebarFilterValue = useMemo(() => ({
     selectedTags,
     toggleTag,
     removeTag,
@@ -203,10 +187,9 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     setTextQuery,
     clearAllFilters,
     hasActiveFilters,
-    archiveView,
-    toggleArchiveView,
-    activeDayKey,
-    setActiveDayKey,
+  }), [selectedTags, toggleTag, removeTag, textQuery, clearAllFilters, hasActiveFilters]);
+
+  const dataValue: SidebarDataValue = useMemo(() => ({
     displayEntriesByDay,
     displayArchivedEntriesByDay,
     sidebarDayKeys,
@@ -214,14 +197,44 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     allTags,
     archivedCount,
     handleDeleteAll,
-  };
+  }), [displayEntriesByDay, displayArchivedEntriesByDay, sidebarDayKeys, archivedDayKeys, allTags, archivedCount, handleDeleteAll]);
 
-  return <SidebarCtx.Provider value={value}>{children}</SidebarCtx.Provider>;
+  return (
+    <SidebarUICtx.Provider value={uiValue}>
+      <SidebarFilterCtx.Provider value={filterValue}>
+        <SidebarDataCtx.Provider value={dataValue}>
+          {children}
+        </SidebarDataCtx.Provider>
+      </SidebarFilterCtx.Provider>
+    </SidebarUICtx.Provider>
+  );
+}
+
+// --- Hooks ---
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function useSidebarUI(): SidebarUIValue {
+  const ctx = useContext(SidebarUICtx);
+  if (!ctx) throw new Error("useSidebarUI must be used within SidebarProvider");
+  return ctx;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function useSidebarContext(): SidebarContextValue {
-  const ctx = useContext(SidebarCtx);
-  if (!ctx) throw new Error("useSidebarContext must be used within SidebarProvider");
+export function useSidebarFilter(): SidebarFilterValue {
+  const ctx = useContext(SidebarFilterCtx);
+  if (!ctx) throw new Error("useSidebarFilter must be used within SidebarProvider");
   return ctx;
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function useSidebarData(): SidebarDataValue {
+  const ctx = useContext(SidebarDataCtx);
+  if (!ctx) throw new Error("useSidebarData must be used within SidebarProvider");
+  return ctx;
+}
+
+// Convenience hook that returns all three — for consumers that need everything
+// eslint-disable-next-line react-refresh/only-export-components
+export function useSidebarContext() {
+  return { ...useSidebarUI(), ...useSidebarFilter(), ...useSidebarData() };
 }

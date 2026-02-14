@@ -15,6 +15,7 @@ import { deleteSearchIndex, updateSearchIndex } from "../storage/search-index.ts
 import type { Block } from "@blocknote/core";
 import { generateId } from "../../../utils/id.ts";
 import { todayKey } from "../../../utils/dates.ts";
+import { emit } from "../../../utils/events.ts";
 
 export function useEntries() {
   const [entriesByDay, setEntriesByDay] = useState<
@@ -60,7 +61,7 @@ export function useEntries() {
       tags: [],
     };
     await dbCreateEntry(entry);
-    window.dispatchEvent(new CustomEvent("workledger:entry-changed", { detail: { entryId: entry.id } }));
+    emit("entry-changed", { entryId: entry.id });
     await refresh();
     return entry;
   }, [refresh]);
@@ -68,7 +69,7 @@ export function useEntries() {
   const updateEntry = useCallback(
     async (entry: WorkLedgerEntry) => {
       await dbUpdateEntry(entry);
-      window.dispatchEvent(new CustomEvent("workledger:entry-changed", { detail: { entryId: entry.id } }));
+      emit("entry-changed", { entryId: entry.id });
       setEntriesByDay((prev) => {
         const next = new Map(prev);
         const dayEntries = [...(next.get(entry.dayKey) || [])];
@@ -95,7 +96,7 @@ export function useEntries() {
         updatedAt: Date.now(),
       };
       await dbUpdateEntry(updated);
-      window.dispatchEvent(new CustomEvent("workledger:entry-changed", { detail: { entryId } }));
+      emit("entry-changed", { entryId });
       setEntriesByDay((prev) => {
         const next = new Map(prev);
         const dayEntries = [...(next.get(dayKey) || [])];
@@ -113,7 +114,7 @@ export function useEntries() {
   const archiveEntry = useCallback(
     async (id: string) => {
       await dbArchiveEntry(id);
-      window.dispatchEvent(new CustomEvent("workledger:entry-changed", { detail: { entryId: id } }));
+      emit("entry-changed", { entryId: id });
       await deleteSearchIndex(id);
       await refresh();
       await refreshArchive();
@@ -142,7 +143,7 @@ export function useEntries() {
   const deleteEntry = useCallback(
     async (id: string) => {
       await dbDeleteEntry(id);
-      window.dispatchEvent(new CustomEvent("workledger:entry-deleted", { detail: { entryId: id } }));
+      emit("entry-deleted", { entryId: id });
       await deleteSearchIndex(id);
       await refresh();
       await refreshArchive();

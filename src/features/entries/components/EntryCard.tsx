@@ -4,6 +4,8 @@ import { formatTime, todayKey } from "../../../utils/dates.ts";
 import { EntryEditor } from "../../editor/index.ts";
 import { TagEditor } from "./TagEditor.tsx";
 import { ConfirmAction } from "../../../components/ui/ConfirmAction.tsx";
+import { ErrorBoundary } from "../../../components/ui/ErrorBoundary.tsx";
+import { CheckIcon, ArchiveIcon, TrashIcon, AIIcon } from "../../../components/ui/Icons.tsx";
 
 interface EntryCardProps {
   entry: WorkLedgerEntry;
@@ -57,11 +59,10 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
               onClick={handleCopyLink}
               className="opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400"
               title={linkCopied ? "Link copied!" : "Copy link to entry"}
+              aria-label={linkCopied ? "Link copied" : "Copy link to entry"}
             >
               {linkCopied ? (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
+                <CheckIcon />
               ) : (
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
@@ -76,6 +77,7 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
               onClick={() => onFocus(entry)}
               className="opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400"
               title="Focus on this entry"
+              aria-label="Focus on this entry"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 3h6v6" />
@@ -91,11 +93,9 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
               onClick={() => onOpenAI(entry)}
               className="opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity p-1 rounded hover:bg-orange-50 dark:hover:bg-orange-950 text-gray-300 dark:text-gray-600 hover:text-orange-500"
               title="Think with AI"
+              aria-label="Think with AI"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2a8 8 0 0 0-8 8c0 3.36 2.07 6.24 5 7.42V19a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1.58c2.93-1.18 5-4.06 5-7.42a8 8 0 0 0-8-8z" />
-                <line x1="9" y1="22" x2="15" y2="22" />
-              </svg>
+              <AIIcon />
             </button>
           )}
           {/* Normal view: archive + delete */}
@@ -121,12 +121,9 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
                   onClick={() => setConfirmArchive(true)}
                   className="opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400"
                   title="Archive entry"
+                  aria-label="Archive entry"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="21 8 21 21 3 21 3 8" />
-                    <rect x="1" y="3" width="22" height="5" />
-                    <line x1="10" y1="12" x2="14" y2="12" />
-                  </svg>
+                  <ArchiveIcon />
                 </button>
               )}
               {onDelete && (
@@ -134,13 +131,9 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
                   onClick={() => setConfirmDelete(true)}
                   className="opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-red-400"
                   title="Delete entry permanently"
+                  aria-label="Delete entry permanently"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
-                  </svg>
+                  <TrashIcon />
                 </button>
               )}
             </>
@@ -161,6 +154,7 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
                   onClick={() => onUnarchive(entry.id)}
                   className="opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-green-500"
                   title="Restore entry"
+                  aria-label="Restore entry"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="1 4 1 10 7 10" />
@@ -173,13 +167,9 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
                   onClick={() => setConfirmDelete(true)}
                   className="opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 dark:text-gray-600 hover:text-red-400"
                   title="Delete entry permanently"
+                  aria-label="Delete entry permanently"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
-                  </svg>
+                  <TrashIcon />
                 </button>
               )}
             </>
@@ -211,12 +201,19 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
           ${isOld || isArchiveView ? "opacity-80" : ""}
         `}
       >
-        <EntryEditor
-          entry={entry}
-          editable={!isArchiveView}
-          onSave={onSave}
-          autoFocus={isLatest && !isOld && !isArchiveView}
-        />
+        <ErrorBoundary fallback={
+          <div className="text-center py-8 text-sm text-[var(--color-notebook-muted)]">
+            Editor failed to load.{" "}
+            <button className="text-[var(--color-notebook-accent)] hover:underline" onClick={() => window.location.reload()}>Reload</button>
+          </div>
+        }>
+          <EntryEditor
+            entry={entry}
+            editable={!isArchiveView}
+            onSave={onSave}
+            autoFocus={isLatest && !isOld && !isArchiveView}
+          />
+        </ErrorBoundary>
       </div>
       <div className="entry-ruling mt-4 mb-4" />
     </div>

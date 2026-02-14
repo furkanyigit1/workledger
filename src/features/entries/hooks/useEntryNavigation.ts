@@ -1,11 +1,12 @@
 import { useEffect, useCallback } from "react";
 import { useEntriesData, useEntriesActions } from "../context/EntriesContext.tsx";
-import { useSidebarContext } from "../../sidebar/index.ts";
+import { useSidebarUI } from "../../sidebar/index.ts";
+import { on } from "../../../utils/events.ts";
 
 export function useEntryNavigation() {
   const { entriesByDay } = useEntriesData();
   const { loadEntryById } = useEntriesActions();
-  const { setActiveDayKey } = useSidebarContext();
+  const { setActiveDayKey } = useSidebarUI();
 
   const navigateToEntry = useCallback(
     async (entryId: string) => {
@@ -65,14 +66,9 @@ export function useEntryNavigation() {
     }
   }, [setActiveDayKey]);
 
-  // Custom event listener for wiki links
+  // Listen for wiki link navigation events
   useEffect(() => {
-    const handler = (e: Event) => {
-      const entryId = (e as CustomEvent).detail?.entryId;
-      if (entryId) navigateToEntry(entryId);
-    };
-    window.addEventListener("workledger:navigate-entry", handler);
-    return () => window.removeEventListener("workledger:navigate-entry", handler);
+    return on("navigate-entry", ({ entryId }) => navigateToEntry(entryId));
   }, [navigateToEntry]);
 
   // Read URL hash on initial load

@@ -1,11 +1,12 @@
 import { lazy, Suspense } from "react";
 import { AppShell } from "../components/layout/AppShell.tsx";
-import { Sidebar, useSidebarContext } from "../features/sidebar/index.ts";
+import { ErrorBoundary } from "../components/ui/ErrorBoundary.tsx";
+import { Sidebar } from "../features/sidebar/index.ts";
+import { useSidebarUI, useSidebarFilter, useSidebarData } from "../features/sidebar/index.ts";
 import { EntryStream, NewEntryButton, useEntriesData, useEntriesActions, useEntryNavigation } from "../features/entries/index.ts";
 import { SearchPanel, useSearch } from "../features/search/index.ts";
 import { useFocusModeContext } from "../features/focus-mode/index.ts";
 import { useAIContext } from "../features/ai/index.ts";
-import { useThemeContext } from "../features/theme/index.ts";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts.ts";
 import { useIsMobile } from "../hooks/useIsMobile.ts";
 
@@ -15,7 +16,9 @@ import { AppProviders } from "./AppProviders.tsx";
 export default function App() {
   return (
     <AppProviders>
-      <AppContent />
+      <ErrorBoundary>
+        <AppContent />
+      </ErrorBoundary>
     </AppProviders>
   );
 }
@@ -23,35 +26,15 @@ export default function App() {
 function AppContent() {
   const isMobile = useIsMobile();
   const { loading } = useEntriesData();
-  const { updateEntry, updateEntryTags, archiveEntry, unarchiveEntry, deleteEntry, refresh } = useEntriesActions();
-  const {
-    isOpen: sidebarOpen,
-    archiveView,
-    selectedTags,
-    toggleTag,
-    removeTag,
-    textQuery,
-    setTextQuery,
-    clearAllFilters,
-    hasActiveFilters,
-    displayEntriesByDay,
-    displayArchivedEntriesByDay,
-    sidebarDayKeys,
-    archivedDayKeys,
-    allTags,
-    archivedCount,
-    toggleArchiveView,
-    activeDayKey,
-    handleDeleteAll,
-    toggleSidebar,
-  } = useSidebarContext();
+  const { updateEntry, updateEntryTags, archiveEntry, unarchiveEntry, deleteEntry } = useEntriesActions();
+  const { isOpen: sidebarOpen, archiveView } = useSidebarUI();
+  const { textQuery, selectedTags, hasActiveFilters, removeTag, clearAllFilters } = useSidebarFilter();
+  const { displayEntriesByDay, displayArchivedEntriesByDay } = useSidebarData();
   const { focusedEntryId, handleFocusEntry, handleExitFocus } = useFocusModeContext();
-  const { settings: aiSettings, sidebarOpen: aiSidebarOpen, targetEntry: aiTargetEntry, handleToggleAI, handleToggleAISidebar, handleOpenAI, available: aiAvailable, updateSettings: updateAISettings } = useAIContext();
+  const { settings: aiSettings, sidebarOpen: aiSidebarOpen, targetEntry: aiTargetEntry, handleToggleAISidebar, handleOpenAI, available: aiAvailable, updateSettings: updateAISettings } = useAIContext();
   const { query, results, isOpen: searchOpen, search, open: openSearch, close: closeSearch } = useSearch();
   const { handleNewEntry } = useKeyboardShortcuts({ isOpen: searchOpen, open: openSearch, close: closeSearch });
   const { handleSearchResultClick, handleDayClick } = useEntryNavigation();
-
-  const { themeId, setTheme, fontFamily, setFont } = useThemeContext();
 
   if (loading) {
     return (
@@ -68,29 +51,8 @@ function AppContent() {
   return (
     <>
       <Sidebar
-        dayKeys={archiveView ? archivedDayKeys : sidebarDayKeys}
-        entriesByDay={archiveView ? (displayArchivedEntriesByDay as Map<string, unknown[]>) : (displayEntriesByDay as Map<string, unknown[]>)}
-        isOpen={sidebarOpen}
-        onToggle={toggleSidebar}
         onDayClick={handleDayClick}
-        textQuery={textQuery}
-        onTextSearch={setTextQuery}
         onSearchOpen={() => search("")}
-        allTags={allTags}
-        selectedTags={selectedTags}
-        onToggleTag={toggleTag}
-        onRefresh={refresh}
-        isArchiveView={archiveView}
-        onToggleArchiveView={toggleArchiveView}
-        archivedCount={archivedCount}
-        activeDayKey={activeDayKey}
-        onDeleteAll={handleDeleteAll}
-        aiEnabled={aiSettings.enabled}
-        onToggleAI={handleToggleAI}
-        themeId={themeId}
-        onSetTheme={setTheme}
-        fontFamily={fontFamily}
-        onSetFont={setFont}
       />
 
       <AppShell sidebarOpen={sidebarOpen} aiSidebarOpen={aiSidebarOpen}>

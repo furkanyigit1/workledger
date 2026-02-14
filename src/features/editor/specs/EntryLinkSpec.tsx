@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { createReactInlineContentSpec } from "@blocknote/react";
 import { getEntry, extractTitle } from "../../entries/index.ts";
+import { emit } from "../../../utils/events.ts";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function EntryLinkRenderer(props: {
@@ -30,11 +31,7 @@ function EntryLinkRenderer(props: {
     e.preventDefault();
     e.stopPropagation();
     if (isDeleted) return;
-    window.dispatchEvent(
-      new CustomEvent("workledger:navigate-entry", {
-        detail: { entryId },
-      }),
-    );
+    emit("navigate-entry", { entryId });
   };
 
   return (

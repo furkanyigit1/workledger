@@ -1,13 +1,13 @@
 import { type ReactNode, useCallback, useMemo } from "react";
 import { useTheme, ThemeContext } from "../features/theme/index.ts";
 import { EntriesProvider } from "../features/entries/index.ts";
-import { SidebarProvider, useSidebarContext } from "../features/sidebar/index.ts";
+import { SidebarProvider, useSidebarUI } from "../features/sidebar/index.ts";
 import { FocusModeProvider } from "../features/focus-mode/index.ts";
 import { AIProvider } from "../features/ai/index.ts";
 import { SyncProvider } from "../features/sync/index.ts";
 
 function AIProviderWithSidebar({ children }: { children: ReactNode }) {
-  const { setSidebarOpen } = useSidebarContext();
+  const { setSidebarOpen } = useSidebarUI();
   const onCollapseSidebar = useCallback(() => setSidebarOpen(false), [setSidebarOpen]);
 
   return (

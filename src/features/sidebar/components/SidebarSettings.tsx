@@ -67,6 +67,9 @@ export function SidebarSettings({
         }}
         className={`p-1 rounded-lg hover:bg-[var(--color-notebook-surface-alt)] transition-colors ${settingsOpen ? "bg-[var(--color-notebook-surface-alt)] text-[var(--color-notebook-text)]" : `${mutedClass} hover:text-[var(--color-notebook-text)]`}`}
         title="Settings"
+        aria-label="Settings"
+        aria-expanded={settingsOpen}
+        aria-haspopup="menu"
       >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="3" />
@@ -75,7 +78,7 @@ export function SidebarSettings({
       </button>
 
       {settingsOpen && (
-        <div className="absolute right-0 top-full mt-1 w-64 bg-[var(--color-notebook-surface)] rounded-lg shadow-lg border border-[var(--color-notebook-border)] py-1 z-50">
+        <div className="absolute right-0 top-full mt-1 w-64 bg-[var(--color-notebook-surface)] rounded-lg shadow-lg border border-[var(--color-notebook-border)] py-1 z-50" role="menu" aria-label="Settings menu">
           {submenu === null && (
             <>
               {/* Archive toggle */}

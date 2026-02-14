@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { useEntriesActions } from "../features/entries/index.ts";
-import { useSidebarContext } from "../features/sidebar/index.ts";
+import { useSidebarUI, useSidebarFilter } from "../features/sidebar/index.ts";
 import { useFocusModeContext } from "../features/focus-mode/index.ts";
 import { useAIContext } from "../features/ai/index.ts";
 
@@ -12,7 +12,8 @@ interface SearchControls {
 
 export function useKeyboardShortcuts(search: SearchControls) {
   const { createEntry } = useEntriesActions();
-  const { archiveView, hasActiveFilters, clearAllFilters, toggleSidebar } = useSidebarContext();
+  const { archiveView, toggleSidebar } = useSidebarUI();
+  const { hasActiveFilters, clearAllFilters } = useSidebarFilter();
   const { focusedEntryId, handleExitFocus } = useFocusModeContext();
   const { settings: aiSettings, handleToggleAISidebar } = useAIContext();
 

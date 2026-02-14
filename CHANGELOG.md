@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.1.2] - 2026-02-14
+
+### Added
+
+- App-level error boundary — unexpected crashes show a recovery screen instead of a blank page
+- Editor-level error boundary — a failed editor no longer takes down the entire app
+- Unit tests for sync crypto, integrity hashing, and entry encryption/decryption (30 tests via vitest)
+- Typed event bus (`src/utils/events.ts`) replaces untyped `window.dispatchEvent(CustomEvent)` calls across features
+- Shared icon components (`Icons.tsx`) for archive, trash, check, AI, search, settings, chevron, and close icons
+- Accessibility: focus trap on search panel, `role`/`aria-expanded`/`aria-haspopup` on settings dropdown, `aria-label` on all icon-only buttons
+
+### Changed
+
+- Split `SidebarContext` into three focused contexts (`useSidebarUI`, `useSidebarFilter`, `useSidebarData`) to reduce unnecessary re-renders
+- `Sidebar` component now consumes its own contexts directly — reduced from 22 props to 2
+- Extracted sync encryption/decryption into `sync-crypto.ts` and push/pull operations into `sync-operations.ts`
+- Deduplicated entry filtering logic into shared `filterEntries()` utility with pluggable text matcher
+- Moved Excalidraw global styles from module-level DOM injection to lazy `ensureStyles()` on first render
+- Sync now performs an initial pull immediately on connect instead of waiting for the first 30-second interval
+
 ## [2.1.1] - 2026-02-14
 
 ### Fixed
@@ -201,6 +221,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Local-first storage with IndexedDB -- no server required
 - Landing page
 
+[2.1.2]: https://github.com/gruberb/workledger/releases/tag/v2.1.2
+[2.1.1]: https://github.com/gruberb/workledger/releases/tag/v2.1.1
 [2.1.0]: https://github.com/gruberb/workledger/releases/tag/v2.1.0
 [2.0.3]: https://github.com/gruberb/workledger/releases/tag/v2.0.3
 [2.0.2]: https://github.com/gruberb/workledger/releases/tag/v2.0.2

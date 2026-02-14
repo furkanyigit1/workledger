@@ -13,15 +13,21 @@ const LazyExcalidraw = React.lazy(() =>
   })),
 );
 
-// CSS to force the BlockNote block wrapper and Excalidraw component to size correctly
-const excalidrawBlockStyles = document.createElement("style");
-excalidrawBlockStyles.textContent = `
+const EXCALIDRAW_STYLES = `
   [data-content-type="excalidraw"] { width: 100%; }
   .excalidraw-wrapper .excalidraw.excalidraw-container { width: 100% !important; height: 100% !important; position: relative; }
   .excalidraw-wrapper { touch-action: none; isolation: isolate; }
   .excalidraw-preview svg { width: 100%; height: 100%; object-fit: contain; }
 `;
-document.head.appendChild(excalidrawBlockStyles);
+
+let stylesInjected = false;
+function ensureStyles() {
+  if (stylesInjected) return;
+  stylesInjected = true;
+  const el = document.createElement("style");
+  el.textContent = EXCALIDRAW_STYLES;
+  document.head.appendChild(el);
+}
 
 const CANVAS_HEIGHT = 500;
 const CANVAS_HEIGHT_MOBILE = 350;
@@ -51,6 +57,7 @@ function ExcalidrawRenderer({
     updateBlock: (block: any, update: any) => void;
   };
 }) {
+  useEffect(() => { ensureStyles(); }, []);
   const themeMode = useThemeMode();
   const [isEditing, setIsEditing] = useState(!block.props.previewSvg);
   const [maxWidth, setMaxWidth] = useState(0);

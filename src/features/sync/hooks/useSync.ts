@@ -1,93 +1,18 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { SyncConfig, SyncStatus, SyncEntry } from "../types/sync.ts";
+import type { SyncConfig, SyncStatus } from "../types/sync.ts";
 import { DEFAULT_SYNC_CONFIG } from "../types/sync.ts";
 import { loadSyncConfig, saveSyncConfig, clearSyncConfig } from "../storage/sync-settings.ts";
-import { deriveKey, encrypt, decrypt, generateSyncIdLocal, computeAuthToken } from "../utils/crypto.ts";
-import { computeIntegrityHash, verifyIntegrityHash } from "../utils/integrity.ts";
-import {
-  apiCreateAccount,
-  apiValidateAccount,
-  apiDeleteAccount,
-  apiPushEntries,
-  apiPullEntries,
-  apiFullSync,
-} from "../utils/sync-api.ts";
+import { deriveKey, generateSyncIdLocal, computeAuthToken } from "../utils/crypto.ts";
+import { apiCreateAccount, apiValidateAccount, apiDeleteAccount, apiFullSync } from "../utils/sync-api.ts";
+import { encryptEntry, decryptEntry } from "../utils/sync-crypto.ts";
 import { mergeRemoteEntries } from "../utils/merge.ts";
+import { pushEntries, pullEntries } from "../utils/sync-operations.ts";
 import { onEntryChanged, onEntryDeleted } from "../utils/sync-events.ts";
 import { getAllEntries } from "../../entries/index.ts";
 import { useEntriesActions } from "../../entries/index.ts";
 
 const PULL_INTERVAL_MS = 30_000;
 const PUSH_DEBOUNCE_MS = 2_000;
-
-interface EntryPayload {
-  dayKey: string;
-  createdAt: number;
-  updatedAt: number;
-  blocks: unknown[];
-  isArchived: boolean;
-  tags: string[];
-}
-
-async function encryptEntry(
-  key: CryptoKey,
-  entry: { id: string; dayKey: string; createdAt: number; updatedAt: number; blocks: unknown[]; isArchived: boolean; tags: string[]; isDeleted?: boolean },
-): Promise<SyncEntry> {
-  const payload: EntryPayload = {
-    dayKey: entry.dayKey,
-    createdAt: entry.createdAt,
-    updatedAt: entry.updatedAt,
-    blocks: entry.blocks,
-    isArchived: entry.isArchived,
-    tags: entry.tags ?? [],
-  };
-  const plaintext = JSON.stringify(payload);
-  const integrityHash = await computeIntegrityHash(payload);
-  const encryptedPayload = await encrypt(key, plaintext);
-  return {
-    id: entry.id,
-    updatedAt: entry.updatedAt,
-    isArchived: entry.isArchived,
-    isDeleted: entry.isDeleted ?? false,
-    encryptedPayload,
-    integrityHash,
-  };
-}
-
-async function decryptEntry(
-  key: CryptoKey,
-  syncEntry: SyncEntry,
-): Promise<{ id: string; dayKey: string; createdAt: number; updatedAt: number; blocks: unknown[]; isArchived: boolean; isDeleted: boolean; tags: string[] }> {
-  if (syncEntry.isDeleted) {
-    return {
-      id: syncEntry.id,
-      dayKey: "",
-      createdAt: 0,
-      updatedAt: syncEntry.updatedAt,
-      blocks: [],
-      isArchived: false,
-      isDeleted: true,
-      tags: [],
-    };
-  }
-  const plaintext = await decrypt(key, syncEntry.encryptedPayload);
-  const payload = JSON.parse(plaintext) as EntryPayload;
-  const valid = await verifyIntegrityHash(payload, syncEntry.integrityHash);
-  if (!valid) {
-    console.warn(`Integrity hash mismatch for entry ${syncEntry.id}, skipping`);
-    throw new Error(`Integrity hash mismatch for entry ${syncEntry.id}`);
-  }
-  return {
-    id: syncEntry.id,
-    dayKey: payload.dayKey,
-    createdAt: payload.createdAt,
-    updatedAt: payload.updatedAt,
-    blocks: payload.blocks,
-    isArchived: payload.isArchived,
-    isDeleted: false,
-    tags: payload.tags ?? [],
-  };
-}
 
 export function useSync() {
   const [config, setConfig] = useState<SyncConfig>(DEFAULT_SYNC_CONFIG);
@@ -111,80 +36,7 @@ export function useSync() {
 
   const { refresh } = useEntriesActions();
 
-  // Load config on mount
-  useEffect(() => {
-    loadSyncConfig().then((loaded) => {
-      setConfig(loaded);
-      setStatus((s) => ({ ...s, lastSyncAt: loaded.lastSyncAt }));
-      setConfigLoaded(true);
-    });
-  }, []);
-
-  // Derive key and auth token, start intervals when config changes to remote mode
-  useEffect(() => {
-    if (!configLoaded) return;
-    if (config.mode !== "remote" || !config.syncId || !config.salt) {
-      cryptoKeyRef.current = null;
-      authTokenRef.current = null;
-      stopIntervals();
-      return;
-    }
-
-    let cancelled = false;
-    Promise.all([
-      deriveKey(config.syncId, config.salt),
-      computeAuthToken(config.syncId),
-    ]).then(([key, token]) => {
-      if (cancelled) return;
-      cryptoKeyRef.current = key;
-      authTokenRef.current = token;
-      startPullInterval();
-    });
-
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configLoaded, config.mode, config.syncId, config.salt]);
-
-  // Listen for entry change/delete events
-  useEffect(() => {
-    if (config.mode !== "remote") return;
-    const unsub1 = onEntryChanged((entryId) => {
-      dirtyEntriesRef.current.add(entryId);
-      setStatus((s) => ({ ...s, pendingChanges: dirtyEntriesRef.current.size }));
-      schedulePush();
-    });
-    const unsub2 = onEntryDeleted((entryId) => {
-      dirtyEntriesRef.current.add(entryId);
-      deletedEntriesRef.current.add(entryId);
-      setStatus((s) => ({ ...s, pendingChanges: dirtyEntriesRef.current.size }));
-      schedulePush();
-    });
-    return () => { unsub1(); unsub2(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.mode]);
-
-  // Visibility change: pull immediately on tab focus
-  useEffect(() => {
-    if (config.mode !== "remote") return;
-    const handler = () => {
-      if (document.visibilityState === "visible" && cryptoKeyRef.current) {
-        pull();
-      }
-    };
-    document.addEventListener("visibilitychange", handler);
-    return () => document.removeEventListener("visibilitychange", handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.mode]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      stopIntervals();
-      if (pushTimeoutRef.current) clearTimeout(pushTimeoutRef.current);
-    };
-  }, []);
+  // --- Interval helpers ---
 
   function startPullInterval() {
     stopIntervals();
@@ -207,13 +59,93 @@ export function useSync() {
     pushTimeoutRef.current = setTimeout(() => push(), PUSH_DEBOUNCE_MS);
   }
 
+  // --- Config loading ---
+
+  useEffect(() => {
+    loadSyncConfig().then((loaded) => {
+      setConfig(loaded);
+      setStatus((s) => ({ ...s, lastSyncAt: loaded.lastSyncAt }));
+      setConfigLoaded(true);
+    });
+  }, []);
+
+  // --- Key derivation & interval start ---
+
+  useEffect(() => {
+    if (!configLoaded) return;
+    if (config.mode !== "remote" || !config.syncId || !config.salt) {
+      cryptoKeyRef.current = null;
+      authTokenRef.current = null;
+      stopIntervals();
+      return;
+    }
+
+    let cancelled = false;
+    Promise.all([
+      deriveKey(config.syncId, config.salt),
+      computeAuthToken(config.syncId),
+    ]).then(([key, token]) => {
+      if (cancelled) return;
+      cryptoKeyRef.current = key;
+      authTokenRef.current = token;
+      pull();
+      startPullInterval();
+    });
+
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configLoaded, config.mode, config.syncId, config.salt]);
+
+  // --- Event listeners ---
+
+  useEffect(() => {
+    if (config.mode !== "remote") return;
+    const unsub1 = onEntryChanged((entryId) => {
+      dirtyEntriesRef.current.add(entryId);
+      setStatus((s) => ({ ...s, pendingChanges: dirtyEntriesRef.current.size }));
+      schedulePush();
+    });
+    const unsub2 = onEntryDeleted((entryId) => {
+      dirtyEntriesRef.current.add(entryId);
+      deletedEntriesRef.current.add(entryId);
+      setStatus((s) => ({ ...s, pendingChanges: dirtyEntriesRef.current.size }));
+      schedulePush();
+    });
+    return () => { unsub1(); unsub2(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.mode]);
+
+  // --- Visibility change: pull on tab focus ---
+
+  useEffect(() => {
+    if (config.mode !== "remote") return;
+    const handler = () => {
+      if (document.visibilityState === "visible" && cryptoKeyRef.current) {
+        pull();
+      }
+    };
+    document.addEventListener("visibilitychange", handler);
+    return () => document.removeEventListener("visibilitychange", handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.mode]);
+
+  // --- Cleanup ---
+
+  useEffect(() => {
+    return () => {
+      stopIntervals();
+      if (pushTimeoutRef.current) clearTimeout(pushTimeoutRef.current);
+    };
+  }, []);
+
+  // --- Push & Pull ---
+
   async function push(forceAll = false) {
     const key = cryptoKeyRef.current;
     const token = authTokenRef.current;
     const cfg = configRef.current;
     if (!key || !token || cfg.mode !== "remote") return;
     if (mutexRef.current) {
-      // Retry push after current operation finishes
       schedulePush();
       return;
     }
@@ -221,54 +153,24 @@ export function useSync() {
 
     try {
       setStatus((s) => ({ ...s, phase: "pushing" }));
+      const result = await pushEntries({
+        key, token, config: cfg,
+        dirtyIds: dirtyEntriesRef.current,
+        deletedIds: deletedEntriesRef.current,
+        forceAll,
+      });
 
-      const allEntries = await getAllEntries();
-      const dirtyIds = dirtyEntriesRef.current;
-      const toPush = forceAll
-        ? allEntries
-        : dirtyIds.size > 0
-          ? allEntries.filter((e) => dirtyIds.has(e.id))
-          : allEntries.filter((e) => cfg.lastSyncAt === null || e.updatedAt > cfg.lastSyncAt);
-
-      // Build deletion markers for entries removed from IDB
-      const now = Date.now();
-      const deletionMarkers: SyncEntry[] = [];
-      for (const entryId of deletedEntriesRef.current) {
-        deletionMarkers.push({
-          id: entryId,
-          updatedAt: now,
-          isArchived: false,
-          isDeleted: true,
-          encryptedPayload: "",
-          integrityHash: "",
-        });
-      }
-
-      const encrypted: SyncEntry[] = await Promise.all(
-        toPush.map((e) => encryptEntry(key, e)),
-      );
-
-      const allToPush = [...encrypted, ...deletionMarkers];
-
-      if (allToPush.length === 0) {
+      if (!result) {
         setStatus((s) => ({ ...s, phase: "idle" }));
-        mutexRef.current = false;
         return;
       }
 
-      const res = await apiPushEntries(token, allToPush, cfg.serverUrl);
-
-      const pushNow = Date.now();
-      const updated: SyncConfig = {
-        ...cfg,
-        lastSyncSeq: res.serverSeq,
-        lastSyncAt: pushNow,
-      };
+      const updated: SyncConfig = { ...cfg, lastSyncSeq: result.serverSeq, lastSyncAt: result.syncedAt };
       await saveSyncConfig(updated);
       setConfig(updated);
       dirtyEntriesRef.current.clear();
       deletedEntriesRef.current.clear();
-      setStatus({ phase: "idle", error: null, lastSyncAt: pushNow, pendingChanges: 0 });
+      setStatus({ phase: "idle", error: null, lastSyncAt: result.syncedAt, pendingChanges: 0 });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Push failed";
       setStatus((s) => ({ ...s, phase: "error", error: msg }));
@@ -287,49 +189,19 @@ export function useSync() {
 
     try {
       setStatus((s) => ({ ...s, phase: "pulling" }));
+      const result = await pullEntries({
+        key, token, config: cfg,
+        onPhaseChange: (phase) => setStatus((s) => ({ ...s, phase: phase as SyncStatus["phase"] })),
+      });
 
-      let since = cfg.lastSyncSeq;
-      let hasMore = true;
-      let totalMerged = 0;
-
-      while (hasMore) {
-        const res = await apiPullEntries(token, since, 100, cfg.serverUrl);
-        hasMore = res.hasMore;
-
-        if (res.entries.length > 0) {
-          setStatus((s) => ({ ...s, phase: "merging" }));
-          const decrypted = [];
-          for (const entry of res.entries) {
-            try {
-              decrypted.push(await decryptEntry(key, entry));
-            } catch {
-              // Skip entries with integrity errors
-            }
-          }
-
-          const merged = await mergeRemoteEntries(decrypted);
-          totalMerged += merged;
-
-          const lastEntry = res.entries[res.entries.length - 1];
-          if (lastEntry.serverSeq !== undefined && lastEntry.serverSeq > since) {
-            since = lastEntry.serverSeq;
-          }
-        }
-
-        if (res.serverSeq > since) {
-          since = res.serverSeq;
-        }
-      }
-
-      if (totalMerged > 0) {
+      if (result.totalMerged > 0) {
         await refresh();
       }
 
-      const now = Date.now();
-      const updated: SyncConfig = { ...cfg, lastSyncSeq: since, lastSyncAt: now };
+      const updated: SyncConfig = { ...cfg, lastSyncSeq: result.serverSeq, lastSyncAt: result.syncedAt };
       await saveSyncConfig(updated);
       setConfig(updated);
-      setStatus((s) => ({ ...s, phase: "idle", error: null, lastSyncAt: now }));
+      setStatus((s) => ({ ...s, phase: "idle", error: null, lastSyncAt: result.syncedAt }));
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Pull failed";
       setStatus((s) => ({ ...s, phase: "error", error: msg }));
@@ -337,6 +209,8 @@ export function useSync() {
       mutexRef.current = false;
     }
   }
+
+  // --- Account management ---
 
   const generateSyncId = useCallback(async () => {
     try {
@@ -454,7 +328,6 @@ export function useSync() {
 
   const setMode = useCallback(async (mode: "local" | "remote") => {
     if (mode === "local") {
-      // Stop active syncing but keep syncId/salt so switching back reconnects
       stopIntervals();
       if (pushTimeoutRef.current) clearTimeout(pushTimeoutRef.current);
       dirtyEntriesRef.current.clear();
