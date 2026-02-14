@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { createReactBlockSpec } from "@blocknote/react";
 import "@excalidraw/excalidraw/index.css";
-import { ThemeContext } from "../../theme/index.ts";
+import { useThemeMode } from "../../theme/index.ts";
 import { ExcalidrawErrorBoundary } from "./ExcalidrawErrorBoundary.tsx";
 import { ExcalidrawResizeHandle } from "./ExcalidrawResizeHandle.tsx";
 import { useExcalidrawResize } from "./useExcalidrawResize.ts";
@@ -51,7 +51,7 @@ function ExcalidrawRenderer({
     updateBlock: (block: any, update: any) => void;
   };
 }) {
-  const themeMode = useContext(ThemeContext);
+  const themeMode = useThemeMode();
   const [isEditing, setIsEditing] = useState(!block.props.previewSvg);
   const [maxWidth, setMaxWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -191,6 +191,13 @@ export const excalidrawBlockSpec = createReactBlockSpec(
     render: (props) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return <ExcalidrawRenderer block={props.block as any} editor={props.editor as any} />;
+    },
+    toExternalHTML: (props) => {
+      const { previewSvg } = props.block.props;
+      if (previewSvg) {
+        return <div data-excalidraw="true" dangerouslySetInnerHTML={{ __html: previewSvg }} />;
+      }
+      return <div data-excalidraw="true">[Drawing]</div>;
     },
   },
 );

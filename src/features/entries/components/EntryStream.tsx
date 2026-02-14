@@ -48,7 +48,7 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
 
     return (
       <div className="entry-stream">
-        <div className="flex items-center gap-3 pt-6 pb-4 px-1 sticky top-0 z-10 bg-[var(--color-notebook-bg)]/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
+        <div className="flex items-center gap-3 pt-6 pb-4 px-1 sticky top-0 sticky-header">
           <button
             onClick={onExitFocus}
             className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"

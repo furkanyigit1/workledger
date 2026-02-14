@@ -7,7 +7,7 @@ interface DayHeaderProps {
 
 export function DayHeader({ dayKey, entryCount }: DayHeaderProps) {
   return (
-    <div className="day-header flex items-baseline gap-3 pt-8 pb-5 px-1 sticky top-0 z-10 bg-[var(--color-notebook-bg)]/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
+    <div className="day-header flex items-baseline gap-3 pt-6 pb-4 px-1 sticky top-0 sticky-header">
       <h2 className="text-gray-800 dark:text-gray-100 day-header-font">
         {formatDayKey(dayKey)}
       </h2>

@@ -3,14 +3,18 @@ import { useEntriesActions } from "../features/entries/index.ts";
 import { useSidebarContext } from "../features/sidebar/index.ts";
 import { useFocusModeContext } from "../features/focus-mode/index.ts";
 import { useAIContext } from "../features/ai/index.ts";
-import { useSearch } from "../features/search/index.ts";
 
-export function useKeyboardShortcuts() {
+interface SearchControls {
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+}
+
+export function useKeyboardShortcuts(search: SearchControls) {
   const { createEntry } = useEntriesActions();
   const { archiveView, hasActiveFilters, clearAllFilters, toggleSidebar } = useSidebarContext();
   const { focusedEntryId, handleExitFocus } = useFocusModeContext();
   const { settings: aiSettings, handleToggleAISidebar } = useAIContext();
-  const { isOpen: searchOpen, open: openSearch, close: closeSearch } = useSearch();
 
   const handleNewEntry = useCallback(async () => {
     const entry = await createEntry();
@@ -27,10 +31,10 @@ export function useKeyboardShortcuts() {
       }
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        if (searchOpen) {
-          closeSearch();
+        if (search.isOpen) {
+          search.close();
         } else {
-          openSearch();
+          search.open();
         }
       }
       if ((e.metaKey || e.ctrlKey) && e.key === "\\") {
@@ -52,7 +56,7 @@ export function useKeyboardShortcuts() {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [handleNewEntry, searchOpen, closeSearch, openSearch, hasActiveFilters, archiveView, aiSettings.enabled, handleToggleAISidebar, focusedEntryId, handleExitFocus, toggleSidebar, clearAllFilters]);
+  }, [handleNewEntry, search, hasActiveFilters, archiveView, aiSettings.enabled, handleToggleAISidebar, focusedEntryId, handleExitFocus, toggleSidebar, clearAllFilters]);
 
   return { handleNewEntry };
 }

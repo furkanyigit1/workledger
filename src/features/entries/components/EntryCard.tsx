@@ -1,7 +1,7 @@
 import { useState, useCallback, memo } from "react";
 import type { WorkLedgerEntry } from "../types/entry.ts";
 import { formatTime, todayKey } from "../../../utils/dates.ts";
-import { EntryEditor } from "../../editor/components/EntryEditor.tsx";
+import { EntryEditor } from "../../editor/index.ts";
 import { TagEditor } from "./TagEditor.tsx";
 import { ConfirmAction } from "../../../components/ui/ConfirmAction.tsx";
 
@@ -218,7 +218,7 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
           autoFocus={isLatest && !isOld && !isArchiveView}
         />
       </div>
-      <div className="entry-ruling mt-4 mb-8" />
+      <div className="entry-ruling mt-4 mb-4" />
     </div>
   );
 }, (prev, next) =>

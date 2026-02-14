@@ -1,72 +1,135 @@
 import { useState, useEffect, useCallback } from "react";
 import { getDB } from "../../../storage/db.ts";
+import { THEME_PRESETS, FONT_OPTIONS, type ThemeId, type FontFamily } from "../themePresets.ts";
+import { useFontLoader } from "./useFontLoader.ts";
 
-type ThemeMode = "light" | "dark";
+const LS_THEME_KEY = "workledger-theme";
+const LS_FONT_KEY = "workledger-font";
+const DB_THEME_KEY = "theme";
+const DB_FONT_KEY = "font";
 
-const LS_KEY = "workledger-theme";
-const DB_KEY = "theme";
+const VALID_THEME_IDS = new Set<string>(THEME_PRESETS.map((p) => p.id));
+const VALID_FONT_IDS = new Set<string>(FONT_OPTIONS.map((f) => f.id));
 
-function getSystemTheme(): ThemeMode {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+function getSystemThemeId(): ThemeId {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "default-dark"
+    : "default-light";
 }
 
-function applyTheme(mode: ThemeMode) {
-  if (mode === "dark") {
+/** Migrate legacy "dark"/"light" values to ThemeId */
+function migrateThemeValue(value: string): ThemeId | null {
+  if (value === "dark") return "default-dark";
+  if (value === "light") return "default-light";
+  if (VALID_THEME_IDS.has(value)) return value as ThemeId;
+  return null;
+}
+
+function applyThemeToDOM(themeId: ThemeId) {
+  const preset = THEME_PRESETS.find((p) => p.id === themeId);
+  if (!preset) return;
+
+  document.documentElement.dataset.theme = themeId;
+
+  if (preset.isDark) {
     document.documentElement.classList.add("dark");
   } else {
     document.documentElement.classList.remove("dark");
   }
 }
 
+function applyFontToDOM(fontFamily: FontFamily) {
+  const option = FONT_OPTIONS.find((f) => f.id === fontFamily);
+  if (!option) return;
+  document.documentElement.style.setProperty("--editor-body-font", option.cssValue);
+}
+
 export function useTheme() {
-  const [resolved, setResolved] = useState<ThemeMode>(() => {
-    const stored = localStorage.getItem(LS_KEY);
-    if (stored === "dark" || stored === "light") return stored;
-    return getSystemTheme();
+  const [themeId, setThemeIdState] = useState<ThemeId>(() => {
+    const stored = localStorage.getItem(LS_THEME_KEY);
+    if (stored) {
+      const migrated = migrateThemeValue(stored);
+      if (migrated) return migrated;
+    }
+    return getSystemThemeId();
   });
-  const [hasExplicit, setHasExplicit] = useState(() => {
-    const stored = localStorage.getItem(LS_KEY);
-    return stored === "dark" || stored === "light";
+
+  const [fontFamily, setFontFamilyState] = useState<FontFamily>(() => {
+    const stored = localStorage.getItem(LS_FONT_KEY);
+    if (stored && VALID_FONT_IDS.has(stored)) return stored as FontFamily;
+    return "figtree";
+  });
+
+  const [hasExplicitTheme, setHasExplicitTheme] = useState(() => {
+    const stored = localStorage.getItem(LS_THEME_KEY);
+    return stored !== null && migrateThemeValue(stored) !== null;
   });
 
   // Load from IndexedDB on mount (source of truth)
   useEffect(() => {
     getDB().then(async (db) => {
-      const row = await db.get("settings", DB_KEY);
-      if (row && (row.value === "dark" || row.value === "light")) {
-        setResolved(row.value);
-        setHasExplicit(true);
-        applyTheme(row.value);
-        localStorage.setItem(LS_KEY, row.value);
+      const themeRow = await db.get("settings", DB_THEME_KEY);
+      if (themeRow) {
+        const migrated = migrateThemeValue(themeRow.value as string);
+        if (migrated) {
+          setThemeIdState(migrated);
+          setHasExplicitTheme(true);
+          applyThemeToDOM(migrated);
+          localStorage.setItem(LS_THEME_KEY, migrated);
+        }
+      }
+
+      const fontRow = await db.get("settings", DB_FONT_KEY);
+      if (fontRow && VALID_FONT_IDS.has(fontRow.value as string)) {
+        const f = fontRow.value as FontFamily;
+        setFontFamilyState(f);
+        applyFontToDOM(f);
+        localStorage.setItem(LS_FONT_KEY, f);
       }
     });
   }, []);
 
-  // Apply theme class whenever resolved changes
+  // Apply theme to DOM whenever themeId changes
   useEffect(() => {
-    applyTheme(resolved);
-  }, [resolved]);
+    applyThemeToDOM(themeId);
+  }, [themeId]);
+
+  // Apply font to DOM whenever fontFamily changes
+  useEffect(() => {
+    applyFontToDOM(fontFamily);
+  }, [fontFamily]);
+
+  // Load font files dynamically
+  useFontLoader(fontFamily);
 
   // Listen for system preference changes when no explicit choice
   useEffect(() => {
-    if (hasExplicit) return;
+    if (hasExplicitTheme) return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (e: MediaQueryListEvent) => {
-      const mode = e.matches ? "dark" : "light";
-      setResolved(mode);
+      const id = e.matches ? "default-dark" : "default-light";
+      setThemeIdState(id);
     };
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
-  }, [hasExplicit]);
+  }, [hasExplicitTheme]);
 
-  const toggle = useCallback(() => {
-    const next: ThemeMode = resolved === "dark" ? "light" : "dark";
-    setResolved(next);
-    setHasExplicit(true);
-    localStorage.setItem(LS_KEY, next);
-    applyTheme(next);
-    getDB().then((db) => db.put("settings", { key: DB_KEY, value: next }));
-  }, [resolved]);
+  const setTheme = useCallback((id: ThemeId) => {
+    setThemeIdState(id);
+    setHasExplicitTheme(true);
+    localStorage.setItem(LS_THEME_KEY, id);
+    applyThemeToDOM(id);
+    getDB().then((db) => db.put("settings", { key: DB_THEME_KEY, value: id }));
+  }, []);
 
-  return { resolved, toggle } as const;
+  const setFont = useCallback((f: FontFamily) => {
+    setFontFamilyState(f);
+    localStorage.setItem(LS_FONT_KEY, f);
+    applyFontToDOM(f);
+    getDB().then((db) => db.put("settings", { key: DB_FONT_KEY, value: f }));
+  }, []);
+
+  const isDark = THEME_PRESETS.find((p) => p.id === themeId)?.isDark ?? false;
+
+  return { themeId, setTheme, isDark, fontFamily, setFont } as const;
 }

@@ -18,7 +18,7 @@
   --color-notebook-scrollbar-hover: #9ca3af;
 }
 
-/* Dark mode overrides */
+/* Dark mode overrides (Default Dark — also serves as base for Tailwind dark: variant) */
 .dark {
   --color-notebook-bg: #0f0f0f;
   --color-notebook-text: #f5f5f5;
@@ -31,6 +31,56 @@
   --color-notebook-code-bg: #1e1e1e;
   --color-notebook-scrollbar: #404040;
   --color-notebook-scrollbar-hover: #525252;
+}
+
+/* Dracula theme */
+[data-theme="dracula"] {
+  --color-notebook-bg: #282a36;
+  --color-notebook-text: #f8f8f2;
+  --color-notebook-accent: #bd93f9;
+  --color-notebook-ruling: #44475a;
+  --color-notebook-surface: #2c2e3a;
+  --color-notebook-surface-alt: #252732;
+  --color-notebook-muted: #9ca0b0;
+  --color-notebook-border: #44475a;
+  --color-notebook-code-bg: #21222c;
+  --color-notebook-scrollbar: #44475a;
+  --color-notebook-scrollbar-hover: #6272a4;
+}
+
+/* Catppuccin Mocha theme */
+[data-theme="catppuccin-mocha"] {
+  --color-notebook-bg: #1e1e2e;
+  --color-notebook-text: #cdd6f4;
+  --color-notebook-accent: #f5a97f;
+  --color-notebook-ruling: #313244;
+  --color-notebook-surface: #24243a;
+  --color-notebook-surface-alt: #1e1e30;
+  --color-notebook-muted: #a6adc8;
+  --color-notebook-border: #313244;
+  --color-notebook-code-bg: #181825;
+  --color-notebook-scrollbar: #45475a;
+  --color-notebook-scrollbar-hover: #585b70;
+}
+
+/* Solarized Light theme */
+[data-theme="solarized-light"] {
+  --color-notebook-bg: #fdf6e3;
+  --color-notebook-text: #002b36;
+  --color-notebook-accent: #859900;
+  --color-notebook-ruling: #e6dfcb;
+  --color-notebook-surface: #fefbf2;
+  --color-notebook-surface-alt: #f5eed9;
+  --color-notebook-muted: #4d6269;
+  --color-notebook-border: #e0d8c2;
+  --color-notebook-code-bg: #eee8d5;
+  --color-notebook-scrollbar: #d0cbb7;
+  --color-notebook-scrollbar-hover: #b8b29e;
+}
+
+/* Editor body font — set dynamically by useTheme */
+:root {
+  --editor-body-font: 'Figtree', system-ui, sans-serif;
 }
 
 /* Shiki syntax highlighting — CSS variable theme (light) */
@@ -63,11 +113,82 @@
   --shiki-token-link: #79b8ff;
 }
 
+/* Shiki — Dracula overrides */
+[data-theme="dracula"] {
+  --shiki-foreground: #f8f8f2;
+  --shiki-background: transparent;
+  --shiki-token-constant: #bd93f9;
+  --shiki-token-string: #f1fa8c;
+  --shiki-token-comment: #6272a4;
+  --shiki-token-keyword: #ff79c6;
+  --shiki-token-parameter: #f8f8f2;
+  --shiki-token-function: #50fa7b;
+  --shiki-token-string-expression: #f1fa8c;
+  --shiki-token-punctuation: #f8f8f2;
+  --shiki-token-link: #8be9fd;
+}
+
+/* Shiki — Catppuccin Mocha overrides */
+[data-theme="catppuccin-mocha"] {
+  --shiki-foreground: #cdd6f4;
+  --shiki-background: transparent;
+  --shiki-token-constant: #fab387;
+  --shiki-token-string: #a6e3a1;
+  --shiki-token-comment: #6c7086;
+  --shiki-token-keyword: #cba6f7;
+  --shiki-token-parameter: #cdd6f4;
+  --shiki-token-function: #89b4fa;
+  --shiki-token-string-expression: #a6e3a1;
+  --shiki-token-punctuation: #9399b2;
+  --shiki-token-link: #89b4fa;
+}
+
+/* Shiki — Solarized Light overrides */
+[data-theme="solarized-light"] {
+  --shiki-foreground: #586e75;
+  --shiki-background: transparent;
+  --shiki-token-constant: #2aa198;
+  --shiki-token-string: #2aa198;
+  --shiki-token-comment: #93a1a1;
+  --shiki-token-keyword: #859900;
+  --shiki-token-parameter: #586e75;
+  --shiki-token-function: #268bd2;
+  --shiki-token-string-expression: #cb4b16;
+  --shiki-token-punctuation: #586e75;
+  --shiki-token-link: #268bd2;
+}
+
 /* Sidebar title font */
 .sidebar-title-font {
   font-family: "Playfair Display", Georgia, serif;
   font-weight: 700;
   letter-spacing: -0.02em;
+}
+
+/* Sticky header — fully opaque, z-10 so it covers scrolling content.
+   BlockNote menus (z-index 300+) still appear above these. */
+.sticky-header {
+  background-color: var(--color-notebook-bg);
+  border-bottom: 1px solid var(--color-notebook-border);
+  z-index: 10;
+}
+
+/* Sidebar day list — accent-aware active state */
+.sidebar-day-active {
+  background: color-mix(in srgb, var(--color-notebook-accent) 12%, transparent);
+  color: var(--color-notebook-accent);
+}
+.sidebar-day-dot {
+  background: var(--color-notebook-accent);
+}
+.sidebar-day-count {
+  color: var(--color-notebook-accent);
+}
+
+/* Sidebar filter input — accent-aware focus ring */
+.sidebar-filter-input:focus {
+  border-color: color-mix(in srgb, var(--color-notebook-accent) 50%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-notebook-accent) 15%, transparent);
 }
 
 /* Day header handwriting font */
@@ -90,29 +211,66 @@
 }
 
 /* BlockNote overrides for notebook feel */
-[data-workledger-editor] .bn-editor {
-  background: transparent;
-  font-family: system-ui, -apple-system, sans-serif;
-  color: var(--color-notebook-text);
-  /* Remove left padding so text aligns with header/tags above.
-     The side menu (+/drag handle) will overflow into the left margin. */
-  padding-inline: 0;
-}
-
 [data-workledger-editor] .bn-container {
+  /* Override BlockNote's own color tokens so they follow our theme */
+  --bn-colors-editor-text: var(--color-notebook-text);
+  --bn-colors-editor-background: transparent;
+  --bn-colors-menu-text: var(--color-notebook-text);
+  --bn-colors-menu-background: var(--color-notebook-surface);
+  --bn-colors-hovered-text: var(--color-notebook-text);
+  --bn-colors-hovered-background: var(--color-notebook-surface-alt);
+  --bn-colors-tooltip-text: var(--color-notebook-text);
+  --bn-colors-tooltip-background: var(--color-notebook-surface-alt);
+  --bn-colors-border: var(--color-notebook-border);
+  --bn-colors-shadow: var(--color-notebook-border);
+  --bn-colors-side-menu: var(--color-notebook-muted);
+  --bn-colors-selected-text: var(--color-notebook-surface);
+  --bn-colors-selected-background: var(--color-notebook-text);
+  --bn-colors-disabled-text: var(--color-notebook-muted);
+  --bn-colors-disabled-background: var(--color-notebook-surface-alt);
+  --bn-ui-base-z-index: 50;
   background: transparent;
   border: none;
   box-shadow: none;
   overflow: visible;
 }
 
+[data-workledger-editor] .bn-editor {
+  background: transparent;
+  font-family: var(--editor-body-font);
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--color-notebook-text);
+  /* Remove left padding so text aligns with header/tags above.
+     The side menu (+/drag handle) will overflow into the left margin. */
+  padding-inline: 0;
+}
+
 [data-workledger-editor] .bn-block-group {
   padding: 0;
 }
 
-/* Let side menu overflow to the left of the content area */
+/* Keep side menu within content area so it doesn't hide behind the sidebar */
 [data-workledger-editor] .bn-side-menu {
-  margin-left: -54px;
+  margin-left: 0;
+}
+
+/* Force opaque backgrounds on all BlockNote popups/menus.
+   These may be portaled anywhere in the DOM.
+   Use both background and background-color to override any shorthand resets. */
+.bn-menu-dropdown,
+.bn-suggestion-menu,
+.bn-drag-handle-menu,
+.bn-toolbar,
+.bn-color-picker-dropdown,
+.mantine-Menu-dropdown,
+.mantine-Popover-dropdown {
+  background: var(--color-notebook-surface, #1a1a1a) !important;
+  background-color: var(--color-notebook-surface, #1a1a1a) !important;
+  border: 1px solid var(--color-notebook-border, #2a2a2a) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
 }
 
 /* Excalidraw preview sizing */

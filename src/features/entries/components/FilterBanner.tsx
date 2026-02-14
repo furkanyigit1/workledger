@@ -10,7 +10,7 @@ interface FilterBannerProps {
 
 export function FilterBanner({ selectedTags, textQuery, count, onRemoveTag, onClearAll }: FilterBannerProps) {
   return (
-    <div className="flex items-center gap-3 pt-6 pb-4 px-1 sticky top-0 z-10 bg-[var(--color-notebook-bg)]/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
+    <div className="flex items-center gap-3 pt-6 pb-4 px-1 sticky top-0 sticky-header">
       <div className="flex items-center gap-2 flex-wrap">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 shrink-0">
           <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />

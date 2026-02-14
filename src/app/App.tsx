@@ -5,7 +5,7 @@ import { EntryStream, NewEntryButton, useEntriesData, useEntriesActions, useEntr
 import { SearchPanel, useSearch } from "../features/search/index.ts";
 import { useFocusModeContext } from "../features/focus-mode/index.ts";
 import { useAIContext } from "../features/ai/index.ts";
-import { useTheme } from "../features/theme/index.ts";
+import { useThemeContext } from "../features/theme/index.ts";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts.ts";
 
 const AISidebar = lazy(() => import("../features/ai/index.ts").then((m) => ({ default: m.AISidebar })));
@@ -45,11 +45,11 @@ function AppContent() {
   } = useSidebarContext();
   const { focusedEntryId, handleFocusEntry, handleExitFocus } = useFocusModeContext();
   const { settings: aiSettings, sidebarOpen: aiSidebarOpen, targetEntry: aiTargetEntry, handleToggleAI, handleToggleAISidebar, handleOpenAI, available: aiAvailable, updateSettings: updateAISettings } = useAIContext();
-  const { query, results, isOpen: searchOpen, search, close: closeSearch } = useSearch();
-  const { handleNewEntry } = useKeyboardShortcuts();
+  const { query, results, isOpen: searchOpen, search, open: openSearch, close: closeSearch } = useSearch();
+  const { handleNewEntry } = useKeyboardShortcuts({ isOpen: searchOpen, open: openSearch, close: closeSearch });
   const { handleSearchResultClick, handleDayClick } = useEntryNavigation();
 
-  const { resolved: themeMode, toggle: toggleTheme } = useTheme();
+  const { themeId, setTheme, fontFamily, setFont } = useThemeContext();
 
   if (loading) {
     return (
@@ -85,8 +85,10 @@ function AppContent() {
         onDeleteAll={handleDeleteAll}
         aiEnabled={aiSettings.enabled}
         onToggleAI={handleToggleAI}
-        themeMode={themeMode}
-        onToggleTheme={toggleTheme}
+        themeId={themeId}
+        onSetTheme={setTheme}
+        fontFamily={fontFamily}
+        onSetFont={setFont}
       />
 
       <AppShell sidebarOpen={sidebarOpen} aiSidebarOpen={aiSidebarOpen}>

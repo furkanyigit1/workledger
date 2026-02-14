@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback } from "react";
+import { type ReactNode, useCallback, useMemo } from "react";
 import { useTheme, ThemeContext } from "../features/theme/index.ts";
 import { EntriesProvider } from "../features/entries/index.ts";
 import { SidebarProvider, useSidebarContext } from "../features/sidebar/index.ts";
@@ -17,10 +17,15 @@ function AIProviderWithSidebar({ children }: { children: ReactNode }) {
 }
 
 export function AppProviders({ children }: { children: ReactNode }) {
-  const { resolved: themeMode } = useTheme();
+  const { themeId, isDark, fontFamily, setTheme, setFont } = useTheme();
+
+  const contextValue = useMemo(
+    () => ({ isDark, themeId, fontFamily, setTheme, setFont }),
+    [isDark, themeId, fontFamily, setTheme, setFont],
+  );
 
   return (
-    <ThemeContext.Provider value={themeMode}>
+    <ThemeContext.Provider value={contextValue}>
       <EntriesProvider>
         <SidebarProvider>
           <FocusModeProvider>
