@@ -212,7 +212,11 @@ export function useSync() {
     const token = authTokenRef.current;
     const cfg = configRef.current;
     if (!key || !token || cfg.mode !== "remote") return;
-    if (mutexRef.current) return;
+    if (mutexRef.current) {
+      // Retry push after current operation finishes
+      schedulePush();
+      return;
+    }
     mutexRef.current = true;
 
     try {
