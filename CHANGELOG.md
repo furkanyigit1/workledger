@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.3] - 2026-02-14
+
+### Fixed
+
+- "Sync now" button force-pushes all local entries to catch previously unsynced data
+- PWA service worker now auto-updates instead of waiting for a prompt that never appeared
+
 ## [2.0.2] - 2026-02-14
 
 ### Fixed
@@ -176,6 +183,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Local-first storage with IndexedDB -- no server required
 - Landing page
 
+[2.0.3]: https://github.com/gruberb/workledger/releases/tag/v2.0.3
 [2.0.2]: https://github.com/gruberb/workledger/releases/tag/v2.0.2
 [2.0.1]: https://github.com/gruberb/workledger/releases/tag/v2.0.1
 [2.0.0]: https://github.com/gruberb/workledger/releases/tag/v2.0.0
