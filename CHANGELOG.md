@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-02-14
+
+### Added
+
+- "Delete account" button in Storage settings with confirmation step — permanently removes server account and all synced entries
+- Connected view now always shows the server endpoint URL
+
+### Changed
+
+- "Delete all entries" no longer deletes the server sync account — only clears local IndexedDB entries
+- "Disconnect" button restyled as neutral (no longer red) to distinguish from destructive "Delete account"
+
 ## [2.0.3] - 2026-02-14
 
 ### Fixed
@@ -183,6 +195,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Local-first storage with IndexedDB -- no server required
 - Landing page
 
+[2.1.0]: https://github.com/gruberb/workledger/releases/tag/v2.1.0
 [2.0.3]: https://github.com/gruberb/workledger/releases/tag/v2.0.3
 [2.0.2]: https://github.com/gruberb/workledger/releases/tag/v2.0.2
 [2.0.1]: https://github.com/gruberb/workledger/releases/tag/v2.0.1

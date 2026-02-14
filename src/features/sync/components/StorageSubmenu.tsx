@@ -26,7 +26,7 @@ function formatSyncTime(timestamp: number | null): string {
 }
 
 export function StorageSubmenu({ mutedClass, dividerClass, onBack }: StorageSubmenuProps) {
-  const { config, status, generateSyncId, connect, disconnect, setMode, setServerUrl, syncNow } = useSyncContext();
+  const { config, status, generateSyncId, connect, disconnect, deleteAccount, setMode, setServerUrl, syncNow } = useSyncContext();
   const { entriesByDay } = useEntriesData();
   const [syncIdInput, setSyncIdInput] = useState("");
   const [serverUrlInput, setServerUrlInput] = useState(config.serverUrl ?? "");
@@ -73,6 +73,15 @@ export function StorageSubmenu({ mutedClass, dividerClass, onBack }: StorageSubm
     setLoading(true);
     await disconnect();
     setSyncIdInput("");
+    setLoading(false);
+  };
+
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const handleDeleteAccount = async () => {
+    setLoading(true);
+    await deleteAccount();
+    setSyncIdInput("");
+    setConfirmDelete(false);
     setLoading(false);
   };
 
@@ -267,11 +276,9 @@ export function StorageSubmenu({ mutedClass, dividerClass, onBack }: StorageSubm
             <p className="text-[10px] text-red-500">{status.error}</p>
           )}
 
-          {config.serverUrl && (
-            <p className={`text-[10px] font-mono ${mutedClass} break-all`}>
-              {config.serverUrl}
-            </p>
-          )}
+          <p className={`text-[10px] font-mono ${mutedClass} break-all`}>
+            {config.serverUrl || DEFAULT_SERVER_URL}
+          </p>
 
           <p className={helperTextClass}>
             Edits and deletes sync to all devices. Disconnect keeps your local data but stops syncing.
@@ -288,18 +295,46 @@ export function StorageSubmenu({ mutedClass, dividerClass, onBack }: StorageSubm
         </span>
       </div>
 
-      {/* Disconnect button — separated at bottom */}
+      {/* Disconnect & Delete account — separated at bottom */}
       {isConnected && (
         <>
           <div className={dividerClass} />
-          <div className="px-3 py-1.5">
+          <div className="px-3 py-1.5 space-y-1.5">
             <button
               onClick={handleDisconnect}
               disabled={loading}
-              className="w-full text-xs px-3 py-1.5 rounded-md border border-red-300 dark:border-red-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors disabled:opacity-50"
+              className={`w-full text-xs px-3 py-1.5 rounded-md border border-[var(--color-notebook-border)] hover:bg-[var(--color-notebook-surface-alt)] transition-colors ${mutedClass} hover:text-[var(--color-notebook-text)] disabled:opacity-50`}
             >
               Disconnect
             </button>
+            {!confirmDelete ? (
+              <button
+                onClick={() => setConfirmDelete(true)}
+                disabled={loading}
+                className="w-full text-xs px-3 py-1.5 rounded-md border border-red-300 dark:border-red-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors disabled:opacity-50"
+              >
+                Delete account
+              </button>
+            ) : (
+              <div className="space-y-1.5">
+                <p className="text-[10px] text-red-500">This permanently deletes your server account and all synced entries. Local data is kept.</p>
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    className={`flex-1 text-xs px-2 py-1.5 rounded-md border border-[var(--color-notebook-border)] ${mutedClass} hover:text-[var(--color-notebook-text)] transition-colors`}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={loading}
+                    className="flex-1 text-xs px-2 py-1.5 rounded-md bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50"
+                  >
+                    Confirm delete
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </>
       )}
