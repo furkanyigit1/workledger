@@ -6,6 +6,7 @@ import { ExcalidrawErrorBoundary } from "./ExcalidrawErrorBoundary.tsx";
 import { ExcalidrawResizeHandle } from "./ExcalidrawResizeHandle.tsx";
 import { useExcalidrawResize } from "./useExcalidrawResize.ts";
 import { useExcalidrawPersist } from "./useExcalidrawPersist.ts";
+import { sanitizeSvg } from "./sanitize-svg.ts";
 
 const LazyExcalidraw = React.lazy(() =>
   import("@excalidraw/excalidraw").then((mod) => ({
@@ -117,7 +118,7 @@ function ExcalidrawRenderer({
   // Non-editable mode
   if (!editor.isEditable) {
     if (block.props.previewSvg) {
-      return <div className="excalidraw-preview rounded-lg overflow-hidden my-2" dangerouslySetInnerHTML={{ __html: block.props.previewSvg }} />;
+      return <div className="excalidraw-preview rounded-lg overflow-hidden my-2" dangerouslySetInnerHTML={{ __html: sanitizeSvg(block.props.previewSvg) }} />;
     }
     return <div className="text-stone-400 italic py-4 text-center">[Drawing]</div>;
   }
@@ -131,7 +132,7 @@ function ExcalidrawRenderer({
           className="excalidraw-preview cursor-pointer rounded-lg overflow-hidden hover:ring-2 hover:ring-orange-300 transition-all"
           style={{ height: `${previewHeight}px` }}
           onClick={() => setIsEditing(true)}
-          dangerouslySetInnerHTML={{ __html: block.props.previewSvg }}
+          dangerouslySetInnerHTML={{ __html: sanitizeSvg(block.props.previewSvg) }}
         />
         <ExcalidrawResizeHandle axis="height" {...heightResize} />
         <ExcalidrawResizeHandle axis="width" {...widthResize} />
@@ -202,7 +203,7 @@ export const excalidrawBlockSpec = createReactBlockSpec(
     toExternalHTML: (props) => {
       const { previewSvg } = props.block.props;
       if (previewSvg) {
-        return <div data-excalidraw="true" dangerouslySetInnerHTML={{ __html: previewSvg }} />;
+        return <div data-excalidraw="true" dangerouslySetInnerHTML={{ __html: sanitizeSvg(previewSvg) }} />;
       }
       return <div data-excalidraw="true">[Drawing]</div>;
     },

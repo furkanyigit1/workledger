@@ -21,7 +21,9 @@ export function ImportExport({ fileInputRef, onRefresh }: ImportExportProps) {
           if (!file) return;
           try {
             const result = await importEntries(file);
-            setImportStatus(`${result.imported} imported, ${result.skipped} skipped`);
+            const parts = [`${result.imported} imported`, `${result.skipped} skipped`];
+            if (result.invalid > 0) parts.push(`${result.invalid} invalid`);
+            setImportStatus(parts.join(", "));
             onRefresh();
             setTimeout(() => setImportStatus(null), 4000);
           } catch {

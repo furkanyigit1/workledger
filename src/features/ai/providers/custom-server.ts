@@ -7,6 +7,10 @@ export class CustomServerProvider implements LLMProvider {
   private apiKey: string | undefined;
 
   constructor(baseUrl: string, model: string, apiKey?: string) {
+    const parsed = new URL(baseUrl);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      throw new Error("Invalid server URL: only http and https are allowed");
+    }
     this.baseUrl = baseUrl;
     this.model = model;
     this.apiKey = apiKey;

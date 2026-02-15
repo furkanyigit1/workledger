@@ -8,9 +8,25 @@ Please do **not** open a public issue for security vulnerabilities.
 
 ## Scope
 
-WorkLedger is a client-side application. All data is stored locally in your browser's IndexedDB. There is no server, no authentication, and no data leaves your machine.
+WorkLedger is a local-first application. How your data is handled depends on which features you enable:
 
-Relevant concerns include:
+### Local mode (default)
+- All data (entries, settings) stored in your browser's IndexedDB — **unencrypted**
+- No data leaves the browser
+- No authentication, no server communication
+
+### Sync mode (opt-in)
+- Entries are end-to-end encrypted using your sync ID as the key
+- The sync server sees metadata only: entry IDs, timestamps, archived/deleted flags
+- Your sync ID is stored unencrypted in IndexedDB — treat it like a password
+
+### AI features (opt-in)
+- Note content is sent to the configured LLM provider (Ollama, Hugging Face, or a custom server)
+- API keys are stored unencrypted in IndexedDB
+- Ollama runs locally by default; other providers send data over the network
+
+### Relevant concerns
 - XSS via editor content or imported data
 - Malicious content in imported JSON files
 - Dependencies with known vulnerabilities
+- Unencrypted local storage of API keys and sync IDs

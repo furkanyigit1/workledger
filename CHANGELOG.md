@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-02-14
+
+### Added
+
+- Content Security Policy meta tag — restricts script, style, connect, and worker sources
+- SVG sanitization via DOMPurify for all Excalidraw preview rendering (`dangerouslySetInnerHTML`)
+- Zod schema validation for imported JSON files and synced remote entries — malformed entries are skipped gracefully
+- AI provider URL validation — rejects non-http/https protocols in Ollama and custom server constructors
+- Helper text warnings for API key storage ("Stored unencrypted in this browser") under HuggingFace and custom server key inputs
+- HTTP warning when Ollama or custom server URL points to a non-localhost HTTP endpoint
+- Disconnect helper text explaining that the server account is preserved
+- New dependencies: `zod`, `dompurify`, `@types/dompurify`
+
+### Changed
+
+- Sync ID warnings rewritten: emphasize it's the encryption key and should be saved in a password manager
+- SECURITY.md rewritten with per-mode data handling documentation (local, sync, AI)
+- Import result now reports invalid entry count alongside imported/skipped
+
 ## [2.1.3] - 2026-02-14
 
 ### Fixed
@@ -233,6 +252,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Local-first storage with IndexedDB -- no server required
 - Landing page
 
+[2.2.0]: https://github.com/gruberb/workledger/releases/tag/v2.2.0
+[2.1.3]: https://github.com/gruberb/workledger/releases/tag/v2.1.3
 [2.1.2]: https://github.com/gruberb/workledger/releases/tag/v2.1.2
 [2.1.1]: https://github.com/gruberb/workledger/releases/tag/v2.1.1
 [2.1.0]: https://github.com/gruberb/workledger/releases/tag/v2.1.0

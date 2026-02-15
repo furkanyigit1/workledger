@@ -1,5 +1,5 @@
 import type { WorkLedgerEntry } from "../../entries/index.ts";
-import { getEntry, deleteSearchIndex } from "../../entries/index.ts";
+import { getEntry, deleteSearchIndex, validateEntry } from "../../entries/index.ts";
 import { getDB } from "../../../storage/db.ts";
 
 interface DecryptedRemoteEntry {
@@ -31,19 +31,18 @@ export async function mergeRemoteEntries(
       continue;
     }
 
+    // Validate non-deleted remote entries before writing to IDB
+    let validatedEntry: WorkLedgerEntry;
+    try {
+      validatedEntry = validateEntry(remote) as WorkLedgerEntry;
+    } catch {
+      continue;
+    }
+
     const shouldOverwrite = !local || remote.updatedAt > local.updatedAt;
 
     if (shouldOverwrite) {
-      const entry: WorkLedgerEntry = {
-        id: remote.id,
-        dayKey: remote.dayKey,
-        createdAt: remote.createdAt,
-        updatedAt: remote.updatedAt,
-        blocks: remote.blocks as WorkLedgerEntry["blocks"],
-        isArchived: remote.isArchived,
-        tags: remote.tags ?? [],
-      };
-      await db.put("entries", entry);
+      await db.put("entries", validatedEntry);
       mergeCount++;
     }
   }

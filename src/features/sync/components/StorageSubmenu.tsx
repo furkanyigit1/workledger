@@ -217,7 +217,7 @@ export function StorageSubmenu({ mutedClass, dividerClass, onBack }: StorageSubm
             <p className="text-[10px] text-red-500">{status.error}</p>
           )}
           <p className={helperTextClass}>
-            Entries will be encrypted and synced across devices. Save your sync ID — it's your only way to access your data.
+            Your sync ID is the encryption key — save it in a password manager before proceeding.
           </p>
         </div>
       )}
@@ -281,7 +281,7 @@ export function StorageSubmenu({ mutedClass, dividerClass, onBack }: StorageSubm
           </p>
 
           <p className={helperTextClass}>
-            Edits and deletes sync to all devices. Disconnect keeps your local data but stops syncing.
+            Your sync ID is stored in this browser. Save it in a password manager so you can reconnect from other devices.
           </p>
         </div>
       )}
@@ -307,6 +307,9 @@ export function StorageSubmenu({ mutedClass, dividerClass, onBack }: StorageSubm
             >
               Disconnect
             </button>
+            <p className={`text-[10px] leading-relaxed ${mutedClass}`}>
+              Disconnect removes the sync ID from this device but keeps your server account. You can reconnect later with the same ID.
+            </p>
             {!confirmDelete ? (
               <button
                 onClick={() => setConfirmDelete(true)}

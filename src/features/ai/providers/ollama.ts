@@ -5,6 +5,10 @@ export class OllamaProvider implements LLMProvider {
   private model: string;
 
   constructor(baseUrl: string, model: string) {
+    const parsed = new URL(baseUrl);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      throw new Error("Invalid server URL: only http and https are allowed");
+    }
     this.baseUrl = baseUrl;
     this.model = model;
   }

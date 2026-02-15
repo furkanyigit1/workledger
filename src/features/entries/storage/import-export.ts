@@ -2,6 +2,7 @@ import type { Block } from "@blocknote/core";
 import type { WorkLedgerEntry } from "../types/entry.ts";
 import { getDB } from "../../../storage/db.ts";
 import { updateSearchIndex } from "./search-index.ts";
+import { validateEntry, validateImportEnvelope } from "../utils/validation.ts";
 
 interface ExportEnvelope {
   version: number;
@@ -35,19 +36,24 @@ export async function exportAllEntries(): Promise<void> {
 
 export async function importEntries(
   file: File,
-): Promise<{ imported: number; skipped: number }> {
+): Promise<{ imported: number; skipped: number; invalid: number }> {
   const text = await file.text();
-  const data = JSON.parse(text) as ExportEnvelope;
-
-  if (data.version !== 1 || !Array.isArray(data.entries)) {
-    throw new Error("Invalid export file format");
-  }
+  const envelope = validateImportEnvelope(JSON.parse(text));
 
   const db = await getDB();
   let imported = 0;
   let skipped = 0;
+  let invalid = 0;
 
-  for (const entry of data.entries) {
+  for (const raw of envelope.entries) {
+    let entry: WorkLedgerEntry;
+    try {
+      entry = validateEntry(raw) as WorkLedgerEntry;
+    } catch {
+      invalid++;
+      continue;
+    }
+
     const existing = await db.get("entries", entry.id);
     if (existing && !(existing as WorkLedgerEntry).isArchived) {
       skipped++;
@@ -65,5 +71,5 @@ export async function importEntries(
     imported++;
   }
 
-  return { imported, skipped };
+  return { imported, skipped, invalid };
 }
