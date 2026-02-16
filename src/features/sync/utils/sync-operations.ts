@@ -65,6 +65,7 @@ interface PullResult {
   serverSeq: number;
   syncedAt: number;
   totalMerged: number;
+  hadEntries: boolean;
 }
 
 export async function pullEntries(params: PullParams): Promise<PullResult> {
@@ -73,6 +74,7 @@ export async function pullEntries(params: PullParams): Promise<PullResult> {
   let since = config.lastSyncSeq;
   let hasMore = true;
   let totalMerged = 0;
+  let hadEntries = false;
   let lastServerSeq = since;
 
   while (hasMore) {
@@ -81,6 +83,7 @@ export async function pullEntries(params: PullParams): Promise<PullResult> {
     lastServerSeq = res.serverSeq;
 
     if (res.entries.length > 0) {
+      hadEntries = true;
       onPhaseChange?.("merging");
       const decrypted = [];
       for (const entry of res.entries) {
@@ -118,5 +121,5 @@ export async function pullEntries(params: PullParams): Promise<PullResult> {
     since = lastServerSeq;
   }
 
-  return { serverSeq: since, syncedAt: Date.now(), totalMerged };
+  return { serverSeq: since, syncedAt: Date.now(), totalMerged, hadEntries };
 }

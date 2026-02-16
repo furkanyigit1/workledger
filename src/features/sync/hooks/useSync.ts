@@ -197,7 +197,7 @@ export function useSync() {
         onPhaseChange: (phase) => setStatus((s) => ({ ...s, phase: phase as SyncStatus["phase"] })),
       });
 
-      if (result.totalMerged > 0) {
+      if (result.hadEntries) {
         await refresh();
       }
 
