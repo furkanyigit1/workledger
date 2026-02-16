@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useEntries } from "../hooks/useEntries.ts";
 import type { WorkLedgerEntry } from "../types/entry.ts";
 
@@ -41,18 +41,24 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
     loadEntryById,
   } = useEntries();
 
-  const data: EntriesData = { entriesByDay, dayKeys, loading, archivedEntries };
-  const actions: EntriesActions = {
-    createEntry,
-    updateEntry,
-    updateEntryTags,
-    archiveEntry,
-    unarchiveEntry,
-    deleteEntry,
-    refreshArchive,
-    refresh,
-    loadEntryById,
-  };
+  const data = useMemo<EntriesData>(
+    () => ({ entriesByDay, dayKeys, loading, archivedEntries }),
+    [entriesByDay, dayKeys, loading, archivedEntries],
+  );
+  const actions = useMemo<EntriesActions>(
+    () => ({
+      createEntry,
+      updateEntry,
+      updateEntryTags,
+      archiveEntry,
+      unarchiveEntry,
+      deleteEntry,
+      refreshArchive,
+      refresh,
+      loadEntryById,
+    }),
+    [createEntry, updateEntry, updateEntryTags, archiveEntry, unarchiveEntry, deleteEntry, refreshArchive, refresh, loadEntryById],
+  );
 
   return (
     <EntriesDataContext.Provider value={data}>

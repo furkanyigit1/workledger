@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useSync } from "../hooks/useSync.ts";
 import type { SyncConfig, SyncStatus, SyncMode } from "../types/sync.ts";
 
@@ -17,8 +17,12 @@ interface SyncContextValue {
 const SyncContext = createContext<SyncContextValue | null>(null);
 
 export function SyncProvider({ children }: { children: ReactNode }) {
-  const sync = useSync();
-  return <SyncContext.Provider value={sync}>{children}</SyncContext.Provider>;
+  const { config, status, generateSyncId, connect, disconnect, deleteAccount, setMode, setServerUrl, syncNow } = useSync();
+  const value = useMemo<SyncContextValue>(
+    () => ({ config, status, generateSyncId, connect, disconnect, deleteAccount, setMode, setServerUrl, syncNow }),
+    [config, status, generateSyncId, connect, disconnect, deleteAccount, setMode, setServerUrl, syncNow],
+  );
+  return <SyncContext.Provider value={value}>{children}</SyncContext.Provider>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

@@ -43,7 +43,20 @@ export function EntryEditor({
     [entry.id],
   );
 
-  const { handleChange } = useAutoSave(entry, onSave);
+  const { handleChange, lastSavedAtRef } = useAutoSave(entry, onSave);
+
+  // Apply external content updates (from sync) without re-mounting the editor.
+  // Local auto-saves set lastSavedAtRef before the state update propagates back,
+  // so we skip those. Only sync-originated updatedAt values trigger replaceBlocks.
+  useEffect(() => {
+    if (!entry.updatedAt || entry.updatedAt === lastSavedAtRef.current) return;
+    try {
+      editor.replaceBlocks(editor.document, entry.blocks as never);
+    } catch {
+      // ignore if editor isn't ready
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entry.updatedAt]);
 
   useEffect(() => {
     if (autoFocus && editor) {

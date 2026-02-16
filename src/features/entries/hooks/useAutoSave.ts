@@ -9,6 +9,7 @@ export function useAutoSave(
 ) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestEntryRef = useRef(entry);
+  const lastSavedAtRef = useRef<number | null>(null);
 
   useEffect(() => {
     latestEntryRef.current = entry;
@@ -23,12 +24,14 @@ export function useAutoSave(
         if (!current) return;
 
         const blocks = editor.document;
+        const now = Date.now();
         const updated: WorkLedgerEntry = {
           ...current,
           blocks: blocks,
-          updatedAt: Date.now(),
+          updatedAt: now,
         };
         latestEntryRef.current = updated;
+        lastSavedAtRef.current = now;
         await onSave(updated);
         await updateSearchIndex(
           updated.id,
@@ -47,5 +50,5 @@ export function useAutoSave(
     };
   }, []);
 
-  return { handleChange };
+  return { handleChange, lastSavedAtRef };
 }
