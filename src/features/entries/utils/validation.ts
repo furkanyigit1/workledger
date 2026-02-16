@@ -8,9 +8,9 @@ const workLedgerEntrySchema = z
     dayKey: z.string().regex(DAY_KEY_REGEX),
     createdAt: z.number().nonnegative(),
     updatedAt: z.number().nonnegative(),
-    blocks: z.array(z.record(z.string(), z.unknown())),
-    isArchived: z.boolean(),
-    tags: z.array(z.string()),
+    blocks: z.array(z.record(z.string(), z.unknown())).default([]),
+    isArchived: z.boolean().default(false),
+    tags: z.array(z.string()).default([]),
   })
   .strip();
 
