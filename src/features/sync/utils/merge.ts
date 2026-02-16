@@ -35,7 +35,8 @@ export async function mergeRemoteEntries(
     let validatedEntry: WorkLedgerEntry;
     try {
       validatedEntry = validateEntry(remote) as WorkLedgerEntry;
-    } catch {
+    } catch (err) {
+      console.warn(`[sync] Entry ${remote.id} failed validation:`, err instanceof Error ? err.message : err);
       continue;
     }
 

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.2.1] - 2026-02-15
+
+### Fixed
+
+- Integrity hash now computed on JSON plaintext instead of sortedStringify, fixing hash mismatch on entries with undefined values after JSON round-trip
+- Hash mismatch on decrypt downgraded from rejection to warning — AES-256-GCM already guarantees authenticity, so old-format entries are accepted and corrected on next push
+- Push handler no longer advances the pull cursor, preventing skipped entries when syncNow() runs push before pull
+- Pull cursor only advances past successfully processed entries — failed entries are re-fetched on next pull instead of silently skipped forever
+- syncNow() now pulls before pushing to avoid cursor jumps
+- Silent catch blocks in sync-operations, merge, and useSync now log entry IDs and error messages
+
 ## [2.2.0] - 2026-02-14
 
 ### Added

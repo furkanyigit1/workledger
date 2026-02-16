@@ -165,7 +165,8 @@ export function useSync() {
         return;
       }
 
-      const updated: SyncConfig = { ...cfg, lastSyncSeq: result.serverSeq, lastSyncAt: result.syncedAt };
+      // Only update lastSyncAt — only pull should advance lastSyncSeq
+      const updated: SyncConfig = { ...cfg, lastSyncAt: result.syncedAt };
       await saveSyncConfig(updated);
       setConfig(updated);
       dirtyEntriesRef.current.clear();
@@ -272,8 +273,8 @@ export function useSync() {
       for (const entry of fullRes.entries) {
         try {
           decrypted.push(await decryptEntry(key, entry));
-        } catch {
-          // Skip entries with integrity errors
+        } catch (err) {
+          console.warn(`[sync] Failed to decrypt entry ${entry.id} during full sync:`, err instanceof Error ? err.message : err);
         }
       }
       await mergeRemoteEntries(decrypted);
@@ -345,8 +346,8 @@ export function useSync() {
   }, []);
 
   const syncNow = useCallback(async () => {
-    await push(true);
     await pull();
+    await push(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

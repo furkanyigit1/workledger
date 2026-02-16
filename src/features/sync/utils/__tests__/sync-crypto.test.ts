@@ -61,12 +61,15 @@ describe("encryptEntry / decryptEntry", () => {
     expect(decrypted.blocks).toEqual([]);
   });
 
-  it("detects tampered payload via integrity hash", async () => {
+  it("warns but still decrypts when integrity hash mismatches", async () => {
     const key = await makeKey();
     const encrypted = await encryptEntry(key, sampleEntry);
     // Tamper with the integrity hash
     const tampered = { ...encrypted, integrityHash: "0".repeat(64) };
-    await expect(decryptEntry(key, tampered)).rejects.toThrow(/Integrity hash mismatch/);
+    // Should succeed (AES-GCM already authenticates) but log a warning
+    const decrypted = await decryptEntry(key, tampered);
+    expect(decrypted.id).toBe(sampleEntry.id);
+    expect(decrypted.blocks).toEqual(sampleEntry.blocks);
   });
 
   it("handles entry with empty blocks and tags", async () => {
