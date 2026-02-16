@@ -165,8 +165,10 @@ export function useSync() {
         return;
       }
 
-      // Only update lastSyncAt — only pull should advance lastSyncSeq
-      const updated: SyncConfig = { ...cfg, lastSyncAt: result.syncedAt };
+      // Only update lastSyncAt — only pull should advance lastSyncSeq.
+      // Re-read configRef to pick up any lastSyncSeq change from a preceding pull().
+      const updated: SyncConfig = { ...configRef.current, lastSyncAt: result.syncedAt };
+      configRef.current = updated;
       await saveSyncConfig(updated);
       setConfig(updated);
       dirtyEntriesRef.current.clear();
@@ -200,6 +202,7 @@ export function useSync() {
       }
 
       const updated: SyncConfig = { ...cfg, lastSyncSeq: result.serverSeq, lastSyncAt: result.syncedAt };
+      configRef.current = updated;
       await saveSyncConfig(updated);
       setConfig(updated);
       setStatus((s) => ({ ...s, phase: "idle", error: null, lastSyncAt: result.syncedAt }));

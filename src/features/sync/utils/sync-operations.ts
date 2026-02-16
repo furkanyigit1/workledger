@@ -81,12 +81,10 @@ export async function pullEntries(params: PullParams): Promise<PullResult> {
     if (res.entries.length > 0) {
       onPhaseChange?.("merging");
       const decrypted = [];
-      let batchHadFailure = false;
       for (const entry of res.entries) {
         try {
           decrypted.push(await decryptEntry(key, entry));
         } catch (err) {
-          batchHadFailure = true;
           console.warn(`[sync] Failed to decrypt entry ${entry.id}:`, err instanceof Error ? err.message : err);
         }
       }
@@ -94,25 +92,16 @@ export async function pullEntries(params: PullParams): Promise<PullResult> {
       const merged = await mergeRemoteEntries(decrypted);
       totalMerged += merged;
 
-      // Only advance cursor past entries that were all successfully processed.
-      // If any entry failed, stop at the last successful entry's seq so
-      // failed entries are re-fetched on next pull.
-      if (!batchHadFailure) {
-        const lastEntry = res.entries[res.entries.length - 1];
-        if (lastEntry.serverSeq !== undefined && lastEntry.serverSeq > since) {
-          since = lastEntry.serverSeq;
-        }
-        if (res.serverSeq > since) {
-          since = res.serverSeq;
-        }
-      } else {
-        // Advance cursor only up to the last successfully decrypted entry
-        for (const entry of res.entries) {
-          const wasDecrypted = decrypted.some((d) => d.id === entry.id);
-          if (wasDecrypted && entry.serverSeq !== undefined && entry.serverSeq > since) {
-            since = entry.serverSeq;
-          }
-        }
+      // Always advance cursor past this batch.  AES-GCM already authenticates
+      // decrypted data, so skipping entries only risks an infinite loop when
+      // the cursor never advances (all entries fail → same batch re-fetched).
+      // Failed entries will get corrected hashes on the next push/full-sync.
+      const lastEntry = res.entries[res.entries.length - 1];
+      if (lastEntry.serverSeq !== undefined && lastEntry.serverSeq > since) {
+        since = lastEntry.serverSeq;
+      }
+      if (res.serverSeq > since) {
+        since = res.serverSeq;
       }
     } else if (res.serverSeq > since) {
       since = res.serverSeq;
