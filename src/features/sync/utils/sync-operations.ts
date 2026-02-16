@@ -73,10 +73,12 @@ export async function pullEntries(params: PullParams): Promise<PullResult> {
   let since = config.lastSyncSeq;
   let hasMore = true;
   let totalMerged = 0;
+  let lastServerSeq = since;
 
   while (hasMore) {
     const res = await apiPullEntries(token, since, 100, config.serverUrl);
     hasMore = res.hasMore;
+    lastServerSeq = res.serverSeq;
 
     if (res.entries.length > 0) {
       onPhaseChange?.("merging");
@@ -92,20 +94,28 @@ export async function pullEntries(params: PullParams): Promise<PullResult> {
       const merged = await mergeRemoteEntries(decrypted);
       totalMerged += merged;
 
-      // Always advance cursor past this batch.  AES-GCM already authenticates
-      // decrypted data, so skipping entries only risks an infinite loop when
-      // the cursor never advances (all entries fail → same batch re-fetched).
-      // Failed entries will get corrected hashes on the next push/full-sync.
+      // Advance cursor to the batch's last entry (entries are ordered by
+      // server_seq ASC).  Do NOT use res.serverSeq here — that is the global
+      // max and would skip intermediate pages during paginated pulls.
+      const previousSince = since;
       const lastEntry = res.entries[res.entries.length - 1];
       if (lastEntry.serverSeq !== undefined && lastEntry.serverSeq > since) {
         since = lastEntry.serverSeq;
       }
-      if (res.serverSeq > since) {
-        since = res.serverSeq;
+
+      // Safety: if cursor didn't advance despite having entries, break to
+      // prevent an infinite loop (entries lack serverSeq or all have seq <= since).
+      if (since === previousSince && hasMore) {
+        console.warn("[sync] Pull cursor stuck, stopping pagination");
+        break;
       }
-    } else if (res.serverSeq > since) {
-      since = res.serverSeq;
     }
+  }
+
+  // After all pages, use the server's global seq as the final cursor.
+  // This ensures we're fully caught up even if concurrent pushes happened.
+  if (lastServerSeq > since) {
+    since = lastServerSeq;
   }
 
   return { serverSeq: since, syncedAt: Date.now(), totalMerged };
