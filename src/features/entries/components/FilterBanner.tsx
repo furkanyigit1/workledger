@@ -1,4 +1,5 @@
 import { getTagColor } from "../../../utils/tag-colors.ts";
+import { SaveFilterButton, type SavedFilter } from "../../sidebar/index.ts";
 
 interface FilterBannerProps {
   selectedTags: string[];
@@ -6,9 +7,11 @@ interface FilterBannerProps {
   count: number;
   onRemoveTag: (tag: string) => void;
   onClearAll: () => void;
+  onSaveFilter?: (name: string) => void;
+  savedFilters?: SavedFilter[];
 }
 
-export function FilterBanner({ selectedTags, textQuery, count, onRemoveTag, onClearAll }: FilterBannerProps) {
+export function FilterBanner({ selectedTags, textQuery, count, onRemoveTag, onClearAll, onSaveFilter, savedFilters }: FilterBannerProps) {
   return (
     <div className="flex items-center gap-3 pt-6 pb-4 px-1 sticky top-0 sticky-header">
       <div className="flex items-center gap-2 flex-wrap">
@@ -36,16 +39,26 @@ export function FilterBanner({ selectedTags, textQuery, count, onRemoveTag, onCl
       <span className="text-xs text-gray-400 shrink-0">
         {count} {count === 1 ? "entry" : "entries"}
       </span>
-      <button
-        onClick={onClearAll}
-        className="ml-auto text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1 shrink-0"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-        Clear all
-      </button>
+      <div className="ml-auto flex items-center gap-3 shrink-0">
+        {onSaveFilter && (
+          <SaveFilterButton
+            onSave={onSaveFilter}
+            savedFilters={savedFilters}
+            selectedTags={selectedTags}
+            textQuery={textQuery}
+          />
+        )}
+        <button
+          onClick={onClearAll}
+          className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1 shrink-0"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+          Clear all
+        </button>
+      </div>
     </div>
   );
 }

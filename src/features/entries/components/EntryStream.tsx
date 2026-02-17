@@ -1,4 +1,5 @@
 import type { WorkLedgerEntry } from "../types/entry.ts";
+import type { SavedFilter } from "../../sidebar/index.ts";
 import { EntryCard } from "./EntryCard.tsx";
 import { DayHeader } from "../../../components/layout/DayHeader.tsx";
 import { FilterBanner } from "./FilterBanner.tsx";
@@ -18,13 +19,15 @@ interface EntryStreamProps {
   hasActiveFilters?: boolean;
   onRemoveTag?: (tag: string) => void;
   onClearAllFilters?: () => void;
+  onSaveFilter?: (name: string) => void;
+  savedFilters?: SavedFilter[];
   onOpenAI?: (entry: WorkLedgerEntry) => void;
   focusedEntryId?: string | null;
   onFocusEntry?: (entry: WorkLedgerEntry) => void;
   onExitFocus?: () => void;
 }
 
-export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onDelete, onUnarchive, isArchiveView, textQuery, selectedTags, hasActiveFilters, onRemoveTag, onClearAllFilters, onOpenAI, focusedEntryId, onFocusEntry, onExitFocus }: EntryStreamProps) {
+export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onDelete, onUnarchive, isArchiveView, textQuery, selectedTags, hasActiveFilters, onRemoveTag, onClearAllFilters, onSaveFilter, savedFilters, onOpenAI, focusedEntryId, onFocusEntry, onExitFocus }: EntryStreamProps) {
   // Focus mode: render only the focused entry
   if (focusedEntryId) {
     let focusedEntry: WorkLedgerEntry | undefined;
@@ -110,6 +113,8 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
           count={totalFilteredEntries}
           onRemoveTag={onRemoveTag ?? (() => {})}
           onClearAll={onClearAllFilters ?? (() => {})}
+          onSaveFilter={onSaveFilter}
+          savedFilters={savedFilters}
         />
       )}
       {sortedDays.map((dayKey) => {

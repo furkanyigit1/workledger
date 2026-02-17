@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useIsMobile } from "../../../hooks/useIsMobile.ts";
 import { useSidebarUI, useSidebarFilter, useSidebarData } from "../context/SidebarContext.tsx";
 import { useThemeContext } from "../../theme/index.ts";
@@ -7,6 +7,7 @@ import { useEntriesActions } from "../../entries/index.ts";
 import { SidebarSettings } from "./SidebarSettings.tsx";
 import { SidebarDayList } from "./SidebarDayList.tsx";
 import { SidebarTagCloud } from "./SidebarTagCloud.tsx";
+import { SavedFilterSection, SaveFilterButton } from "./SavedFilters.tsx";
 import { ImportExport } from "./ImportExport.tsx";
 
 interface SidebarProps {
@@ -17,7 +18,7 @@ interface SidebarProps {
 export function Sidebar({ onDayClick, onSearchOpen }: SidebarProps) {
   const isMobile = useIsMobile();
   const { isOpen, toggleSidebar, archiveView, toggleArchiveView, activeDayKey } = useSidebarUI();
-  const { textQuery, setTextQuery, selectedTags, toggleTag } = useSidebarFilter();
+  const { textQuery, setTextQuery, selectedTags, toggleTag, hasActiveFilters, savedFilters, saveCurrentFilter, applySavedFilter, deleteSavedFilter, clearAllFilters } = useSidebarFilter();
   const {
     displayEntriesByDay,
     displayArchivedEntriesByDay,
@@ -37,6 +38,33 @@ export function Sidebar({ onDayClick, onSearchOpen }: SidebarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
+
+  // Bottom panel resize
+  const [bottomHeight, setBottomHeight] = useState(160);
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+  const [tagsCollapsed, setTagsCollapsed] = useState(true);
+  const dragRef = useRef<{ startY: number; startHeight: number } | null>(null);
+  const bottomContentRef = useRef<HTMLDivElement>(null);
+
+  const handleDragStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    dragRef.current = { startY: e.clientY, startHeight: bottomHeight };
+    const onMove = (ev: MouseEvent) => {
+      if (!dragRef.current) return;
+      const delta = dragRef.current.startY - ev.clientY;
+      // Min height = full scrollHeight so headers are never clipped, capped at 80px floor
+      const scrollH = bottomContentRef.current?.scrollHeight ?? 100;
+      const minH = Math.min(scrollH, 100);
+      setBottomHeight(Math.max(minH, Math.min(400, dragRef.current.startHeight + delta)));
+    };
+    const onUp = () => {
+      dragRef.current = null;
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }, [bottomHeight]);
 
   // Close settings dropdown when clicking outside
   useEffect(() => {
@@ -115,17 +143,28 @@ export function Sidebar({ onDayClick, onSearchOpen }: SidebarProps) {
               value={textQuery}
               onChange={(e) => setTextQuery(e.target.value)}
               placeholder={archiveView ? "Filter archive..." : "Filter entries..."}
-              className="w-full text-sm bg-[var(--color-notebook-surface-alt)] border border-[var(--color-notebook-border)] rounded-lg pl-8 pr-7 py-2 outline-none focus:bg-[var(--color-notebook-surface)] transition-all text-[var(--color-notebook-text)] placeholder:text-[var(--color-notebook-muted)] sidebar-filter-input"
+              className={`w-full text-sm bg-[var(--color-notebook-surface-alt)] border border-[var(--color-notebook-border)] rounded-lg pl-8 ${hasActiveFilters ? "pr-16" : "pr-3"} py-2 outline-none focus:bg-[var(--color-notebook-surface)] transition-all text-[var(--color-notebook-text)] placeholder:text-[var(--color-notebook-muted)] sidebar-filter-input`}
               autoComplete="off"
               data-1p-ignore
             />
-            {textQuery && (
-              <button onClick={() => setTextQuery("")} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" aria-label="Clear filter">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            )}
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+              {hasActiveFilters && !archiveView && (
+                <SaveFilterButton
+                  variant="icon"
+                  onSave={saveCurrentFilter}
+                  savedFilters={savedFilters}
+                  selectedTags={selectedTags}
+                  textQuery={textQuery}
+                />
+              )}
+              {hasActiveFilters && (
+                <button onClick={clearAllFilters} className="text-gray-400 hover:text-gray-600" aria-label="Clear all filters">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
           <div className="flex items-center justify-between mt-2 px-2">
             {archiveView ? (
@@ -171,13 +210,39 @@ export function Sidebar({ onDayClick, onSearchOpen }: SidebarProps) {
           }}
         />
 
-        {/* Tags */}
-        {!archiveView && (
-          <SidebarTagCloud
-            allTags={allTags}
-            selectedTags={selectedTags}
-            onToggleTag={toggleTag}
-          />
+        {/* Bottom panel: Saved Filters + Tags */}
+        {!archiveView && (allTags.length > 0 || savedFilters.length > 0) && (
+          <div className="shrink-0 mt-1">
+            {/* Drag handle */}
+            <div
+              onMouseDown={handleDragStart}
+              className="h-2 cursor-row-resize flex items-center justify-center group"
+            >
+              <div className="w-8 h-0.5 rounded-full bg-gray-200 dark:bg-gray-700 group-hover:bg-gray-400 dark:group-hover:bg-gray-500 transition-colors" />
+            </div>
+            <div
+              ref={bottomContentRef}
+              className="border-t border-gray-100 dark:border-gray-800 pt-2 overflow-y-auto"
+              style={{ maxHeight: bottomHeight }}
+            >
+              <SavedFilterSection
+                savedFilters={savedFilters}
+                onApply={applySavedFilter}
+                onDelete={deleteSavedFilter}
+                collapsed={filtersCollapsed}
+                onToggleCollapse={() => setFiltersCollapsed((p) => !p)}
+                selectedTags={selectedTags}
+                textQuery={textQuery}
+              />
+              <SidebarTagCloud
+                allTags={allTags}
+                selectedTags={selectedTags}
+                onToggleTag={toggleTag}
+                collapsed={tagsCollapsed}
+                onToggleCollapse={() => setTagsCollapsed((p) => !p)}
+              />
+            </div>
+          </div>
         )}
 
         {/* Import file input */}

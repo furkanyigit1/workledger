@@ -28,7 +28,7 @@ function AppContent() {
   const { loading } = useEntriesData();
   const { createEntry, updateEntry, updateEntryTags, archiveEntry, unarchiveEntry, deleteEntry } = useEntriesActions();
   const { isOpen: sidebarOpen, archiveView } = useSidebarUI();
-  const { textQuery, selectedTags, hasActiveFilters, removeTag, clearAllFilters } = useSidebarFilter();
+  const { textQuery, selectedTags, hasActiveFilters, removeTag, clearAllFilters, saveCurrentFilter, savedFilters } = useSidebarFilter();
   const { displayEntriesByDay, displayArchivedEntriesByDay } = useSidebarData();
   const { focusedEntryId, handleFocusEntry, handleExitFocus } = useFocusModeContext();
   const { settings: aiSettings, sidebarOpen: aiSidebarOpen, targetEntry: aiTargetEntry, handleToggleAISidebar, handleOpenAI, available: aiAvailable, updateSettings: updateAISettings } = useAIContext();
@@ -76,6 +76,8 @@ function AppContent() {
           hasActiveFilters={hasActiveFilters}
           onRemoveTag={removeTag}
           onClearAllFilters={clearAllFilters}
+          onSaveFilter={!archiveView ? saveCurrentFilter : undefined}
+          savedFilters={!archiveView ? savedFilters : undefined}
           onOpenAI={aiSettings.enabled && aiAvailable && !isMobile ? handleOpenAI : undefined}
           focusedEntryId={focusedEntryId}
           onFocusEntry={handleFocusEntry}

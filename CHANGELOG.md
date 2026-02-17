@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   - Debugging Session (Problem / Hypothesis / Steps Tried / Solution) with auto-tag `#debugging`
   - Meeting Notes (Attendees / Discussion / Action Items) with auto-tag `#meeting`
   - Learning Log (What I Learned / Source / How to Apply) with auto-tag `#learning`
+- Saved filters — save the current tag + text filter combination as a named quick-access filter in the sidebar
 
 ## [2.2.3] - 2026-02-15
 

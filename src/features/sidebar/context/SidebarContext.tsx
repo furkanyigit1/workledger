@@ -5,6 +5,9 @@ import { clearAllData, getDB } from "../../../storage/db.ts";
 import { emit } from "../../../utils/events.ts";
 import type { Block } from "@blocknote/core";
 import { filterEntries } from "../utils/filterEntries.ts";
+import type { SavedFilter } from "../types/saved-filter.ts";
+import { loadSavedFilters, persistSavedFilters } from "../storage/saved-filters.ts";
+import { generateId } from "../../../utils/id.ts";
 
 // --- Context value types ---
 
@@ -26,6 +29,10 @@ interface SidebarFilterValue {
   setTextQuery: (query: string) => void;
   clearAllFilters: () => void;
   hasActiveFilters: boolean;
+  savedFilters: SavedFilter[];
+  saveCurrentFilter: (name: string) => Promise<void>;
+  applySavedFilter: (filter: SavedFilter) => void;
+  deleteSavedFilter: (id: string) => Promise<void>;
 }
 
 interface SidebarDataValue {
@@ -93,6 +100,37 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const hasActiveFilters = selectedTags.length > 0 || textQuery.trim() !== "";
+
+  // --- Saved filters ---
+
+  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([]);
+
+  useEffect(() => {
+    loadSavedFilters().then(setSavedFilters);
+  }, []);
+
+  const saveCurrentFilter = useCallback(async (name: string) => {
+    const filter: SavedFilter = {
+      id: generateId(),
+      name,
+      tags: selectedTags,
+      textQuery,
+    };
+    const updated = [...savedFilters, filter];
+    setSavedFilters(updated);
+    await persistSavedFilters(updated);
+  }, [selectedTags, textQuery, savedFilters]);
+
+  const applySavedFilter = useCallback((filter: SavedFilter) => {
+    setSelectedTags(filter.tags);
+    setTextQuery(filter.textQuery);
+  }, []);
+
+  const deleteSavedFilter = useCallback(async (id: string) => {
+    const updated = savedFilters.filter((f) => f.id !== id);
+    setSavedFilters(updated);
+    await persistSavedFilters(updated);
+  }, [savedFilters]);
 
   // Debounced text search
   useEffect(() => {
@@ -187,7 +225,11 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     setTextQuery,
     clearAllFilters,
     hasActiveFilters,
-  }), [selectedTags, toggleTag, removeTag, textQuery, clearAllFilters, hasActiveFilters]);
+    savedFilters,
+    saveCurrentFilter,
+    applySavedFilter,
+    deleteSavedFilter,
+  }), [selectedTags, toggleTag, removeTag, textQuery, clearAllFilters, hasActiveFilters, savedFilters, saveCurrentFilter, applySavedFilter, deleteSavedFilter]);
 
   const dataValue: SidebarDataValue = useMemo(() => ({
     displayEntriesByDay,
