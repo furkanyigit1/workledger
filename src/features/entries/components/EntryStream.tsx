@@ -21,13 +21,15 @@ interface EntryStreamProps {
   onClearAllFilters?: () => void;
   onSaveFilter?: (name: string) => void;
   savedFilters?: SavedFilter[];
+  onPin?: (id: string) => void;
+  onUnpin?: (id: string) => void;
   onOpenAI?: (entry: WorkLedgerEntry) => void;
   focusedEntryId?: string | null;
   onFocusEntry?: (entry: WorkLedgerEntry) => void;
   onExitFocus?: () => void;
 }
 
-export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onDelete, onUnarchive, isArchiveView, textQuery, selectedTags, hasActiveFilters, onRemoveTag, onClearAllFilters, onSaveFilter, savedFilters, onOpenAI, focusedEntryId, onFocusEntry, onExitFocus }: EntryStreamProps) {
+export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onDelete, onUnarchive, isArchiveView, textQuery, selectedTags, hasActiveFilters, onRemoveTag, onClearAllFilters, onSaveFilter, savedFilters, onPin, onUnpin, onOpenAI, focusedEntryId, onFocusEntry, onExitFocus }: EntryStreamProps) {
   // Focus mode: render only the focused entry
   if (focusedEntryId) {
     let focusedEntry: WorkLedgerEntry | undefined;
@@ -75,6 +77,8 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
             onArchive={isArchiveView ? undefined : onArchive}
             onDelete={onDelete}
             onUnarchive={isArchiveView ? onUnarchive : undefined}
+            onPin={isArchiveView ? undefined : onPin}
+            onUnpin={isArchiveView ? undefined : onUnpin}
             isArchiveView={isArchiveView}
             onOpenAI={isArchiveView ? undefined : onOpenAI}
           />
@@ -104,6 +108,21 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
     return <EmptyFilterResults selectedTags={selectedTags ?? []} textQuery={textQuery ?? ""} onClearAllFilters={onClearAllFilters} />;
   }
 
+  // Collect pinned entries across all days
+  const pinnedEntries: WorkLedgerEntry[] = [];
+  const pinnedIds = new Set<string>();
+  if (!isArchiveView && !isFiltering) {
+    for (const entries of entriesByDay.values()) {
+      for (const entry of entries) {
+        if (entry.isPinned) {
+          pinnedEntries.push(entry);
+          pinnedIds.add(entry.id);
+        }
+      }
+    }
+    pinnedEntries.sort((a, b) => b.updatedAt - a.updatedAt);
+  }
+
   return (
     <div className="entry-stream">
       {isFiltering && (
@@ -117,8 +136,41 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
           savedFilters={savedFilters}
         />
       )}
+
+      {/* Pinned entries section */}
+      {pinnedEntries.length > 0 && (
+        <div className="mb-2">
+          <div className="flex items-center gap-2 pt-6 pb-3 px-1 sticky top-0 sticky-header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-400">
+              <path d="M12 17v5" />
+              <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1z" />
+            </svg>
+            <span className="text-[11px] uppercase tracking-wider text-orange-400 font-medium">Pinned</span>
+            <span className="text-[10px] text-gray-300">{pinnedEntries.length}</span>
+          </div>
+          {pinnedEntries.map((entry) => (
+            <div key={entry.id}>
+              <EntryCard
+                entry={entry}
+                isLatest={false}
+                onSave={onSave}
+                onTagsChange={onTagsChange}
+                onArchive={onArchive}
+                onDelete={onDelete}
+                onPin={onPin}
+                onUnpin={onUnpin}
+                onOpenAI={onOpenAI}
+                onFocus={onFocusEntry}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
       {sortedDays.map((dayKey) => {
-        const entries = entriesByDay.get(dayKey) || [];
+        const allEntries = entriesByDay.get(dayKey) || [];
+        const entries = pinnedIds.size > 0 ? allEntries.filter((e) => !pinnedIds.has(e.id)) : allEntries;
+        if (entries.length === 0) return null;
         return (
           <div key={dayKey} id={`day-${dayKey}`}>
             {!isFiltering && (
@@ -134,6 +186,8 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
                   onArchive={isArchiveView ? undefined : onArchive}
                   onDelete={onDelete}
                   onUnarchive={isArchiveView ? onUnarchive : undefined}
+                  onPin={isArchiveView ? undefined : onPin}
+                  onUnpin={isArchiveView ? undefined : onUnpin}
                   isArchiveView={isArchiveView}
                   onOpenAI={isArchiveView ? undefined : onOpenAI}
                   onFocus={isArchiveView ? undefined : onFocusEntry}

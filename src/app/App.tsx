@@ -26,7 +26,7 @@ export default function App() {
 function AppContent() {
   const isMobile = useIsMobile();
   const { loading } = useEntriesData();
-  const { createEntry, updateEntry, updateEntryTags, archiveEntry, unarchiveEntry, deleteEntry } = useEntriesActions();
+  const { createEntry, updateEntry, updateEntryTags, archiveEntry, unarchiveEntry, deleteEntry, pinEntry, unpinEntry } = useEntriesActions();
   const { isOpen: sidebarOpen, archiveView } = useSidebarUI();
   const { textQuery, selectedTags, hasActiveFilters, removeTag, clearAllFilters, saveCurrentFilter, savedFilters } = useSidebarFilter();
   const { displayEntriesByDay, displayArchivedEntriesByDay } = useSidebarData();
@@ -78,6 +78,8 @@ function AppContent() {
           onClearAllFilters={clearAllFilters}
           onSaveFilter={!archiveView ? saveCurrentFilter : undefined}
           savedFilters={!archiveView ? savedFilters : undefined}
+          onPin={archiveView ? undefined : pinEntry}
+          onUnpin={archiveView ? undefined : unpinEntry}
           onOpenAI={aiSettings.enabled && aiAvailable && !isMobile ? handleOpenAI : undefined}
           focusedEntryId={focusedEntryId}
           onFocusEntry={handleFocusEntry}

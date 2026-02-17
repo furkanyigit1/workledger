@@ -11,6 +11,7 @@ const workLedgerEntrySchema = z
     blocks: z.array(z.record(z.string(), z.unknown())).default([]),
     isArchived: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
+    isPinned: z.boolean().default(false),
   })
   .strip();
 

@@ -8,6 +8,7 @@ export interface WorkLedgerEntry {
   blocks: PartialBlock[];
   isArchived: boolean;
   tags: string[];
+  isPinned?: boolean;
 }
 
 export interface SearchIndexEntry {

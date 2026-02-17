@@ -8,6 +8,8 @@ import {
   archiveEntry as dbArchiveEntry,
   unarchiveEntry as dbUnarchiveEntry,
   deleteEntry as dbDeleteEntry,
+  pinEntry as dbPinEntry,
+  unpinEntry as dbUnpinEntry,
   getArchivedEntries,
   getAllDayKeys,
 } from "../storage/entries.ts";
@@ -152,6 +154,27 @@ export function useEntries() {
     [refresh, refreshArchive],
   );
 
+  const pinEntry = useCallback(
+    async (id: string) => {
+      await dbPinEntry(id);
+      emit("entry-changed", { entryId: id });
+      await refresh();
+      setTimeout(() => {
+        document.getElementById(`entry-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    },
+    [refresh],
+  );
+
+  const unpinEntry = useCallback(
+    async (id: string) => {
+      await dbUnpinEntry(id);
+      emit("entry-changed", { entryId: id });
+      await refresh();
+    },
+    [refresh],
+  );
+
   const loadEntryById = useCallback(
     async (entryId: string): Promise<WorkLedgerEntry | null> => {
       const entry = await dbGetEntry(entryId);
@@ -180,6 +203,8 @@ export function useEntries() {
     archiveEntry,
     unarchiveEntry,
     deleteEntry,
+    pinEntry,
+    unpinEntry,
     archivedEntries,
     refreshArchive,
     refresh,

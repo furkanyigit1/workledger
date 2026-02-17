@@ -1,7 +1,7 @@
 import { openDB, type IDBPDatabase } from "idb";
 
 const DB_NAME = "workledger";
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 export interface WorkLedgerDB {
   entries: {
@@ -14,6 +14,7 @@ export interface WorkLedgerDB {
       blocks: unknown[];
       isArchived: boolean;
       tags: string[];
+      isPinned?: boolean;
     };
     indexes: {
       "by-dayKey": string;
@@ -87,6 +88,19 @@ export function getDB(): Promise<IDBPDatabase<WorkLedgerDB>> {
           const aiStore = db.createObjectStore("aiConversations", { keyPath: "id" });
           aiStore.createIndex("by-entryId", "entryId");
           aiStore.createIndex("by-updatedAt", "updatedAt");
+        }
+
+        if (oldVersion < 4) {
+          // Default isPinned to false for existing entries
+          const entryStore = transaction.objectStore("entries");
+          entryStore.getAll().then((entries) => {
+            for (const entry of entries) {
+              if (entry.isPinned === undefined) {
+                entry.isPinned = false;
+                entryStore.put(entry);
+              }
+            }
+          });
         }
       },
     });

@@ -3,7 +3,7 @@ import { getDB } from "../../../storage/db.ts";
 
 function normalizeEntry(raw: Record<string, unknown>): WorkLedgerEntry {
   const entry = raw as unknown as WorkLedgerEntry;
-  return { ...entry, tags: entry.tags ?? [] };
+  return { ...entry, tags: entry.tags ?? [], isPinned: entry.isPinned ?? false };
 }
 
 export async function createEntry(
@@ -98,6 +98,28 @@ export async function unarchiveEntry(id: string): Promise<void> {
 export async function deleteEntry(id: string): Promise<void> {
   const db = await getDB();
   await db.delete("entries", id);
+}
+
+export async function pinEntry(id: string): Promise<void> {
+  const db = await getDB();
+  const raw = await db.get("entries", id);
+  if (raw) {
+    const entry = normalizeEntry(raw as Record<string, unknown>);
+    entry.isPinned = true;
+    entry.updatedAt = Date.now();
+    await db.put("entries", entry);
+  }
+}
+
+export async function unpinEntry(id: string): Promise<void> {
+  const db = await getDB();
+  const raw = await db.get("entries", id);
+  if (raw) {
+    const entry = normalizeEntry(raw as Record<string, unknown>);
+    entry.isPinned = false;
+    entry.updatedAt = Date.now();
+    await db.put("entries", entry);
+  }
 }
 
 export async function getArchivedEntries(): Promise<Map<string, WorkLedgerEntry[]>> {

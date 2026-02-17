@@ -9,6 +9,7 @@ interface EntryPayload {
   blocks: unknown[];
   isArchived: boolean;
   tags: string[];
+  isPinned?: boolean;
 }
 
 export interface DecryptedEntry {
@@ -20,11 +21,12 @@ export interface DecryptedEntry {
   isArchived: boolean;
   isDeleted: boolean;
   tags: string[];
+  isPinned?: boolean;
 }
 
 export async function encryptEntry(
   key: CryptoKey,
-  entry: { id: string; dayKey: string; createdAt: number; updatedAt: number; blocks: unknown[]; isArchived: boolean; tags: string[]; isDeleted?: boolean },
+  entry: { id: string; dayKey: string; createdAt: number; updatedAt: number; blocks: unknown[]; isArchived: boolean; tags: string[]; isPinned?: boolean; isDeleted?: boolean },
 ): Promise<SyncEntry> {
   const payload: EntryPayload = {
     dayKey: entry.dayKey,
@@ -33,6 +35,7 @@ export async function encryptEntry(
     blocks: entry.blocks,
     isArchived: entry.isArchived,
     tags: entry.tags ?? [],
+    isPinned: entry.isPinned ?? false,
   };
   const plaintext = JSON.stringify(payload);
   const integrityHash = await computePlaintextHash(plaintext);
@@ -81,5 +84,6 @@ export async function decryptEntry(
     isArchived: payload.isArchived,
     isDeleted: false,
     tags: payload.tags ?? [],
+    isPinned: payload.isPinned ?? false,
   };
 }

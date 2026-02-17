@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   - Meeting Notes (Attendees / Discussion / Action Items) with auto-tag `#meeting`
   - Learning Log (What I Learned / Source / How to Apply) with auto-tag `#learning`
 - Saved filters — save the current tag + text filter combination as a named quick-access filter in the sidebar
+- Pin entries — star icon on entry cards to pin important entries; pinned entries float to the top in a dedicated "Pinned" section above day groups
 
 ## [2.2.3] - 2026-02-15
 

@@ -15,12 +15,14 @@ interface EntryCardProps {
   onArchive?: (id: string) => void;
   onDelete?: (id: string) => void;
   onUnarchive?: (id: string) => void;
+  onPin?: (id: string) => void;
+  onUnpin?: (id: string) => void;
   isArchiveView?: boolean;
   onOpenAI?: (entry: WorkLedgerEntry) => void;
   onFocus?: (entry: WorkLedgerEntry) => void;
 }
 
-export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, onDelete, onUnarchive, isArchiveView, onOpenAI, onFocus }: EntryCardProps) {
+export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, onDelete, onUnarchive, onPin, onUnpin, isArchiveView, onOpenAI, onFocus }: EntryCardProps) {
   const isOld = entry.dayKey < todayKey();
   const [confirmArchive, setConfirmArchive] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -53,6 +55,20 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
 
         {/* Action buttons */}
         <div className="ml-auto flex items-center gap-1">
+          {/* Pin button */}
+          {!isArchiveView && !confirmArchive && !confirmDelete && (onPin || onUnpin) && (
+            <button
+              onClick={() => entry.isPinned ? onUnpin?.(entry.id) : onPin?.(entry.id)}
+              className={`${entry.isPinned ? "opacity-100 text-orange-400" : "opacity-0 group-hover:opacity-100 max-sm:opacity-100 text-gray-300 dark:text-gray-600 hover:text-orange-400"} transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800`}
+              title={entry.isPinned ? "Unpin entry" : "Pin to top"}
+              aria-label={entry.isPinned ? "Unpin entry" : "Pin to top"}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill={entry.isPinned ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 17v5" />
+                <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1z" />
+              </svg>
+            </button>
+          )}
           {/* Copy link button */}
           {!isArchiveView && !confirmArchive && !confirmDelete && (
             <button
@@ -220,6 +236,7 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
   );
 }, (prev, next) =>
   prev.entry.updatedAt === next.entry.updatedAt &&
+  prev.entry.isPinned === next.entry.isPinned &&
   prev.isLatest === next.isLatest &&
   !!prev.onOpenAI === !!next.onOpenAI &&
   !!prev.onFocus === !!next.onFocus &&
