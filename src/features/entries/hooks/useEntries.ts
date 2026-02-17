@@ -49,16 +49,16 @@ export function useEntries() {
     refreshArchive();
   }, [refresh, refreshArchive]);
 
-  const createEntry = useCallback(async (): Promise<WorkLedgerEntry> => {
+  const createEntry = useCallback(async (options?: { blocks?: WorkLedgerEntry["blocks"]; tags?: string[] }): Promise<WorkLedgerEntry> => {
     const now = Date.now();
     const entry: WorkLedgerEntry = {
       id: generateId(),
       dayKey: todayKey(),
       createdAt: now,
       updatedAt: now,
-      blocks: [],
+      blocks: options?.blocks ?? [],
       isArchived: false,
-      tags: [],
+      tags: options?.tags ?? [],
     };
     await dbCreateEntry(entry);
     emit("entry-changed", { entryId: entry.id });

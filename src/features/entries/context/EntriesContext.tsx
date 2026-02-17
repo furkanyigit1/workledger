@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useEntries } from "../hooks/useEntries.ts";
 import type { WorkLedgerEntry } from "../types/entry.ts";
+import type { PartialBlock } from "@blocknote/core";
 
 interface EntriesData {
   entriesByDay: Map<string, WorkLedgerEntry[]>;
@@ -10,7 +11,7 @@ interface EntriesData {
 }
 
 interface EntriesActions {
-  createEntry: () => Promise<WorkLedgerEntry>;
+  createEntry: (options?: { blocks?: PartialBlock[]; tags?: string[] }) => Promise<WorkLedgerEntry>;
   updateEntry: (entry: WorkLedgerEntry) => Promise<void>;
   updateEntryTags: (entryId: string, dayKey: string, tags: string[]) => Promise<void>;
   archiveEntry: (id: string) => Promise<void>;

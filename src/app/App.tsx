@@ -3,7 +3,7 @@ import { AppShell } from "../components/layout/AppShell.tsx";
 import { ErrorBoundary } from "../components/ui/ErrorBoundary.tsx";
 import { Sidebar } from "../features/sidebar/index.ts";
 import { useSidebarUI, useSidebarFilter, useSidebarData } from "../features/sidebar/index.ts";
-import { EntryStream, NewEntryButton, useEntriesData, useEntriesActions, useEntryNavigation } from "../features/entries/index.ts";
+import { EntryStream, NewEntryButton, useEntriesData, useEntriesActions, useEntryNavigation, type EntryTemplate } from "../features/entries/index.ts";
 import { SearchPanel, useSearch } from "../features/search/index.ts";
 import { useFocusModeContext } from "../features/focus-mode/index.ts";
 import { useAIContext } from "../features/ai/index.ts";
@@ -26,7 +26,7 @@ export default function App() {
 function AppContent() {
   const isMobile = useIsMobile();
   const { loading } = useEntriesData();
-  const { updateEntry, updateEntryTags, archiveEntry, unarchiveEntry, deleteEntry } = useEntriesActions();
+  const { createEntry, updateEntry, updateEntryTags, archiveEntry, unarchiveEntry, deleteEntry } = useEntriesActions();
   const { isOpen: sidebarOpen, archiveView } = useSidebarUI();
   const { textQuery, selectedTags, hasActiveFilters, removeTag, clearAllFilters } = useSidebarFilter();
   const { displayEntriesByDay, displayArchivedEntriesByDay } = useSidebarData();
@@ -35,6 +35,13 @@ function AppContent() {
   const { query, results, isOpen: searchOpen, search, open: openSearch, close: closeSearch } = useSearch();
   const { handleNewEntry } = useKeyboardShortcuts({ isOpen: searchOpen, open: openSearch, close: closeSearch });
   const { handleSearchResultClick, handleDayClick } = useEntryNavigation();
+
+  const handleNewEntryFromTemplate = async (template: EntryTemplate) => {
+    const entry = await createEntry({ blocks: template.blocks, tags: [template.tag] });
+    setTimeout(() => {
+      document.getElementById(`entry-${entry.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+  };
 
   if (loading) {
     return (
@@ -76,7 +83,7 @@ function AppContent() {
         />
       </AppShell>
 
-      {!archiveView && !focusedEntryId && <NewEntryButton onClick={handleNewEntry} aiSidebarOpen={aiSidebarOpen && !isMobile} />}
+      {!archiveView && !focusedEntryId && <NewEntryButton onClick={handleNewEntry} onCreateFromTemplate={handleNewEntryFromTemplate} aiSidebarOpen={aiSidebarOpen && !isMobile} />}
 
       <SearchPanel
         isOpen={searchOpen}

@@ -20,6 +20,8 @@ export { exportAllEntries, importEntries } from "./storage/import-export.ts";
 
 // Utils (entries-specific)
 export { extractTitle } from "./utils/extract-title.ts";
+export { ENTRY_TEMPLATES } from "./utils/templates.ts";
+export type { EntryTemplate } from "./utils/templates.ts";
 
 // Validation
 export { validateEntry, validateImportEnvelope } from "./utils/validation.ts";

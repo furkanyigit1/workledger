@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Entry templates — create entries pre-filled with structured sections via dropdown on the New Entry button
+  - Decision Log (Context / Decision / Consequences) with auto-tag `#decision`
+  - Debugging Session (Problem / Hypothesis / Steps Tried / Solution) with auto-tag `#debugging`
+  - Meeting Notes (Attendees / Discussion / Action Items) with auto-tag `#meeting`
+  - Learning Log (What I Learned / Source / How to Apply) with auto-tag `#learning`
+
 ## [2.2.3] - 2026-02-15
 
 ### Fixed
