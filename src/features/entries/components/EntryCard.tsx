@@ -58,7 +58,7 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
         )}
         {isArchiveView && entry.signifier && (
           <span className={`text-[11px] font-medium ${
-            { note: "text-blue-500", decision: "text-emerald-500", task: "text-violet-500", question: "text-amber-500", idea: "text-pink-500" }[entry.signifier]
+            { decision: "text-emerald-500", question: "text-amber-500", idea: "text-pink-500", milestone: "text-blue-500" }[entry.signifier]
           }`}>
             {entry.signifier}
           </span>

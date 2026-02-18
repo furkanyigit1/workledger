@@ -42,8 +42,8 @@
 - **Syntax highlighting** -- 24 languages with Shiki, theme-aware code blocks
 - **Wiki-style linking** -- Type `[[` to link between entries and build a knowledge graph
 - **Backlinks** -- "Referenced by" panel below each entry shows all entries that link to it, auto-maintained on save
-- **Entry templates** -- Start entries with structured sections: Decision Log, Debugging Session, Meeting Notes, Learning Log — each with pre-filled headings and auto-tags
-- **Entry signifiers** -- Label entries as Note, Decision, Task, Question, or Idea with color-coded indicators; filterable in the sidebar
+- **Entry templates** -- Start entries with structured sections: Decision Log, Debugging Session, Meeting Notes, Learning Log, and End of Day — each with pre-filled headings and auto-tags
+- **Entry signifiers** -- Label entries as Decision, Question, Idea, or Milestone with color-coded indicators; filterable in the sidebar. Most entries need no signifier — use them to highlight what matters
 - **Pin entries** -- Pin important entries to the top of your stream
 - **Tagging** -- Color-coded tags for categorization and filtering
 - **Saved filters** -- Save tag + text filter combinations as named presets for one-click access

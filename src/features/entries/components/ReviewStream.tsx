@@ -226,7 +226,7 @@ export function ReviewStream({ entriesByDay, onEntryClick, onOpenAI }: ReviewStr
                     <div className="flex flex-wrap gap-2.5 mb-6 px-1">
                       {week.signifierCounts.map(([sig, count]) => {
                         const cfg = SIGNIFIER_CONFIG[sig];
-                        const bgColor = { note: "bg-blue-50 dark:bg-blue-950/30 border-blue-100 dark:border-blue-900/40", decision: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-100 dark:border-emerald-900/40", task: "bg-violet-50 dark:bg-violet-950/30 border-violet-100 dark:border-violet-900/40", question: "bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-900/40", idea: "bg-pink-50 dark:bg-pink-950/30 border-pink-100 dark:border-pink-900/40" }[sig];
+                        const bgColor = { decision: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-100 dark:border-emerald-900/40", question: "bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-900/40", idea: "bg-pink-50 dark:bg-pink-950/30 border-pink-100 dark:border-pink-900/40", milestone: "bg-blue-50 dark:bg-blue-950/30 border-blue-100 dark:border-blue-900/40" }[sig];
                         return (
                           <div key={sig} className={`rounded-lg border px-3.5 py-2 flex flex-col items-center justify-center shadow-sm ${bgColor}`}>
                             <div className={`text-base font-bold leading-none ${cfg.color}`}>{count}</div>
@@ -262,7 +262,7 @@ export function ReviewStream({ entriesByDay, onEntryClick, onOpenAI }: ReviewStr
                             const isPinned = !!entry.isPinned;
                             const sig = entry.signifier ? SIGNIFIER_CONFIG[entry.signifier] : null;
                             const borderColor = sig
-                              ? { note: "border-blue-400", decision: "border-emerald-400", task: "border-violet-400", question: "border-amber-400", idea: "border-pink-400" }[entry.signifier!]
+                              ? { decision: "border-emerald-400", question: "border-amber-400", idea: "border-pink-400", milestone: "border-blue-400" }[entry.signifier!]
                               : "border-transparent";
 
                             return (

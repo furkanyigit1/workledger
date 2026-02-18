@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-02-18
+
+### Added
+
+- End of Day template — brain dump template with sections for Done Today, In Progress, Blocked, Tomorrow's Priorities, Follow-ups, Meetings, To Review, and Brain Dump; auto-tagged `#eod`
+
+### Changed
+
+- Reworked entry signifiers — replaced Note/Decision/Task/Question/Idea with Decision/Question/Idea/Milestone. "Note" was redundant (every entry is a note) and "Task" belongs in a task tracker. New "Milestone" signifier marks accomplishments for brag docs and performance reviews. Signifiers are now optional highlights, not mandatory categories.
+- Updated landing page and README to reflect new template and signifier changes
+
 ## [3.0.0] - 2026-02-17
 
 ### Added

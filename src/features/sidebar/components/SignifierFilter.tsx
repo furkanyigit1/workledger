@@ -1,11 +1,10 @@
 import { SIGNIFIER_CONFIG, type EntrySignifier } from "../../entries/index.ts";
 
 const BG_COLORS: Record<EntrySignifier, string> = {
-  note: "bg-blue-100 dark:bg-blue-950/40",
   decision: "bg-emerald-100 dark:bg-emerald-950/40",
-  task: "bg-violet-100 dark:bg-violet-950/40",
   question: "bg-amber-100 dark:bg-amber-950/40",
   idea: "bg-pink-100 dark:bg-pink-950/40",
+  milestone: "bg-blue-100 dark:bg-blue-950/40",
 };
 
 interface SignifierFilterProps {

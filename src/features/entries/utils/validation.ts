@@ -12,7 +12,7 @@ const workLedgerEntrySchema = z
     isArchived: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
     isPinned: z.boolean().default(false),
-    signifier: z.enum(["note", "decision", "task", "question", "idea"]).optional(),
+    signifier: z.enum(["decision", "question", "idea", "milestone", "note", "task"]).optional(),
   })
   .strip();
 
