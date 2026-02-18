@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import type { SavedFilter } from "../types/saved-filter.ts";
+import { useClickOutside } from "../../../hooks/useClickOutside.ts";
 
 interface SaveFilterButtonProps {
   onSave: (name: string) => void;
@@ -21,17 +22,8 @@ export function SaveFilterButton({ onSave, savedFilters, selectedTags, textQuery
     return sameTags && sameQuery;
   });
 
-  useEffect(() => {
-    if (!open) return;
-    function handleClick(e: MouseEvent) {
-      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
-        setOpen(false);
-        setName("");
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
+  const closePopover = useCallback(() => { setOpen(false); setName(""); }, []);
+  useClickOutside(popoverRef, closePopover, open);
 
   const handleSave = () => {
     const trimmed = name.trim();

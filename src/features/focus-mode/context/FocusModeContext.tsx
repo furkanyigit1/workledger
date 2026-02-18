@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useRef, useEffect, useMemo, type ReactNode } from "react";
 import type { WorkLedgerEntry } from "../../entries/index.ts";
 
 interface FocusModeContextValue {
@@ -11,6 +11,8 @@ const FocusModeCtx = createContext<FocusModeContextValue | null>(null);
 
 export function FocusModeProvider({ children }: { children: ReactNode }) {
   const [focusedEntryId, setFocusedEntryId] = useState<string | null>(null);
+  const focusedEntryIdRef = useRef(focusedEntryId);
+  useEffect(() => { focusedEntryIdRef.current = focusedEntryId; }, [focusedEntryId]);
   const scrollRestoreId = useRef<string | null>(null);
 
   const handleFocusEntry = useCallback((entry: WorkLedgerEntry) => {
@@ -19,10 +21,10 @@ export function FocusModeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const handleExitFocus = useCallback(() => {
-    scrollRestoreId.current = focusedEntryId;
+    scrollRestoreId.current = focusedEntryIdRef.current;
     setFocusedEntryId(null);
     history.replaceState(null, "", window.location.pathname);
-  }, [focusedEntryId]);
+  }, []);
 
   // After exiting focus mode, scroll to the entry that was focused
   useEffect(() => {
@@ -38,8 +40,14 @@ export function FocusModeProvider({ children }: { children: ReactNode }) {
     }
   }, [focusedEntryId]);
 
+  const value = useMemo(() => ({
+    focusedEntryId,
+    handleFocusEntry,
+    handleExitFocus,
+  }), [focusedEntryId, handleFocusEntry, handleExitFocus]);
+
   return (
-    <FocusModeCtx.Provider value={{ focusedEntryId, handleFocusEntry, handleExitFocus }}>
+    <FocusModeCtx.Provider value={value}>
       {children}
     </FocusModeCtx.Provider>
   );

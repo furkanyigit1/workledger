@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { WorkLedgerEntry } from "../types/entry.ts";
 import type { SavedFilter } from "../../sidebar/index.ts";
 import { EntryCard } from "./EntryCard.tsx";
@@ -30,7 +31,37 @@ interface EntryStreamProps {
   onExitFocus?: () => void;
 }
 
+const noop = () => {};
+
 export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onDelete, onUnarchive, isArchiveView, textQuery, selectedTags, hasActiveFilters, onRemoveTag, onClearAllFilters, onSaveFilter, savedFilters, onPin, onUnpin, onSignifierChange, onOpenAI, focusedEntryId, onFocusEntry, onExitFocus }: EntryStreamProps) {
+  const isFiltering = !!hasActiveFilters;
+
+  const sortedDays = useMemo(
+    () => [...entriesByDay.keys()].sort((a, b) => b.localeCompare(a)),
+    [entriesByDay],
+  );
+
+  const { pinnedEntries, pinnedIds } = useMemo(() => {
+    if (isArchiveView || isFiltering) return { pinnedEntries: [] as WorkLedgerEntry[], pinnedIds: new Set<string>() };
+    const pinned: WorkLedgerEntry[] = [];
+    const ids = new Set<string>();
+    for (const entries of entriesByDay.values()) {
+      for (const entry of entries) {
+        if (entry.isPinned) {
+          pinned.push(entry);
+          ids.add(entry.id);
+        }
+      }
+    }
+    pinned.sort((a, b) => b.updatedAt - a.updatedAt);
+    return { pinnedEntries: pinned, pinnedIds: ids };
+  }, [entriesByDay, isArchiveView, isFiltering]);
+
+  const totalFilteredEntries = useMemo(
+    () => isFiltering ? sortedDays.reduce((sum, dk) => sum + (entriesByDay.get(dk)?.length || 0), 0) : 0,
+    [isFiltering, sortedDays, entriesByDay],
+  );
+
   // Focus mode: render only the focused entry
   if (focusedEntryId) {
     let focusedEntry: WorkLedgerEntry | undefined;
@@ -89,15 +120,6 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
     );
   }
 
-  const sortedDays = [...entriesByDay.keys()].sort((a, b) =>
-    b.localeCompare(a),
-  );
-
-  const isFiltering = !!hasActiveFilters;
-  const totalFilteredEntries = isFiltering
-    ? sortedDays.reduce((sum, dk) => sum + (entriesByDay.get(dk)?.length || 0), 0)
-    : 0;
-
   if (sortedDays.length === 0 && isArchiveView) {
     return <EmptyArchive />;
   }
@@ -110,21 +132,6 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
     return <EmptyFilterResults selectedTags={selectedTags ?? []} textQuery={textQuery ?? ""} onClearAllFilters={onClearAllFilters} />;
   }
 
-  // Collect pinned entries across all days
-  const pinnedEntries: WorkLedgerEntry[] = [];
-  const pinnedIds = new Set<string>();
-  if (!isArchiveView && !isFiltering) {
-    for (const entries of entriesByDay.values()) {
-      for (const entry of entries) {
-        if (entry.isPinned) {
-          pinnedEntries.push(entry);
-          pinnedIds.add(entry.id);
-        }
-      }
-    }
-    pinnedEntries.sort((a, b) => b.updatedAt - a.updatedAt);
-  }
-
   return (
     <div className="entry-stream">
       {isFiltering && (
@@ -132,8 +139,8 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
           selectedTags={selectedTags ?? []}
           textQuery={textQuery ?? ""}
           count={totalFilteredEntries}
-          onRemoveTag={onRemoveTag ?? (() => {})}
-          onClearAll={onClearAllFilters ?? (() => {})}
+          onRemoveTag={onRemoveTag ?? noop}
+          onClearAll={onClearAllFilters ?? noop}
           onSaveFilter={onSaveFilter}
           savedFilters={savedFilters}
         />

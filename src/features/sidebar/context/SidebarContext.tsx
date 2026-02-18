@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from "react";
-import { useEntriesData, useEntriesActions, searchEntries, extractTextFromBlocks } from "../../entries/index.ts";
+import { useEntriesData, useEntriesActions, searchEntries, extractTextFromBlocks, getAllEntryIds } from "../../entries/index.ts";
 import type { WorkLedgerEntry, EntrySignifier } from "../../entries/index.ts";
-import { clearAllData, getDB } from "../../../storage/db.ts";
+import { clearAllData } from "../../../storage/db.ts";
 import { emit } from "../../../utils/events.ts";
 import type { Block } from "@blocknote/core";
 import { filterEntries } from "../utils/filterEntries.ts";
@@ -237,8 +237,7 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
 
   const handleDeleteAll = useCallback(async () => {
     // Collect all entry IDs before clearing so sync can create deletion tombstones
-    const db = await getDB();
-    const entryIds = await db.getAllKeys("entries");
+    const entryIds = await getAllEntryIds();
     await clearAllData();
     for (const id of entryIds) {
       emit("entry-deleted", { entryId: id as string });

@@ -5,7 +5,6 @@ import { SyncStatusIndicator } from "./SyncStatusIndicator.tsx";
 import { DEFAULT_SERVER_URL } from "../types/sync.ts";
 
 interface StorageSubmenuProps {
-  menuItemClass: string;
   mutedClass: string;
   dividerClass: string;
   onBack: () => void;

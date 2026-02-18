@@ -156,6 +156,11 @@ export async function getAllEntries(): Promise<WorkLedgerEntry[]> {
   return (await db.getAll("entries") as unknown as Record<string, unknown>[]).map(normalizeEntry);
 }
 
+export async function getAllEntryIds(): Promise<string[]> {
+  const db = await getDB();
+  return (await db.getAllKeys("entries")) as string[];
+}
+
 export async function getAllTags(): Promise<string[]> {
   const db = await getDB();
   const allEntries = await db.getAll("entries");

@@ -1,5 +1,8 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useIsMobile } from "../../../hooks/useIsMobile.ts";
+import { useClickOutside } from "../../../hooks/useClickOutside.ts";
+import type { EntrySignifier } from "../../entries/index.ts";
+import type { SavedFilter } from "../types/saved-filter.ts";
 import { useSidebarUI, useSidebarFilter, useSidebarData } from "../context/SidebarContext.tsx";
 import { useThemeContext } from "../../theme/index.ts";
 import { useAIContext } from "../../ai/index.ts";
@@ -65,17 +68,32 @@ export function Sidebar({ onDayClick, onSearchOpen }: SidebarProps) {
     document.addEventListener("mouseup", onUp);
   }, [bottomHeight]);
 
-  // Close settings dropdown when clicking outside
-  useEffect(() => {
-    if (!settingsOpen) return;
-    function handleClick(e: MouseEvent) {
-      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
-        setSettingsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [settingsOpen]);
+  const handleDayClick = useCallback((dayKey: string) => {
+    onDayClick(dayKey);
+    if (isMobile) toggleSidebar();
+  }, [onDayClick, isMobile, toggleSidebar]);
+
+  const handleApplyFilter = useCallback((f: SavedFilter) => {
+    applySavedFilter(f);
+    if (isMobile) toggleSidebar();
+  }, [applySavedFilter, isMobile, toggleSidebar]);
+
+  const handleToggleSignifier = useCallback((s: EntrySignifier) => {
+    toggleSignifier(s);
+    if (isMobile) toggleSidebar();
+  }, [toggleSignifier, isMobile, toggleSidebar]);
+
+  const handleToggleTag = useCallback((t: string) => {
+    toggleTag(t);
+    if (isMobile) toggleSidebar();
+  }, [toggleTag, isMobile, toggleSidebar]);
+
+  const closeSettings = useCallback(() => setSettingsOpen(false), []);
+  useClickOutside(settingsRef, closeSettings, settingsOpen);
+
+  const handleToggleFiltersCollapse = useCallback(() => setFiltersCollapsed((p) => !p), []);
+  const handleToggleSignifiersCollapse = useCallback(() => setSignifiersCollapsed((p) => !p), []);
+  const handleToggleTagsCollapse = useCallback(() => setTagsCollapsed((p) => !p), []);
 
   return (
     <>
@@ -226,10 +244,7 @@ export function Sidebar({ onDayClick, onSearchOpen }: SidebarProps) {
             entriesByDay={entriesByDay}
             isArchiveView={archiveView}
             activeDayKey={activeDayKey}
-            onDayClick={(dayKey: string) => {
-              onDayClick(dayKey);
-              if (isMobile) toggleSidebar();
-            }}
+            onDayClick={handleDayClick}
           />
         )}
 
@@ -249,26 +264,26 @@ export function Sidebar({ onDayClick, onSearchOpen }: SidebarProps) {
             >
               <SavedFilterSection
                 savedFilters={savedFilters}
-                onApply={(f) => { applySavedFilter(f); if (isMobile) toggleSidebar(); }}
+                onApply={handleApplyFilter}
                 onDelete={deleteSavedFilter}
                 collapsed={filtersCollapsed}
-                onToggleCollapse={() => setFiltersCollapsed((p) => !p)}
+                onToggleCollapse={handleToggleFiltersCollapse}
                 selectedTags={selectedTags}
                 textQuery={textQuery}
               />
               <SignifierFilter
                 allSignifiers={allSignifiers}
                 selectedSignifiers={selectedSignifiers}
-                onToggle={(s) => { toggleSignifier(s); if (isMobile) toggleSidebar(); }}
+                onToggle={handleToggleSignifier}
                 collapsed={signifiersCollapsed}
-                onToggleCollapse={() => setSignifiersCollapsed((p) => !p)}
+                onToggleCollapse={handleToggleSignifiersCollapse}
               />
               <SidebarTagCloud
                 allTags={allTags}
                 selectedTags={selectedTags}
-                onToggleTag={(t) => { toggleTag(t); if (isMobile) toggleSidebar(); }}
+                onToggleTag={handleToggleTag}
                 collapsed={tagsCollapsed}
-                onToggleCollapse={() => setTagsCollapsed((p) => !p)}
+                onToggleCollapse={handleToggleTagsCollapse}
               />
             </div>
           </div>

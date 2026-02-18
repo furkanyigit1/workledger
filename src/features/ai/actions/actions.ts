@@ -138,7 +138,3 @@ export const AI_ACTIONS: AIAction[] = [
     followUpSuggestions: ["Summarize the most recent session", "How long have I been working on this?", "What's the next step?"],
   },
 ];
-
-export function getAction(id: string): AIAction | undefined {
-  return AI_ACTIONS.find((a) => a.id === id);
-}

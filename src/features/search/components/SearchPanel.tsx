@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, memo } from "react";
 import type { SearchIndexEntry } from "../../entries/index.ts";
 import { formatDayKey } from "../../../utils/dates.ts";
 import { SearchIcon } from "../../../components/ui/Icons.tsx";
@@ -12,7 +12,7 @@ interface SearchPanelProps {
   onResultClick: (entryId: string, dayKey: string) => void;
 }
 
-export function SearchPanel({
+export const SearchPanel = memo(function SearchPanel({
   isOpen,
   query,
   results,
@@ -134,4 +134,4 @@ export function SearchPanel({
       </div>
     </div>
   );
-}
+});

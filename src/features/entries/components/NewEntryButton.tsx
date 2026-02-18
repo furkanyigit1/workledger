@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback, memo } from "react";
 import { ENTRY_TEMPLATES, type EntryTemplate } from "../utils/templates.ts";
+import { useClickOutside } from "../../../hooks/useClickOutside.ts";
 
 interface NewEntryButtonProps {
   onClick: () => void;
@@ -7,20 +8,12 @@ interface NewEntryButtonProps {
   aiSidebarOpen?: boolean;
 }
 
-export function NewEntryButton({ onClick, onCreateFromTemplate, aiSidebarOpen }: NewEntryButtonProps) {
+export const NewEntryButton = memo(function NewEntryButton({ onClick, onCreateFromTemplate, aiSidebarOpen }: NewEntryButtonProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    function handleClick(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [menuOpen]);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  useClickOutside(menuRef, closeMenu, menuOpen);
 
   return (
     <div
@@ -116,4 +109,4 @@ export function NewEntryButton({ onClick, onCreateFromTemplate, aiSidebarOpen }:
       </div>
     </div>
   );
-}
+});

@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { SIGNIFIER_CONFIG, type EntrySignifier } from "../types/entry.ts";
+import { useClickOutside } from "../../../hooks/useClickOutside.ts";
 
 interface SignifierPickerProps {
   value: EntrySignifier | undefined;
@@ -12,16 +13,8 @@ export function SignifierPicker({ value, onChange }: SignifierPickerProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
+  const closeDropdown = useCallback(() => setOpen(false), []);
+  useClickOutside(ref, closeDropdown, open);
 
   const config = value ? SIGNIFIER_CONFIG[value] : null;
 

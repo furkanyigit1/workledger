@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from "react";
 import { useAISettings } from "../hooks/useAISettings.ts";
 import { useAIFeatureGate } from "../hooks/useAIFeatureGate.ts";
 import type { AISettings } from "../types/ai.ts";
@@ -54,7 +54,7 @@ export function AIProvider({ children, onCollapseSidebar }: { children: ReactNod
     setSidebarOpen((prev) => !prev);
   }, []);
 
-  const value: AIContextValue = {
+  const value = useMemo<AIContextValue>(() => ({
     settings,
     updateSettings,
     available,
@@ -64,7 +64,7 @@ export function AIProvider({ children, onCollapseSidebar }: { children: ReactNod
     handleOpenAI,
     handleToggleAISidebar,
     setSidebarOpen,
-  };
+  }), [settings, updateSettings, available, sidebarOpen, targetEntry, handleToggleAI, handleOpenAI, handleToggleAISidebar]);
 
   return <AICtx.Provider value={value}>{children}</AICtx.Provider>;
 }

@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useCallback } from "react";
 import { AppShell } from "../components/layout/AppShell.tsx";
 import { ErrorBoundary } from "../components/ui/ErrorBoundary.tsx";
 import { Sidebar } from "../features/sidebar/index.ts";
@@ -37,23 +37,29 @@ function AppContent() {
   const { handleNewEntry } = useKeyboardShortcuts({ isOpen: searchOpen, open: openSearch, close: closeSearch });
   const { handleSearchResultClick, handleDayClick } = useEntryNavigation();
 
-  const handleReviewEntryClick = (entryId: string) => {
+  const handleReviewEntryClick = useCallback((entryId: string) => {
     toggleReviewView();
     setTimeout(() => {
       emit("navigate-entry", { entryId });
     }, 250);
-  };
+  }, [toggleReviewView]);
 
-  const handleReviewOpenAI = () => {
+  const handleReviewOpenAI = useCallback(() => {
     setAISidebarOpen(true);
-  };
+  }, [setAISidebarOpen]);
 
-  const handleNewEntryFromTemplate = async (template: EntryTemplate) => {
+  const handleNewEntryFromTemplate = useCallback(async (template: EntryTemplate) => {
     const entry = await createEntry({ blocks: template.blocks, tags: [template.tag] });
     setTimeout(() => {
       document.getElementById(`entry-${entry.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 100);
-  };
+  }, [createEntry]);
+
+  const handleTagsChange = useCallback((entryId: string, dayKey: string, tags: string[]) => {
+    updateEntryTags(entryId, dayKey, tags);
+  }, [updateEntryTags]);
+
+  const handleSearchOpen = useCallback(() => search(""), [search]);
 
   if (loading) {
     return (
@@ -63,15 +69,11 @@ function AppContent() {
     );
   }
 
-  const handleTagsChange = (entryId: string, dayKey: string, tags: string[]) => {
-    updateEntryTags(entryId, dayKey, tags);
-  };
-
   return (
     <>
       <Sidebar
         onDayClick={handleDayClick}
-        onSearchOpen={() => search("")}
+        onSearchOpen={handleSearchOpen}
       />
 
       <AppShell sidebarOpen={sidebarOpen} aiSidebarOpen={aiSidebarOpen}>
@@ -120,15 +122,21 @@ function AppContent() {
       />
 
       {aiSettings.enabled && (
-        <Suspense fallback={null}>
-          <AISidebar
-            isOpen={aiSidebarOpen}
-            onClose={handleToggleAISidebar}
-            settings={aiSettings}
-            onUpdateSettings={updateAISettings}
-            targetEntry={aiTargetEntry}
-          />
-        </Suspense>
+        <ErrorBoundary fallback={
+          <div className="fixed right-0 top-0 h-full w-96 bg-[var(--color-notebook-surface)] border-l border-[var(--color-notebook-border)] flex items-center justify-center">
+            <p className="text-sm text-[var(--color-notebook-muted)]">AI unavailable</p>
+          </div>
+        }>
+          <Suspense fallback={null}>
+            <AISidebar
+              isOpen={aiSidebarOpen}
+              onClose={handleToggleAISidebar}
+              settings={aiSettings}
+              onUpdateSettings={updateAISettings}
+              targetEntry={aiTargetEntry}
+            />
+          </Suspense>
+        </ErrorBoundary>
       )}
     </>
   );

@@ -307,7 +307,6 @@ export function SidebarSettings({
           {/* Storage submenu */}
           {submenu === "storage" && (
             <StorageSubmenu
-              menuItemClass={menuItemClass}
               mutedClass={mutedClass}
               dividerClass={dividerClass}
               onBack={() => setSubmenu(null)}

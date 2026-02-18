@@ -242,7 +242,9 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
           />
         </ErrorBoundary>
       </div>
-      <BacklinksPanel entryId={entry.id} />
+      <ErrorBoundary fallback={null}>
+        <BacklinksPanel entryId={entry.id} />
+      </ErrorBoundary>
       <div className="entry-ruling mt-4 mb-4" />
     </div>
   );

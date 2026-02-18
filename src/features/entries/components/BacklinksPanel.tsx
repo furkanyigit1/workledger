@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { getBacklinks } from "../storage/backlinks.ts";
 import { getEntry } from "../storage/entries.ts";
 import { extractTitle } from "../utils/extract-title.ts";
@@ -15,7 +15,7 @@ interface BacklinksPanelProps {
   entryId: string;
 }
 
-export function BacklinksPanel({ entryId }: BacklinksPanelProps) {
+export const BacklinksPanel = memo(function BacklinksPanel({ entryId }: BacklinksPanelProps) {
   const [backlinks, setBacklinks] = useState<BacklinkEntry[]>([]);
   const [expanded, setExpanded] = useState(true);
 
@@ -110,4 +110,4 @@ export function BacklinksPanel({ entryId }: BacklinksPanelProps) {
       )}
     </div>
   );
-}
+});
