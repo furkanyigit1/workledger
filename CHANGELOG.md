@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-02-18
+
+### Fixed
+
+- BacklinksPanel no longer floods IndexedDB on every autosave — re-fetches only when a known source changes or a new backlink is detected (debounced)
+- EntryStream uses progressive rendering when large numbers of entries appear at once (e.g. clearing filters), eliminating UI jank
+
 ## [3.1.0] - 2026-02-18
 
 ### Fixed

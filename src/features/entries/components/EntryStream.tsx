@@ -6,6 +6,7 @@ import { DayHeader } from "../../../components/layout/DayHeader.tsx";
 import { FilterBanner } from "./FilterBanner.tsx";
 import { EmptyArchive, EmptyEntries, EmptyFilterResults } from "./EmptyStates.tsx";
 import { formatDayKey, formatTime } from "../../../utils/dates.ts";
+import { useProgressiveRender } from "../hooks/useProgressiveRender.ts";
 
 interface EntryStreamProps {
   entriesByDay: Map<string, WorkLedgerEntry[]>;
@@ -61,6 +62,30 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
     () => isFiltering ? sortedDays.reduce((sum, dk) => sum + (entriesByDay.get(dk)?.length || 0), 0) : 0,
     [isFiltering, sortedDays, entriesByDay],
   );
+
+  // Count total non-pinned entries across all days for progressive rendering
+  const totalUnpinnedEntries = useMemo(
+    () => sortedDays.reduce((sum, dk) => {
+      const all = entriesByDay.get(dk) || [];
+      return sum + (pinnedIds.size > 0 ? all.filter((e) => !pinnedIds.has(e.id)).length : all.length);
+    }, 0),
+    [sortedDays, entriesByDay, pinnedIds],
+  );
+  const renderedCount = useProgressiveRender(totalUnpinnedEntries);
+
+  // Precompute per-day render limits for progressive rendering
+  const dayRenderLimits = useMemo(() => {
+    const limits = new Map<string, number>();
+    let budget = renderedCount;
+    for (const dk of sortedDays) {
+      const all = entriesByDay.get(dk) || [];
+      const count = pinnedIds.size > 0 ? all.filter((e) => !pinnedIds.has(e.id)).length : all.length;
+      const limit = Math.min(count, budget);
+      limits.set(dk, limit);
+      budget -= limit;
+    }
+    return limits;
+  }, [renderedCount, sortedDays, entriesByDay, pinnedIds]);
 
   // Focus mode: render only the focused entry
   if (focusedEntryId) {
@@ -180,13 +205,15 @@ export function EntryStream({ entriesByDay, onSave, onTagsChange, onArchive, onD
       {sortedDays.map((dayKey) => {
         const allEntries = entriesByDay.get(dayKey) || [];
         const entries = pinnedIds.size > 0 ? allEntries.filter((e) => !pinnedIds.has(e.id)) : allEntries;
+        const dayLimit = dayRenderLimits.get(dayKey) ?? entries.length;
+        const entriesToRender = dayLimit >= entries.length ? entries : entries.slice(0, dayLimit);
         if (entries.length === 0) return null;
         return (
           <div key={dayKey} id={`day-${dayKey}`}>
             {!isFiltering && (
               <DayHeader dayKey={dayKey} entryCount={entries.length} />
             )}
-            {entries.map((entry, idx) => (
+            {entriesToRender.map((entry, idx) => (
               <div key={entry.id} className={idx === 0 && !isFiltering ? "mt-4" : ""}>
                 <EntryCard
                   entry={entry}

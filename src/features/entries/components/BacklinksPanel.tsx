@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, memo } from "react";
+import { useState, useEffect, useCallback, useRef, memo } from "react";
 import { getBacklinks } from "../storage/backlinks.ts";
 import { getEntry } from "../storage/entries.ts";
 import { extractTitle } from "../utils/extract-title.ts";
@@ -18,10 +18,12 @@ interface BacklinksPanelProps {
 export const BacklinksPanel = memo(function BacklinksPanel({ entryId }: BacklinksPanelProps) {
   const [backlinks, setBacklinks] = useState<BacklinkEntry[]>([]);
   const [expanded, setExpanded] = useState(true);
+  const knownSourceIdsRef = useRef<Set<string>>(new Set());
 
   const fetchBacklinks = useCallback(async () => {
     const sourceIds = await getBacklinks(entryId);
     if (sourceIds.length === 0) {
+      knownSourceIdsRef.current = new Set();
       setBacklinks([]);
       return;
     }
@@ -32,6 +34,7 @@ export const BacklinksPanel = memo(function BacklinksPanel({ entryId }: Backlink
         entries.push({ id: entry.id, title: extractTitle(entry), dayKey: entry.dayKey });
       }
     }
+    knownSourceIdsRef.current = new Set(sourceIds);
     setBacklinks(entries);
   }, [entryId]);
 
@@ -40,7 +43,10 @@ export const BacklinksPanel = memo(function BacklinksPanel({ entryId }: Backlink
     let cancelled = false;
     getBacklinks(entryId).then(async (sourceIds) => {
       if (cancelled || sourceIds.length === 0) {
-        if (!cancelled) setBacklinks([]);
+        if (!cancelled) {
+          knownSourceIdsRef.current = new Set();
+          setBacklinks([]);
+        }
         return;
       }
       const entries: BacklinkEntry[] = [];
@@ -50,17 +56,36 @@ export const BacklinksPanel = memo(function BacklinksPanel({ entryId }: Backlink
           entries.push({ id: entry.id, title: extractTitle(entry), dayKey: entry.dayKey });
         }
       }
-      if (!cancelled) setBacklinks(entries);
+      if (!cancelled) {
+        knownSourceIdsRef.current = new Set(sourceIds);
+        setBacklinks(entries);
+      }
     });
     return () => { cancelled = true; };
   }, [entryId]);
 
-  // Re-fetch when any entry is saved or deleted (backlinks index may have changed)
+  // Re-fetch when another entry changes — known sources immediately, unknown sources debounced.
+  // Skip when the changed entry is ourselves (self-edits can't create backlinks to self).
   useEffect(() => {
-    const unsubChange = on("entry-changed", () => { fetchBacklinks(); });
-    const unsubDelete = on("entry-deleted", () => { fetchBacklinks(); });
-    return () => { unsubChange(); unsubDelete(); };
-  }, [fetchBacklinks]);
+    let debounceTimer = 0;
+    const unsubChange = on("entry-changed", ({ entryId: changedId }) => {
+      if (changedId === entryId) return;
+      if (knownSourceIdsRef.current.has(changedId)) {
+        // Known source changed (title, archive, link removal) — re-fetch immediately
+        fetchBacklinks();
+      } else {
+        // Unknown entry changed — could be a new backlink source, debounce the re-fetch
+        clearTimeout(debounceTimer);
+        debounceTimer = window.setTimeout(() => { fetchBacklinks(); }, 2_000);
+      }
+    });
+    const unsubDelete = on("entry-deleted", ({ entryId: deletedId }) => {
+      if (knownSourceIdsRef.current.has(deletedId)) {
+        fetchBacklinks();
+      }
+    });
+    return () => { unsubChange(); unsubDelete(); clearTimeout(debounceTimer); };
+  }, [fetchBacklinks, entryId]);
 
   if (backlinks.length === 0) return null;
 
