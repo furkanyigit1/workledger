@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.2] - 2026-02-18
+
+### Fixed
+
+- Backlinks "Referenced by" panel now updates live when a `[[link]]` is created — no longer requires a page reload
+- `[[` entry link suggestion menu now works on mobile keyboards (replaced `keydown` with `input` event)
+- Clicking a backlink now scrolls to the entry's heading instead of the toolbar row
+
 ## [3.0.1] - 2026-02-18
 
 ### Added

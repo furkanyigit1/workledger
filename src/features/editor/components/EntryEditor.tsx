@@ -74,7 +74,8 @@ export function EntryEditor({
 
   // Workaround: BlockNote's handleTextInput fails to detect [[ mid-text
   // because it reads triggerLength+1 chars and compares to triggerLength chars.
-  // We attach to the wrapper div (via ref) so we don't depend on editor.domElement timing.
+  // We use the `input` event (not keydown) because mobile keyboards don't fire
+  // reliable keydown events for special characters like [.
   const wrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -82,10 +83,12 @@ export function EntryEditor({
 
     let pendingTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== "[") return;
+    const handleInput = (e: Event) => {
+      const inputEvent = e as InputEvent;
+      // Only care about text insertion containing [
+      if (inputEvent.data && !inputEvent.data.includes("[")) return;
 
-      // Defer check until after ProseMirror has fully processed the keystroke
+      // Defer check until after ProseMirror's transaction cycle completes
       pendingTimer = setTimeout(() => {
         pendingTimer = null;
         const suggestionMenuExt = editor.getExtension(SuggestionMenu);
@@ -111,9 +114,9 @@ export function EntryEditor({
       }, 0);
     };
 
-    wrapper.addEventListener("keydown", handleKeyDown);
+    wrapper.addEventListener("input", handleInput);
     return () => {
-      wrapper.removeEventListener("keydown", handleKeyDown);
+      wrapper.removeEventListener("input", handleInput);
       if (pendingTimer) clearTimeout(pendingTimer);
     };
   }, [editor]);

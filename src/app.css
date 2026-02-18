@@ -399,6 +399,11 @@ body {
   border-radius: 8px;
 }
 
+/* Scroll margin for heading targets when navigating via backlinks */
+.entry-card [data-content-type="heading"] {
+  scroll-margin-top: 120px;
+}
+
 /* Override BlockNote hardcoded dark code block background */
 [data-workledger-editor] .bn-block-content[data-content-type="codeBlock"] {
   background-color: var(--color-notebook-code-bg);

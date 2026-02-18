@@ -33,7 +33,8 @@ export function useAutoSave(
         };
         latestEntryRef.current = updated;
         lastSavedAtRef.current = now;
-        await onSave(updated);
+        // Update indexes before onSave because onSave emits entry-changed,
+        // and listeners (e.g. BacklinksPanel) need up-to-date indexes.
         await updateSearchIndex(
           updated.id,
           updated.dayKey,
@@ -41,6 +42,7 @@ export function useAutoSave(
           updated.tags ?? [],
         );
         await updateBacklinks(updated.id, blocks);
+        await onSave(updated);
       }, 500);
     },
     [onSave],

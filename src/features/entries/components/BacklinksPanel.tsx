@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getBacklinks } from "../storage/backlinks.ts";
 import { getEntry } from "../storage/entries.ts";
 import { extractTitle } from "../utils/extract-title.ts";
 import { formatDayKey } from "../../../utils/dates.ts";
-import { emit } from "../../../utils/events.ts";
+import { emit, on } from "../../../utils/events.ts";
 
 interface BacklinkEntry {
   id: string;
@@ -19,6 +19,23 @@ export function BacklinksPanel({ entryId }: BacklinksPanelProps) {
   const [backlinks, setBacklinks] = useState<BacklinkEntry[]>([]);
   const [expanded, setExpanded] = useState(true);
 
+  const fetchBacklinks = useCallback(async () => {
+    const sourceIds = await getBacklinks(entryId);
+    if (sourceIds.length === 0) {
+      setBacklinks([]);
+      return;
+    }
+    const entries: BacklinkEntry[] = [];
+    for (const id of sourceIds) {
+      const entry = await getEntry(id);
+      if (entry && !entry.isArchived) {
+        entries.push({ id: entry.id, title: extractTitle(entry), dayKey: entry.dayKey });
+      }
+    }
+    setBacklinks(entries);
+  }, [entryId]);
+
+  // Fetch on mount
   useEffect(() => {
     let cancelled = false;
     getBacklinks(entryId).then(async (sourceIds) => {
@@ -37,6 +54,13 @@ export function BacklinksPanel({ entryId }: BacklinksPanelProps) {
     });
     return () => { cancelled = true; };
   }, [entryId]);
+
+  // Re-fetch when any entry is saved or deleted (backlinks index may have changed)
+  useEffect(() => {
+    const unsubChange = on("entry-changed", () => { fetchBacklinks(); });
+    const unsubDelete = on("entry-deleted", () => { fetchBacklinks(); });
+    return () => { unsubChange(); unsubDelete(); };
+  }, [fetchBacklinks]);
 
   if (backlinks.length === 0) return null;
 

@@ -12,7 +12,11 @@ export function useEntryNavigation() {
   const navigateToEntry = useCallback(
     async (entryId: string) => {
       const scrollAndHighlight = (el: HTMLElement) => {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Scroll to the first heading inside the editor if available,
+        // so the user sees the entry title rather than the toolbar row.
+        const heading = el.querySelector<HTMLElement>("[data-content-type='heading']");
+        const scrollTarget = heading ?? el;
+        scrollTarget.scrollIntoView({ behavior: "smooth", block: "start" });
         el.classList.add("entry-link-highlight");
         setTimeout(() => el.classList.remove("entry-link-highlight"), 2000);
         setTimeout(() => {
