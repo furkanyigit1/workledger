@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-02-18
+
+### Fixed
+
+- Performance improvements — reduced unnecessary re-renders across the app
+  - DayHeader wrapped in `React.memo` (was the #1 offender at 1,530 re-renders)
+  - Sidebar collapse handlers converted to `useCallback` (162 re-renders)
+  - Search open handler in App.tsx converted to `useCallback` (58 re-renders)
+  - SearchPanel, NewEntryButton, and BacklinksPanel wrapped in `React.memo`
+  - Context values memoized (AIContext, FocusModeContext)
+  - AppContent handlers wrapped in `useCallback`
+
 ## [3.0.2] - 2026-02-18
 
 ### Fixed
@@ -334,7 +346,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Local-first storage with IndexedDB -- no server required
 - Landing page
 
+[3.1.0]: https://github.com/gruberb/workledger/releases/tag/v3.1.0
+[3.0.2]: https://github.com/gruberb/workledger/releases/tag/v3.0.2
+[3.0.1]: https://github.com/gruberb/workledger/releases/tag/v3.0.1
 [3.0.0]: https://github.com/gruberb/workledger/releases/tag/v3.0.0
+[2.2.3]: https://github.com/gruberb/workledger/releases/tag/v2.2.3
 [2.2.2]: https://github.com/gruberb/workledger/releases/tag/v2.2.2
 [2.2.1]: https://github.com/gruberb/workledger/releases/tag/v2.2.1
 [2.2.0]: https://github.com/gruberb/workledger/releases/tag/v2.2.0
