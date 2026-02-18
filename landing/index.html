@@ -1391,240 +1391,120 @@
                     </p>
                 </div>
 
-                <!-- ── NEW: Highlight features (large cards) ── -->
+                <!-- ── Highlight features (large cards) ── -->
                 <div class="features-highlights">
-                    <!-- Themes -->
+                    <!-- Weekly Review -->
                     <div class="highlight-card reveal">
                         <div class="highlight-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <circle cx="12" cy="12" r="5" />
-                                <line x1="12" y1="1" x2="12" y2="3" />
-                                <line x1="12" y1="21" x2="12" y2="23" />
-                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                                <line
-                                    x1="18.36"
-                                    y1="18.36"
-                                    x2="19.78"
-                                    y2="19.78"
-                                />
-                                <line x1="1" y1="12" x2="3" y2="12" />
-                                <line x1="21" y1="12" x2="23" y2="12" />
-                                <line
-                                    x1="4.22"
-                                    y1="19.78"
-                                    x2="5.64"
-                                    y2="18.36"
-                                />
-                                <line
-                                    x1="18.36"
-                                    y1="5.64"
-                                    x2="19.78"
-                                    y2="4.22"
-                                />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
                             </svg>
                         </div>
                         <div class="highlight-content">
-                            <h3 class="highlight-title">5 Theme Presets</h3>
+                            <h3 class="highlight-title">Weekly Review</h3>
                             <p class="highlight-desc">
-                                Light, Dark, Dracula, Catppuccin Mocha, and
-                                Solarized Light. Each theme adapts the entire UI
-                                — editor, sidebar, code blocks, and syntax
-                                highlighting.
+                                Toggle a weekly view that groups entries by ISO week with signifier breakdowns, top tags, and entry previews. Collapsible week cards auto-expand the most recent. Filter by tag, text, or signifier — all filters work in review mode.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Entry Templates -->
+                    <div class="highlight-card reveal reveal-delay-1">
+                        <div class="highlight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <line x1="16" y1="13" x2="8" y2="13" />
+                                <line x1="16" y1="17" x2="8" y2="17" />
+                                <polyline points="10 9 9 9 8 9" />
+                            </svg>
+                        </div>
+                        <div class="highlight-content">
+                            <h3 class="highlight-title">Entry Templates</h3>
+                            <p class="highlight-desc">
+                                Start entries with structured sections. Decision Log, Debugging Session, Meeting Notes, and Learning Log — each with pre-filled headings and auto-tags.
                             </p>
                             <div class="highlight-tags">
-                                <span
-                                    class="highlight-tag"
-                                    style="
-                                        background: #fafaf9;
-                                        color: #1a1a1a;
-                                        border: 1px solid #e5e5e4;
-                                    "
-                                    >Light</span
-                                >
-                                <span
-                                    class="highlight-tag"
-                                    style="background: #1e1e2e; color: #cdd6f4"
-                                    >Dark</span
-                                >
-                                <span
-                                    class="highlight-tag"
-                                    style="background: #282a36; color: #bd93f9"
-                                    >Dracula</span
-                                >
-                                <span
-                                    class="highlight-tag"
-                                    style="background: #1e1e2e; color: #f5a97f"
-                                    >Catppuccin</span
-                                >
-                                <span
-                                    class="highlight-tag"
-                                    style="background: #fdf6e3; color: #859900"
-                                    >Solarized</span
-                                >
+                                <span class="highlight-tag" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0">#decision</span>
+                                <span class="highlight-tag" style="background: #fef3c7; color: #d97706; border: 1px solid #fde68a">#debugging</span>
+                                <span class="highlight-tag" style="background: #ede9fe; color: #7c3aed; border: 1px solid #c4b5fd">#meeting</span>
+                                <span class="highlight-tag" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd">#learning</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Focus Mode -->
-                    <div class="highlight-card reveal reveal-delay-1">
-                        <div class="highlight-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"
-                                />
-                            </svg>
-                        </div>
-                        <div class="highlight-content">
-                            <h3 class="highlight-title">Focus Mode</h3>
-                            <p class="highlight-desc">
-                                Full-screen, distraction-free writing. Open any
-                                entry in focus mode to hide the sidebar and
-                                concentrate on a single note. Press
-                                <span class="feature-kbd"
-                                    >&thinsp;Esc&thinsp;</span
-                                >
-                                to return.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Fonts -->
+                    <!-- Entry Signifiers -->
                     <div class="highlight-card reveal reveal-delay-2">
                         <div class="highlight-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <polyline points="4 7 4 4 20 4 20 7" />
-                                <line x1="9" y1="20" x2="15" y2="20" />
-                                <line x1="12" y1="4" x2="12" y2="20" />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
                             </svg>
                         </div>
                         <div class="highlight-content">
-                            <h3 class="highlight-title">7 Font Families</h3>
+                            <h3 class="highlight-title">Entry Signifiers</h3>
                             <p class="highlight-desc">
-                                Choose your writing font — Figtree, Plus Jakarta
-                                Sans, DM Sans, Urbanist, Inter, JetBrains Mono,
-                                or Source Serif. Switch anytime from settings.
+                                Label entries as Note, Decision, Task, Question, or Idea. Color-coded signifiers are visible in the stream and filterable in the sidebar.
                             </p>
+                            <div class="highlight-tags">
+                                <span class="highlight-tag" style="background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe">Note</span>
+                                <span class="highlight-tag" style="background: #ecfdf5; color: #10b981; border: 1px solid #a7f3d0">Decision</span>
+                                <span class="highlight-tag" style="background: #f5f3ff; color: #8b5cf6; border: 1px solid #c4b5fd">Task</span>
+                                <span class="highlight-tag" style="background: #fffbeb; color: #f59e0b; border: 1px solid #fde68a">Question</span>
+                                <span class="highlight-tag" style="background: #fdf2f8; color: #ec4899; border: 1px solid #fbcfe8">Idea</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- PWA -->
+                    <!-- Backlinks + Wiki Linking -->
                     <div class="highlight-card reveal reveal-delay-3">
                         <div class="highlight-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <rect
-                                    x="5"
-                                    y="2"
-                                    width="14"
-                                    height="20"
-                                    rx="2"
-                                    ry="2"
-                                />
-                                <line x1="12" y1="18" x2="12.01" y2="18" />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                             </svg>
                         </div>
                         <div class="highlight-content">
-                            <h3 class="highlight-title">Progressive Web App</h3>
+                            <h3 class="highlight-title">Wiki Links &amp; Backlinks</h3>
                             <p class="highlight-desc">
-                                Install WorkLedger as a standalone app on any
-                                device. Works offline with a service worker —
-                                your notes are always accessible, even without
-                                internet.
+                                Type <code style="background: #fef3c7; padding: 1px 5px; border-radius: 4px; font-size: 0.85em">[[</code> to link between entries. A "Referenced by" panel below each entry shows all backlinks — auto-maintained as you write.
                             </p>
                         </div>
                     </div>
 
-                    <!-- Wiki Linking -->
+                    <!-- Pin & Saved Filters -->
                     <div class="highlight-card reveal reveal-delay-4">
                         <div class="highlight-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-                                />
-                                <path
-                                    d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-                                />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <polyline points="19 12 12 19 5 12" />
                             </svg>
                         </div>
                         <div class="highlight-content">
-                            <h3 class="highlight-title">Wiki-Style Linking</h3>
+                            <h3 class="highlight-title">Pin &amp; Saved Filters</h3>
                             <p class="highlight-desc">
-                                Type
-                                <code
-                                    style="
-                                        background: #fef3c7;
-                                        padding: 1px 5px;
-                                        border-radius: 4px;
-                                        font-size: 0.85em;
-                                    "
-                                    >[[</code
-                                >
-                                to link between entries. Build a personal
-                                knowledge graph across your notes.
+                                Pin important entries to the top of your stream. Save tag + text filter combinations as named presets for one-click access in the sidebar.
                             </p>
                         </div>
                     </div>
 
-                    <!-- ── Sync ── -->
+                    <!-- Sync -->
                     <div class="highlight-card reveal">
                         <div class="highlight-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="23 4 23 10 17 10" />
                                 <polyline points="1 20 1 14 7 14" />
-                                <path
-                                    d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"
-                                />
+                                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
                             </svg>
                         </div>
                         <div class="highlight-content">
                             <h3 class="highlight-title">End-to-End Encrypted Sync</h3>
                             <p class="highlight-desc">
-                                Local storage by default. Optionally sync across
-                                devices with end-to-end encryption — entries are
-                                encrypted before leaving your browser. Use the
-                                default server or
-                                <a href="https://github.com/gruberb/workledger-sync" target="_blank" rel="noopener">self-host your own</a>.
+                                Local storage by default. Optionally sync across devices with end-to-end encryption — entries are encrypted before leaving your browser. Use the default server or <a href="https://github.com/gruberb/workledger-sync" target="_blank" rel="noopener">self-host your own</a>.
                             </p>
                         </div>
                     </div>
@@ -1635,238 +1515,131 @@
                     <p class="core-features-label">Core Features</p>
                     <div class="core-features-grid">
                         <div class="core-feature">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <rect
-                                    x="3"
-                                    y="4"
-                                    width="18"
-                                    height="18"
-                                    rx="2"
-                                />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" />
                                 <line x1="16" y1="2" x2="16" y2="6" />
                                 <line x1="8" y1="2" x2="8" y2="6" />
                                 <line x1="3" y1="10" x2="21" y2="10" />
                             </svg>
                             <div>
                                 <strong>Daily Entries</strong>
-                                <span
-                                    >Organized by day &middot;
-                                    <span class="feature-kbd"
-                                        >&thinsp;&#8984;J&thinsp;</span
-                                    >
-                                    to create</span
-                                >
+                                <span>Organized by day &middot; <span class="feature-kbd">&thinsp;&#8984;J&thinsp;</span> to create</span>
                             </div>
                         </div>
                         <div class="core-feature">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 20h9" />
-                                <path
-                                    d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"
-                                />
+                                <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
                             </svg>
                             <div>
                                 <strong>Rich Text Editing</strong>
-                                <span
-                                    >BlockNote &middot; slash commands &middot;
-                                    code blocks</span
-                                >
+                                <span>BlockNote &middot; slash commands &middot; code blocks</span>
                             </div>
                         </div>
                         <div class="core-feature">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 <path d="M9 12l2 2 4-4" />
                             </svg>
                             <div>
                                 <strong>Inline Drawings</strong>
-                                <span
-                                    >Excalidraw diagrams &middot; resizable
-                                    canvases</span
-                                >
+                                <span>Excalidraw diagrams &middot; resizable canvases</span>
                             </div>
                         </div>
                         <div class="core-feature">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"
-                                />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
                                 <line x1="7" y1="7" x2="7.01" y2="7" />
                             </svg>
                             <div>
                                 <strong>Tagging</strong>
-                                <span
-                                    >Color-coded tags &middot; click to
-                                    filter</span
-                                >
+                                <span>Color-coded tags &middot; click to filter</span>
                             </div>
                         </div>
                         <div class="core-feature">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="11" cy="11" r="8" />
                                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
                             </svg>
                             <div>
                                 <strong>Full-Text Search</strong>
-                                <span
-                                    >Entries, content &amp; tags &middot;
-                                    <span class="feature-kbd"
-                                        >&thinsp;&#8984;K&thinsp;</span
-                                    ></span
-                                >
+                                <span>Entries, content &amp; tags &middot; <span class="feature-kbd">&thinsp;&#8984;K&thinsp;</span></span>
                             </div>
                         </div>
                         <div class="core-feature">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <rect
-                                    x="3"
-                                    y="11"
-                                    width="18"
-                                    height="11"
-                                    rx="2"
-                                />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" />
                                 <path d="M7 11V7a5 5 0 0110 0v4" />
                             </svg>
                             <div>
                                 <strong>Local-First &amp; Private</strong>
-                                <span
-                                    >IndexedDB &middot; no server &middot; no
-                                    tracking</span
-                                >
+                                <span>IndexedDB &middot; no server &middot; no tracking</span>
                             </div>
                         </div>
                         <div class="core-feature">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"
-                                />
-                                <polyline points="7 10 12 15 17 10" />
-                                <line x1="12" y1="15" x2="12" y2="3" />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5" />
+                                <line x1="12" y1="1" x2="12" y2="3" />
+                                <line x1="12" y1="21" x2="12" y2="23" />
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                                <line x1="1" y1="12" x2="3" y2="12" />
+                                <line x1="21" y1="12" x2="23" y2="12" />
                             </svg>
                             <div>
-                                <strong>Import &amp; Export</strong>
-                                <span>JSON backup &middot; portable data</span>
+                                <strong>5 Themes &middot; 7 Fonts</strong>
+                                <span>Light, Dark, Dracula, Catppuccin, Solarized</span>
                             </div>
                         </div>
                         <div class="core-feature">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <polyline points="21 8 21 21 3 21 3 8" />
-                                <rect x="1" y="3" width="22" height="5" />
-                                <line x1="10" y1="12" x2="14" y2="12" />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
                             </svg>
                             <div>
-                                <strong>Archive &amp; Restore</strong>
-                                <span
-                                    >Clean workspace &middot; browse &amp;
-                                    restore anytime</span
-                                >
+                                <strong>Focus Mode</strong>
+                                <span>Distraction-free single-entry view</span>
                             </div>
                         </div>
                         <div class="core-feature">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                                <line x1="12" y1="18" x2="12.01" y2="18" />
+                            </svg>
+                            <div>
+                                <strong>PWA &middot; Mobile-Friendly</strong>
+                                <span>Install as app &middot; offline &middot; responsive</span>
+                            </div>
+                        </div>
+                        <div class="core-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 20h9" />
-                                <path
-                                    d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"
-                                />
+                                <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
                                 <line x1="15" y1="5" x2="19" y2="9" />
                             </svg>
                             <div>
                                 <strong>Syntax Highlighting</strong>
-                                <span
-                                    >24 languages &middot; Shiki &middot;
-                                    theme-aware</span
-                                >
+                                <span>24 languages &middot; Shiki &middot; theme-aware</span>
                             </div>
                         </div>
                         <div class="core-feature">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <rect
-                                    x="2"
-                                    y="3"
-                                    width="20"
-                                    height="14"
-                                    rx="2"
-                                    ry="2"
-                                />
-                                <line x1="8" y1="21" x2="16" y2="21" />
-                                <line x1="12" y1="17" x2="12" y2="21" />
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
                             </svg>
                             <div>
-                                <strong>Mobile-Friendly</strong>
-                                <span
-                                    >Responsive layout &middot;
-                                    touch-friendly</span
-                                >
+                                <strong>Import, Export &amp; Archive</strong>
+                                <span>JSON backup &middot; portable data</span>
+                            </div>
+                        </div>
+                        <div class="core-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                <path d="M13.73 21a2 2 0 01-3.46 0" />
+                            </svg>
+                            <div>
+                                <strong>Keyboard-Driven</strong>
+                                <span><span class="feature-kbd">&thinsp;&#8984;J&thinsp;</span> <span class="feature-kbd">&thinsp;&#8984;K&thinsp;</span> <span class="feature-kbd">&thinsp;&#8984;\&thinsp;</span> &middot; no mouse needed</span>
                             </div>
                         </div>
                     </div>
@@ -1946,13 +1719,10 @@
                         Optional
                     </span>
                     <h2 class="section-heading reveal reveal-delay-1">
-                        Think with AI
+                        Your AI Notebook Companion
                     </h2>
                     <p class="ai-intro reveal reveal-delay-2">
-                        Click the lightbulb next to any note, choose from 10
-                        structured thinking frameworks, and let an open-source
-                        LLM challenge your assumptions, find blind spots, and
-                        stress-test your ideas. Runs locally via
+                        12 concrete actions built for engineers — summarize your day, generate a standup update, rubber-duck a problem, or recall past decisions. AI works across your entries with day, week, and topic scope. Runs locally via
                         <strong>Ollama</strong> or remotely via
                         <strong>Hugging Face</strong> — your choice, your data.
                     </p>
@@ -1986,10 +1756,10 @@
                     </div>
                     <div class="ai-step reveal reveal-delay-3">
                         <div class="ai-step-num">4</div>
-                        <h4>Choose a framework</h4>
+                        <h4>Pick an action</h4>
                         <p>
-                            Pick one of 10 thinking models and start a
-                            structured conversation
+                            Choose from 12 engineer actions — summarize,
+                            generate, think, or remember
                         </p>
                     </div>
                 </div>
@@ -1998,314 +1768,231 @@
                 <div class="ai-showcase-card reveal" style="margin-bottom: 0">
                     <img
                         src="./images/ai/ai_in_action.png"
-                        alt="AI conversation using Six Thinking Hats on a note"
+                        alt="AI notebook companion generating a standup update"
                     />
                     <div class="ai-showcase-caption">
-                        <h4>Structured AI conversation</h4>
+                        <h4>AI actions on your entries</h4>
                         <p>
-                            The framework is applied to your note's content.
-                            Switch steps, ask follow-ups, copy results.
+                            Pick an action, choose the scope (day, week, or topic), and get actionable output you can copy and use.
                         </p>
                     </div>
                 </div>
 
-                <!-- 10 frameworks as full cards -->
+                <!-- 12 AI actions organized by category -->
                 <div class="ai-frameworks">
                     <p class="ai-frameworks-label reveal">
-                        10 thinking frameworks included
+                        12 engineer actions in 4 categories
                     </p>
                     <div class="ai-frameworks-grid">
+                        <!-- Summarize -->
                         <div class="ai-fw-card reveal">
                             <div class="ai-fw-header">
-                                <span class="ai-fw-icon">&#x1f9f0;</span>
+                                <span class="ai-fw-icon">&#x1f4cb;</span>
                                 <div>
-                                    <div class="ai-fw-category">Analytical</div>
-                                    <div class="ai-fw-name">
-                                        The Thinker's Toolkit
-                                    </div>
-                                    <div class="ai-fw-author">
-                                        Morgan D. Jones
-                                    </div>
+                                    <div class="ai-fw-category">Summarize</div>
+                                    <div class="ai-fw-name">My Day</div>
                                 </div>
                             </div>
                             <p class="ai-fw-desc">
-                                14 powerful techniques for structured analysis —
-                                from problem definition through stress testing.
+                                Get a concise summary of everything you documented today — decisions, tasks, and key takeaways.
                             </p>
                             <div class="ai-fw-steps">
-                                <span class="ai-fw-step"
-                                    >Problem Definition</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Information Analysis</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Option Generation</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Structured Evaluation</span
-                                >
-                                <span class="ai-fw-step">Stress Testing</span>
+                                <span class="ai-fw-step">Today's entries</span>
+                                <span class="ai-fw-step">Key highlights</span>
                             </div>
                         </div>
 
                         <div class="ai-fw-card reveal reveal-delay-1">
                             <div class="ai-fw-header">
-                                <span class="ai-fw-icon">&#x1f52c;</span>
+                                <span class="ai-fw-icon">&#x1f4c5;</span>
                                 <div>
-                                    <div class="ai-fw-category">Analytical</div>
-                                    <div class="ai-fw-name">
-                                        First Principles Thinking
-                                    </div>
-                                    <div class="ai-fw-author">Aristotle</div>
+                                    <div class="ai-fw-category">Summarize</div>
+                                    <div class="ai-fw-name">My Week</div>
                                 </div>
                             </div>
                             <p class="ai-fw-desc">
-                                Break down problems to fundamental truths and
-                                rebuild from the ground up.
+                                Review the full week at a glance — themes, progress, and open items across all entries.
                             </p>
                             <div class="ai-fw-steps">
-                                <span class="ai-fw-step"
-                                    >Deconstruct Assumptions</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Identify Fundamental Truths</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Rebuild from Ground Up</span
-                                >
+                                <span class="ai-fw-step">Week scope</span>
+                                <span class="ai-fw-step">Themes &amp; progress</span>
                             </div>
                         </div>
 
                         <div class="ai-fw-card reveal">
                             <div class="ai-fw-header">
-                                <span class="ai-fw-icon">&#x1f3a9;</span>
+                                <span class="ai-fw-icon">&#x1f50d;</span>
                                 <div>
-                                    <div class="ai-fw-category">Creative</div>
-                                    <div class="ai-fw-name">
-                                        Six Thinking Hats
-                                    </div>
-                                    <div class="ai-fw-author">
-                                        Edward de Bono
-                                    </div>
+                                    <div class="ai-fw-category">Summarize</div>
+                                    <div class="ai-fw-name">A Topic</div>
                                 </div>
                             </div>
                             <p class="ai-fw-desc">
-                                Explore a problem from six distinct perspectives
-                                — facts, emotions, caution, optimism,
-                                creativity, and process.
+                                Search for a topic and get a summary of everything you've written about it across all entries.
                             </p>
                             <div class="ai-fw-steps">
-                                <span class="ai-fw-step"
-                                    >White Hat — Facts</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Red Hat — Emotions</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Black Hat — Caution</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Yellow Hat — Optimism</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Green Hat — Creativity</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Blue Hat — Process</span
-                                >
+                                <span class="ai-fw-step">Topic search</span>
+                                <span class="ai-fw-step">Cross-entry synthesis</span>
                             </div>
                         </div>
 
+                        <!-- Generate -->
                         <div class="ai-fw-card reveal reveal-delay-1">
                             <div class="ai-fw-header">
-                                <span class="ai-fw-icon">&#x1f4a1;</span>
+                                <span class="ai-fw-icon">&#x1f4e3;</span>
                                 <div>
-                                    <div class="ai-fw-category">Creative</div>
-                                    <div class="ai-fw-name">TRIZ</div>
-                                    <div class="ai-fw-author">
-                                        Genrich Altshuller
-                                    </div>
+                                    <div class="ai-fw-category">Generate</div>
+                                    <div class="ai-fw-name">Standup Update</div>
                                 </div>
                             </div>
                             <p class="ai-fw-desc">
-                                Theory of Inventive Problem Solving — model
-                                contradictions and apply inventive principles.
+                                Generate a ready-to-post standup message from your recent entries — yesterday, today, blockers.
                             </p>
                             <div class="ai-fw-steps">
-                                <span class="ai-fw-step"
-                                    >Model the Problem</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Analyze Contradictions</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Apply Inventive Principles</span
-                                >
+                                <span class="ai-fw-step">Yesterday / Today / Blockers</span>
                             </div>
                         </div>
 
                         <div class="ai-fw-card reveal">
                             <div class="ai-fw-header">
-                                <span class="ai-fw-icon">&#x1f3a8;</span>
+                                <span class="ai-fw-icon">&#x1f4dd;</span>
                                 <div>
-                                    <div class="ai-fw-category">Creative</div>
-                                    <div class="ai-fw-name">
-                                        Design Thinking
-                                    </div>
-                                    <div class="ai-fw-author">
-                                        IDEO / Stanford d.school
-                                    </div>
+                                    <div class="ai-fw-category">Generate</div>
+                                    <div class="ai-fw-name">PR Description</div>
                                 </div>
                             </div>
                             <p class="ai-fw-desc">
-                                Human-centered innovation — empathize, define,
-                                ideate, prototype, test.
+                                Turn your implementation notes into a clear PR description with context, changes, and test plan.
                             </p>
                             <div class="ai-fw-steps">
-                                <span class="ai-fw-step">Empathize</span>
-                                <span class="ai-fw-step">Define</span>
-                                <span class="ai-fw-step">Ideate</span>
-                                <span class="ai-fw-step">Prototype</span>
-                                <span class="ai-fw-step">Test</span>
+                                <span class="ai-fw-step">Context</span>
+                                <span class="ai-fw-step">Changes</span>
+                                <span class="ai-fw-step">Test plan</span>
                             </div>
                         </div>
 
                         <div class="ai-fw-card reveal reveal-delay-1">
                             <div class="ai-fw-header">
-                                <span class="ai-fw-icon"
-                                    >&#x1f3db;&#xfe0f;</span
-                                >
+                                <span class="ai-fw-icon">&#x1f4d0;</span>
                                 <div>
-                                    <div class="ai-fw-category">Analytical</div>
-                                    <div class="ai-fw-name">
-                                        Socratic Method
-                                    </div>
-                                    <div class="ai-fw-author">Socrates</div>
+                                    <div class="ai-fw-category">Generate</div>
+                                    <div class="ai-fw-name">ADR from Notes</div>
                                 </div>
                             </div>
                             <p class="ai-fw-desc">
-                                Systematic questioning to examine ideas, expose
-                                contradictions, and stimulate critical thinking.
+                                Transform decision notes into a structured Architecture Decision Record — context, decision, consequences.
                             </p>
                             <div class="ai-fw-steps">
-                                <span class="ai-fw-step"
-                                    >Clarification Questions</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Assumption Probing</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Evidence Examination</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Implication Exploration</span
-                                >
+                                <span class="ai-fw-step">Context</span>
+                                <span class="ai-fw-step">Decision</span>
+                                <span class="ai-fw-step">Consequences</span>
                             </div>
                         </div>
 
                         <div class="ai-fw-card reveal">
                             <div class="ai-fw-header">
-                                <span class="ai-fw-icon">&#x1f310;</span>
+                                <span class="ai-fw-icon">&#x2709;&#xfe0f;</span>
                                 <div>
-                                    <div class="ai-fw-category">Strategic</div>
-                                    <div class="ai-fw-name">
-                                        Systems Thinking
-                                    </div>
-                                    <div class="ai-fw-author">
-                                        Peter Senge / Donella Meadows
-                                    </div>
+                                    <div class="ai-fw-category">Generate</div>
+                                    <div class="ai-fw-name">Draft Message</div>
                                 </div>
                             </div>
                             <p class="ai-fw-desc">
-                                See the whole system — map relationships,
-                                feedback loops, and find leverage points.
+                                Draft a Slack message or email from your notes — clear, professional, ready to send.
                             </p>
                             <div class="ai-fw-steps">
-                                <span class="ai-fw-step">Map the System</span>
-                                <span class="ai-fw-step"
-                                    >Identify Feedback Loops</span
-                                >
-                                <span class="ai-fw-step"
-                                    >Find Leverage Points</span
-                                >
+                                <span class="ai-fw-step">From your entries</span>
+                                <span class="ai-fw-step">Copy &amp; send</span>
                             </div>
                         </div>
 
+                        <!-- Think -->
                         <div class="ai-fw-card reveal reveal-delay-1">
                             <div class="ai-fw-header">
-                                <span class="ai-fw-icon">&#x1f500;</span>
+                                <span class="ai-fw-icon">&#x1f9f8;</span>
                                 <div>
-                                    <div class="ai-fw-category">Creative</div>
-                                    <div class="ai-fw-name">
-                                        Lateral Thinking
-                                    </div>
-                                    <div class="ai-fw-author">
-                                        Edward de Bono
-                                    </div>
+                                    <div class="ai-fw-category">Think</div>
+                                    <div class="ai-fw-name">Rubber Duck</div>
                                 </div>
                             </div>
                             <p class="ai-fw-desc">
-                                Break free from logical patterns — use
-                                randomness, provocation, and alternatives.
+                                Explain your problem to an AI rubber duck. It asks clarifying questions to help you find the answer yourself.
                             </p>
                             <div class="ai-fw-steps">
-                                <span class="ai-fw-step">Random Entry</span>
-                                <span class="ai-fw-step">Provocation</span>
-                                <span class="ai-fw-step"
-                                    >Alternative Generation</span
-                                >
+                                <span class="ai-fw-step">Explain</span>
+                                <span class="ai-fw-step">Clarify</span>
+                                <span class="ai-fw-step">Discover</span>
                             </div>
                         </div>
 
                         <div class="ai-fw-card reveal">
                             <div class="ai-fw-header">
-                                <span class="ai-fw-icon">&#x1f3af;</span>
+                                <span class="ai-fw-icon">&#x1f914;</span>
                                 <div>
-                                    <div class="ai-fw-category">
-                                        Decision Making
-                                    </div>
-                                    <div class="ai-fw-name">OODA Loop</div>
-                                    <div class="ai-fw-author">John Boyd</div>
+                                    <div class="ai-fw-category">Think</div>
+                                    <div class="ai-fw-name">Challenge My Thinking</div>
                                 </div>
                             </div>
                             <p class="ai-fw-desc">
-                                Rapid decision-making cycle — Observe, Orient,
-                                Decide, Act.
+                                Get your assumptions challenged. The AI plays devil's advocate on your notes and decisions.
                             </p>
                             <div class="ai-fw-steps">
-                                <span class="ai-fw-step">Observe</span>
-                                <span class="ai-fw-step">Orient</span>
-                                <span class="ai-fw-step">Decide</span>
-                                <span class="ai-fw-step">Act</span>
+                                <span class="ai-fw-step">Assumptions</span>
+                                <span class="ai-fw-step">Blind spots</span>
+                                <span class="ai-fw-step">Alternatives</span>
                             </div>
                         </div>
 
                         <div class="ai-fw-card reveal reveal-delay-1">
                             <div class="ai-fw-header">
-                                <span class="ai-fw-icon">&#x26d3;&#xfe0f;</span>
+                                <span class="ai-fw-icon">&#x2696;&#xfe0f;</span>
                                 <div>
-                                    <div class="ai-fw-category">Strategic</div>
-                                    <div class="ai-fw-name">
-                                        Theory of Constraints
-                                    </div>
-                                    <div class="ai-fw-author">
-                                        Eliyahu Goldratt
-                                    </div>
+                                    <div class="ai-fw-category">Think</div>
+                                    <div class="ai-fw-name">Explore Tradeoffs</div>
                                 </div>
                             </div>
                             <p class="ai-fw-desc">
-                                Find the bottleneck, exploit it, and elevate
-                                system throughput.
+                                Weigh the pros and cons of approaches you're considering. Get a structured comparison.
                             </p>
                             <div class="ai-fw-steps">
-                                <span class="ai-fw-step"
-                                    >Identify the Constraint</span
-                                >
-                                <span class="ai-fw-step">Exploit</span>
-                                <span class="ai-fw-step">Subordinate</span>
-                                <span class="ai-fw-step">Elevate</span>
-                                <span class="ai-fw-step">Repeat</span>
+                                <span class="ai-fw-step">Options</span>
+                                <span class="ai-fw-step">Pros &amp; cons</span>
+                                <span class="ai-fw-step">Recommendation</span>
+                            </div>
+                        </div>
+
+                        <!-- Remember -->
+                        <div class="ai-fw-card reveal">
+                            <div class="ai-fw-header">
+                                <span class="ai-fw-icon">&#x1f4cc;</span>
+                                <div>
+                                    <div class="ai-fw-category">Remember</div>
+                                    <div class="ai-fw-name">What Did I Decide About...?</div>
+                                </div>
+                            </div>
+                            <p class="ai-fw-desc">
+                                Search your past entries for decisions on a topic. Never lose track of why you chose an approach.
+                            </p>
+                            <div class="ai-fw-steps">
+                                <span class="ai-fw-step">Topic search</span>
+                                <span class="ai-fw-step">Decision history</span>
+                            </div>
+                        </div>
+
+                        <div class="ai-fw-card reveal reveal-delay-1">
+                            <div class="ai-fw-header">
+                                <span class="ai-fw-icon">&#x1f552;</span>
+                                <div>
+                                    <div class="ai-fw-category">Remember</div>
+                                    <div class="ai-fw-name">When Did I Last Work On...?</div>
+                                </div>
+                            </div>
+                            <p class="ai-fw-desc">
+                                Find when you last touched a project or topic. Get a timeline of related work across your notebook.
+                            </p>
+                            <div class="ai-fw-steps">
+                                <span class="ai-fw-step">Topic search</span>
+                                <span class="ai-fw-step">Timeline</span>
                             </div>
                         </div>
                     </div>
