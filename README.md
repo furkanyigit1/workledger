@@ -41,8 +41,19 @@
 - **Inline drawings** -- Embed [Excalidraw](https://excalidraw.com/) diagrams directly in your notes via `/drawing`
 - **Syntax highlighting** -- 24 languages with Shiki, theme-aware code blocks
 - **Wiki-style linking** -- Type `[[` to link between entries and build a knowledge graph
+- **Backlinks** -- "Referenced by" panel below each entry shows all entries that link to it, auto-maintained on save
+- **Entry templates** -- Start entries with structured sections: Decision Log, Debugging Session, Meeting Notes, Learning Log — each with pre-filled headings and auto-tags
+- **Entry signifiers** -- Label entries as Note, Decision, Task, Question, or Idea with color-coded indicators; filterable in the sidebar
+- **Pin entries** -- Pin important entries to the top of your stream
 - **Tagging** -- Color-coded tags for categorization and filtering
+- **Saved filters** -- Save tag + text filter combinations as named presets for one-click access
 - **Search** -- Full-text search across all entries and tags (`Cmd+K`)
+
+### Review your work
+
+- **Weekly review** -- Toggle a weekly view that groups entries by ISO week with signifier breakdowns, top tags, and entry previews
+- **Collapsible week cards** -- Most recent week auto-expanded, older weeks collapsed
+- **Filtering in review mode** -- Text, tag, signifier, and saved filter all work in the weekly view
 
 ### Stay in control
 
@@ -53,9 +64,9 @@
 - **Mobile-friendly** -- Responsive layout with touch-friendly controls
 - **Keyboard-driven** -- `Cmd+J` new entry, `Cmd+K` search, `Cmd+\` toggle sidebar, `Escape` clear filter
 
-### Optional: Think with AI
+### Optional: AI Notebook Companion
 
-An optional AI sidebar with 10 structured thinking frameworks. Off by default, zero impact on the core app when disabled. Easy to remove if unwanted — fork and delete the `src/ai/` and `src/components/ai/` directories without affecting anything else.
+An optional AI sidebar with 12 concrete engineer actions. Off by default, zero impact on the core app when disabled. Easy to remove if unwanted — fork and delete `src/features/ai/` without affecting anything else.
 
 **Quick start:**
 
@@ -65,12 +76,19 @@ An optional AI sidebar with 10 structured thinking frameworks. Off by default, z
    - **Hugging Face (remote):** Paste a free [API token](https://huggingface.co/settings/tokens) and pick a model
    - **Custom server:** Point to any OpenAI-compatible endpoint
 3. Hover over a note and click the **lightbulb icon**
-4. **Pick a thinking framework** and the AI applies it to your note
+4. **Pick an action** from 4 categories:
 
-**10 frameworks included:** The Thinker's Toolkit, First Principles, Six Thinking Hats, TRIZ, Design Thinking, Socratic Method, Systems Thinking, Lateral Thinking, OODA Loop, Theory of Constraints
+| Category | Actions |
+|----------|---------|
+| **Summarize** | My Day, My Week, A Topic |
+| **Generate** | Standup Update, PR Description, ADR from Notes, Draft Message |
+| **Think** | Rubber Duck, Challenge My Thinking, Explore Tradeoffs |
+| **Remember** | What Did I Decide About...?, When Did I Last Work On...? |
+
+Actions support multi-entry context (day, week, or topic scope) and topic search.
 
 <p align="center">
-  <img src="landing/images/ai/ai_in_action.png" alt="AI thinking sidebar" width="720">
+  <img src="landing/images/ai/ai_in_action.png" alt="AI notebook companion" width="720">
 </p>
 
 ## Getting Started
