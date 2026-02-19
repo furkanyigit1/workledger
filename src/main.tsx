@@ -13,6 +13,20 @@ if (plausibleSrc) {
   script.async = true;
   script.src = plausibleSrc;
   document.head.appendChild(script);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const w = window as any;
+  w.plausible =
+    w.plausible ||
+    function (...args: unknown[]) {
+      (w.plausible.q = w.plausible.q || []).push(args);
+    };
+  w.plausible.init =
+    w.plausible.init ||
+    function (i?: Record<string, unknown>) {
+      w.plausible.o = i || {};
+    };
+  w.plausible.init();
 }
 
 registerSW({
