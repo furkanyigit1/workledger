@@ -12,6 +12,8 @@ export function useEntryNavigation() {
   const navigateToEntry = useCallback(
     async (entryId: string) => {
       const scrollAndHighlight = (el: HTMLElement) => {
+        // Suppress IntersectionObserver during programmatic scroll
+        isManualScroll.current = true;
         // Scroll to the first heading inside the editor if available,
         // so the user sees the entry title rather than the toolbar row.
         const heading = el.querySelector<HTMLElement>("[data-content-type='heading']");
@@ -19,10 +21,12 @@ export function useEntryNavigation() {
         scrollTarget.scrollIntoView({ behavior: "smooth", block: "start" });
         el.classList.add("entry-link-highlight");
         setTimeout(() => el.classList.remove("entry-link-highlight"), 2000);
+        // Focus after smooth scroll settles to avoid scroll jiggle
         setTimeout(() => {
+          isManualScroll.current = false;
           const editorEl = el.querySelector<HTMLElement>("[contenteditable=true]");
           if (editorEl) editorEl.focus();
-        }, 400);
+        }, 800);
       };
 
       for (const [dayKey, entries] of entriesByDay) {

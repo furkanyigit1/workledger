@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Backlink navigation no longer jiggles/bounces in production — suppressed IntersectionObserver during programmatic scroll and delayed editor focus until smooth scroll settles
+
 ## [3.2.0] - 2026-02-18
 
 ### Fixed
