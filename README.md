@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <img src="landing/images/product.png" alt="WorkLedger" width="720">
+  <img src="docs/images/product.png" alt="WorkLedger" width="720">
 </p>
 
 ## Features
@@ -88,7 +88,7 @@ An optional AI sidebar with 12 concrete engineer actions. Off by default, zero i
 Actions support multi-entry context (day, week, or topic scope) and topic search.
 
 <p align="center">
-  <img src="landing/images/ai/ai_in_action.png" alt="AI notebook companion" width="720">
+  <img src="docs/images/ai/ai_in_action.png" alt="AI notebook companion" width="720">
 </p>
 
 ## Getting Started
