@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Lazy-mount BlockNote editors based on viewport proximity — only entries within ~2 viewport heights get a live editor; far-away entries render a lightweight title/preview placeholder, reducing live `useSyncExternalStore` subscribers from ~40 to ~5-8 and eliminating scroll jiggle during backlink navigation
+
 ### Fixed
 
-- Backlink navigation no longer jiggles/bounces in production — suppressed IntersectionObserver during programmatic scroll and delayed editor focus until smooth scroll settles
+- Imported entries now build backlinks index — wiki-links in imported entries generate "Referenced by" panels immediately instead of requiring a manual edit to each entry
 
 ## [3.2.0] - 2026-02-18
 

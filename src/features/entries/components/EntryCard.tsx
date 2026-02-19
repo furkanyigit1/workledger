@@ -1,4 +1,4 @@
-import { useState, useCallback, memo } from "react";
+import { useState, useCallback, useRef, memo } from "react";
 import type { WorkLedgerEntry } from "../types/entry.ts";
 import { formatTime, todayKey } from "../../../utils/dates.ts";
 import { EntryEditor } from "../../editor/index.ts";
@@ -8,6 +8,8 @@ import { ErrorBoundary } from "../../../components/ui/ErrorBoundary.tsx";
 import { CheckIcon, ArchiveIcon, TrashIcon, AIIcon } from "../../../components/ui/Icons.tsx";
 import { SignifierPicker } from "./SignifierPicker.tsx";
 import { BacklinksPanel } from "./BacklinksPanel.tsx";
+import { useNearViewport } from "../hooks/useNearViewport.ts";
+import { extractTitle, extractPreview } from "../utils/extract-title.ts";
 
 interface EntryCardProps {
   entry: WorkLedgerEntry;
@@ -25,11 +27,26 @@ interface EntryCardProps {
   onFocus?: (entry: WorkLedgerEntry) => void;
 }
 
+function EntryPlaceholder({ entry }: { entry: WorkLedgerEntry }) {
+  const title = extractTitle(entry);
+  const preview = extractPreview(entry);
+  return (
+    <div className="px-12 py-4 min-h-[80px]">
+      <p className="text-base font-semibold text-[var(--color-notebook-text)]">{title}</p>
+      {preview && (
+        <p className="mt-1 text-sm text-[var(--color-notebook-muted)] line-clamp-2">{preview}</p>
+      )}
+    </div>
+  );
+}
+
 export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTagsChange, onArchive, onDelete, onUnarchive, onPin, onUnpin, onSignifierChange, isArchiveView, onOpenAI, onFocus }: EntryCardProps) {
   const isOld = entry.dayKey < todayKey();
   const [confirmArchive, setConfirmArchive] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const nearViewport = useNearViewport(cardRef);
 
   const handleCopyLink = useCallback(() => {
     const url = `${window.location.origin}${window.location.pathname}#entry-${entry.id}`;
@@ -40,7 +57,7 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
   }, [entry.id]);
 
   return (
-    <div className="entry-card group scroll-mt-[120px]" id={`entry-${entry.id}`}>
+    <div ref={cardRef} className="entry-card group scroll-mt-[120px]" id={`entry-${entry.id}`}>
       <div className="flex items-center gap-3 mb-2 px-1">
         <span className="text-sm text-gray-400 dark:text-gray-500 font-mono">
           {formatTime(entry.createdAt)}
@@ -228,19 +245,23 @@ export const EntryCard = memo(function EntryCard({ entry, isLatest, onSave, onTa
           ${isArchiveView ? "opacity-80" : ""}
         `}
       >
-        <ErrorBoundary fallback={
-          <div className="text-center py-8 text-sm text-[var(--color-notebook-muted)]">
-            Editor failed to load.{" "}
-            <button className="text-[var(--color-notebook-accent)] hover:underline" onClick={() => window.location.reload()}>Reload</button>
-          </div>
-        }>
-          <EntryEditor
-            entry={entry}
-            editable={!isArchiveView}
-            onSave={onSave}
-            autoFocus={isLatest && !isOld && !isArchiveView}
-          />
-        </ErrorBoundary>
+        {nearViewport ? (
+          <ErrorBoundary fallback={
+            <div className="text-center py-8 text-sm text-[var(--color-notebook-muted)]">
+              Editor failed to load.{" "}
+              <button className="text-[var(--color-notebook-accent)] hover:underline" onClick={() => window.location.reload()}>Reload</button>
+            </div>
+          }>
+            <EntryEditor
+              entry={entry}
+              editable={!isArchiveView}
+              onSave={onSave}
+              autoFocus={isLatest && !isOld && !isArchiveView}
+            />
+          </ErrorBoundary>
+        ) : (
+          <EntryPlaceholder entry={entry} />
+        )}
       </div>
       <ErrorBoundary fallback={null}>
         <BacklinksPanel entryId={entry.id} />

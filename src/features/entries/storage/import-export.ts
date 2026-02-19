@@ -2,6 +2,7 @@ import type { Block } from "@blocknote/core";
 import type { WorkLedgerEntry } from "../types/entry.ts";
 import { getDB } from "../../../storage/db.ts";
 import { updateSearchIndex } from "./search-index.ts";
+import { updateBacklinks } from "./backlinks.ts";
 import { validateEntry, validateImportEnvelope } from "../utils/validation.ts";
 
 interface ExportEnvelope {
@@ -67,6 +68,7 @@ export async function importEntries(
         entry.blocks as Block[],
         entry.tags ?? [],
       );
+      await updateBacklinks(entry.id, entry.blocks as Block[]);
     }
     imported++;
   }
